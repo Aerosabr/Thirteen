@@ -10,6 +10,8 @@ public class Chair : MonoBehaviour, IInteractable
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private GameObject hand;
 
+    [SerializeField] private List<GameObject> selectedCards;
+
     private float fanRadius = 0.15f;
     private float maxFanAngle = 67.5f;
 
@@ -66,6 +68,18 @@ public class Chair : MonoBehaviour, IInteractable
 
     public void PlayCards()
     {
+        if (selectedCards.Count > 0)
+        {
+            Table.Instance.PlayCards(ref selectedCards);
+            ArrangeCardsInFan();
+        }
+    }
 
+    public void SelectedCard(GameObject card)
+    {
+        if (selectedCards.Contains(card))
+            selectedCards.Remove(card);
+        else
+            selectedCards.Add(card);
     }
 }

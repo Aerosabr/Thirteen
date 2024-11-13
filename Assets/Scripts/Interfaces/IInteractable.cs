@@ -7,5 +7,5 @@ public interface IInteractable
     public void Highlight();
     public void Unhighlight();
 
-    public void Interact(GameObject player);
+    public void Interact(GameObject obj);
 }

@@ -5,6 +5,12 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
 {
+    private enum PlayerState
+    {
+        Playing,
+        Walking,
+    }
+
     private float moveSpeed = 4.0f;
     private float sprintSpeed = 6.0f;
     private float cameraSensitivity = 1.5f;
@@ -24,6 +30,8 @@ public class Player : MonoBehaviour
     private bool canMove = true;
     private bool canInteract = true;
     private bool canLook = true;
+    private PlayerState playerState;
+
 
     private float _cinemachineTargetPitch;
     private float _speed;
@@ -39,6 +47,8 @@ public class Player : MonoBehaviour
     {
         if (_mainCamera == null)
             _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+
+        playerState = PlayerState.Walking;
     }
 
     private void Start()
@@ -149,7 +159,10 @@ public class Player : MonoBehaviour
     {
         if (interactObject)
         {
-            interactObject.GetComponent<IInteractable>().Interact(gameObject);
+            if (playerState == PlayerState.Playing)
+                interactObject.GetComponent<IInteractable>().Interact(Chair);
+            else if (playerState == PlayerState.Walking)
+                interactObject.GetComponent<IInteractable>().Interact(gameObject);
         }
     }
 
@@ -166,6 +179,8 @@ public class Player : MonoBehaviour
         interactObject.GetComponent<IInteractable>().Unhighlight();
 
         interactableLayers = LayerMask.GetMask("Card");
+
+        playerState = PlayerState.Playing;
     }
 
     private void OnExitChair()
@@ -184,11 +199,13 @@ public class Player : MonoBehaviour
         isPlaying = false;
 
         interactableLayers = LayerMask.GetMask("Interactable");
+
+        playerState = PlayerState.Walking;
     }
 
     private void OnPlayCards()
     {
-        Debug.Log("Playing Cards");
+        Chair.GetComponent<Chair>().PlayCards();
     }
 
     private void OnApplicationFocus(bool hasFocus) => SetCursorState(cursorLocked);

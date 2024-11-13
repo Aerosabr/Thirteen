@@ -57,16 +57,18 @@ public class Card : MonoBehaviour, IInteractable
         highlight.SetActive(false);
     }
 
-    public void Interact(GameObject player)
+    public void Interact(GameObject chair)
     {
         if (!Selected)
         {
             transform.localPosition = new Vector3(handPos.x * 0.175f, handPos.y, handPos.z * 0.175f);
+            chair.GetComponent<Chair>().SelectedCard(gameObject);
             Selected = true;
         }
         else
         {
             transform.localPosition = new Vector3(handPos.x * 0.15f, handPos.y, handPos.z * 0.15f);
+            chair.GetComponent<Chair>().SelectedCard(gameObject);
             Selected = false;
         }
     }

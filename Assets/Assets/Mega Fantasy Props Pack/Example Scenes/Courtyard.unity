@@ -729,6 +729,7 @@ MonoBehaviour:
   sitPoint: {fileID: 1779035884}
   exitPoint: {fileID: 78594423}
   hand: {fileID: 461565032}
+  selectedCards: []
 --- !u!114 &217157704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -972,6 +973,7 @@ MonoBehaviour:
   sitPoint: {fileID: 6716531}
   exitPoint: {fileID: 2078442201}
   hand: {fileID: 1031612984}
+  selectedCards: []
 --- !u!64 &272660159
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2624,6 +2626,7 @@ MonoBehaviour:
   sitPoint: {fileID: 1107249376}
   exitPoint: {fileID: 778367935}
   hand: {fileID: 910304632}
+  selectedCards: []
 --- !u!64 &1031968552
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5366,6 +5369,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 214274147}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1779406698
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1779406699}
+  m_Layer: 0
+  m_Name: Tabletop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1779406699
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779406698}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.815, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5938038845578921346}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1799737147
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6077,6 +6111,7 @@ MonoBehaviour:
   sitPoint: {fileID: 1313759992}
   exitPoint: {fileID: 286084696}
   hand: {fileID: 393358314}
+  selectedCards: []
 --- !u!64 &1991487317
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7474,21 +7509,6 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.3253, y: 0, z: 0.055000007}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
-  m_Father: {fileID: 6952692003326655095}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &762102640448183968
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4379981022379109555}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.3253, y: 0, z: -0.16499999}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -9479,48 +9499,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6952692003326655095}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &2662761543540267119
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4379981022379109555}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: e4c2871890650ae41b820045fca7eb50, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!23 &2663551991144027697
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -11210,24 +11188,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6952692003326655095}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &4379981022379109555
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 762102640448183968}
-  - component: {fileID: 8631305844488807574}
-  - component: {fileID: 2662761543540267119}
-  m_Layer: 0
-  m_Name: Blue_PlayingCards_Club02_00
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &4380314000785580781
 GameObject:
   m_ObjectHideFlags: 0
@@ -12528,6 +12488,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 813698948216420022}
+  - {fileID: 1779406699}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5938038845578959266
@@ -12584,6 +12545,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c6b9ffbbf7eeab4091cfe34295bcbe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tabletop: {fileID: 1779406698}
   Deck: {fileID: 350033351}
   Chairs:
   - {fileID: 217157703}
@@ -13545,7 +13507,6 @@ Transform:
   m_LocalScale: {x: 1.75, y: 1.75, z: 1.75}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 762102640448183968}
   - {fileID: 7666904249407790099}
   - {fileID: 4357435001951203846}
   - {fileID: 5422001494026069066}
@@ -32017,14 +31978,6 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4331598943377800701}
-  m_Mesh: {fileID: -4393675991995823134, guid: 0464afc39207ab540b94807b2273e3e5, type: 3}
---- !u!33 &8631305844488807574
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4379981022379109555}
   m_Mesh: {fileID: -4393675991995823134, guid: 0464afc39207ab540b94807b2273e3e5, type: 3}
 --- !u!33 &8631816122903521992
 MeshFilter:

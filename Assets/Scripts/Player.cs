@@ -19,8 +19,11 @@ public class Player : MonoBehaviour
     private bool isSprinting;
     private bool cursorLocked = true;
     private bool cursorInputForLook = true;
+
+    private bool isPlaying;
     private bool canMove = true;
     private bool canInteract = true;
+    private bool canLook = true;
 
     private float _cinemachineTargetPitch;
     private float _speed;
@@ -30,6 +33,7 @@ public class Player : MonoBehaviour
     private GameObject _mainCamera;
 
     [SerializeField] private GameObject interactObject;
+    [SerializeField] private GameObject Chair;
 
     private void Awake()
     {
@@ -48,13 +52,13 @@ public class Player : MonoBehaviour
         if (canMove)
             Move();
 
-        if (canInteract)
-            InteractWithObject();
+        InteractWithObject();
     }
 
     private void LateUpdate()
     {
-        CameraRotation();
+        if (canLook)
+            CameraRotation();
     }
 
     private void CameraRotation()
@@ -109,12 +113,18 @@ public class Player : MonoBehaviour
             if (!interactObject)
             {
                 interactObject = hit.collider.gameObject;
-                interactObject.GetComponent<IInteractable>().EnableOutline();
+                interactObject.GetComponent<IInteractable>().Highlight();
+            }
+            else if (interactObject != hit.collider.gameObject)
+            {
+                interactObject.GetComponent<IInteractable>().Unhighlight();
+                interactObject = hit.collider.gameObject;
+                interactObject.GetComponent<IInteractable>().Highlight();
             }
         }
         else if (interactObject)
         {
-            interactObject.GetComponent<IInteractable>().DisableOutline();
+            interactObject.GetComponent<IInteractable>().Unhighlight();
             interactObject = null;
         }
     }
@@ -143,11 +153,42 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void SetPosition(Vector3 pos)
+    public void SitOnChair(Vector3 pos)
     {
         _controller.enabled = false;
         transform.position = pos;
+        transform.rotation = interactObject.transform.rotation;
         _controller.enabled = true;
+        canMove = false;
+        canInteract = false;
+        isPlaying = true;
+        Chair = interactObject;
+        interactObject.GetComponent<IInteractable>().Unhighlight();
+
+        interactableLayers = LayerMask.GetMask("Card");
+    }
+
+    private void OnExitChair()
+    {
+        if (!isPlaying)
+            return;
+
+        _controller.enabled = false;
+        transform.position = Chair.GetComponent<Chair>().GetExitPoint();
+        _controller.enabled = true;
+
+        Chair = null;
+
+        canMove = true;
+        canInteract = true;
+        isPlaying = false;
+
+        interactableLayers = LayerMask.GetMask("Interactable");
+    }
+
+    private void OnPlayCards()
+    {
+        Debug.Log("Playing Cards");
     }
 
     private void OnApplicationFocus(bool hasFocus) => SetCursorState(cursorLocked);

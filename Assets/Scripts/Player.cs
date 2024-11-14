@@ -23,12 +23,12 @@ public class Player : MonoBehaviour
     private Vector2 movementInput;
     private Vector2 lookInput;
     private bool isSprinting;
+    private bool cursorEnabled;
     private bool cursorLocked = true;
     private bool cursorInputForLook = true;
 
     private bool isPlaying;
     private bool canMove = true;
-    private bool canInteract = true;
     private bool canLook = true;
     private PlayerState playerState;
 
@@ -151,7 +151,7 @@ public class Player : MonoBehaviour
     public void OnMove(InputValue value) => movementInput = value.Get<Vector2>();
     public void OnLook(InputValue value) 
     { 
-        if (cursorInputForLook) 
+        if (!cursorEnabled) 
             lookInput = value.Get<Vector2>(); 
     }
     public void OnSprint(InputValue value) => isSprinting = value.isPressed;
@@ -173,7 +173,6 @@ public class Player : MonoBehaviour
         transform.rotation = interactObject.transform.rotation;
         _controller.enabled = true;
         canMove = false;
-        canInteract = false;
         isPlaying = true;
         Chair = interactObject;
         interactObject.GetComponent<IInteractable>().Unhighlight();
@@ -195,7 +194,6 @@ public class Player : MonoBehaviour
         Chair = null;
 
         canMove = true;
-        canInteract = true;
         isPlaying = false;
 
         interactableLayers = LayerMask.GetMask("Interactable");
@@ -206,6 +204,30 @@ public class Player : MonoBehaviour
     private void OnPlayCards()
     {
         Chair.GetComponent<Chair>().PlayCards();
+    }
+
+    public void OnToggleCursor()
+    {
+        if (!cursorEnabled)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            cursorEnabled = true;
+        }
+        else
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            cursorEnabled = false;
+        }
+    }
+
+    public void RemoveInteractObject()
+    {
+        if (interactObject)
+            interactObject.GetComponent<IInteractable>().Highlight();
+
+        interactObject = null;
     }
 
     private void OnApplicationFocus(bool hasFocus) => SetCursorState(cursorLocked);

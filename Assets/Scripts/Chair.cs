@@ -9,15 +9,21 @@ public class Chair : MonoBehaviour, IInteractable
     [SerializeField] private GameObject sitPoint;
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private GameObject hand;
+    [SerializeField] private int chairID;
 
-    [SerializeField] private List<GameObject> selectedCards;
+    [SerializeField] private List<Card> selectedCards;
+    [SerializeField] private Player player;
 
     private float fanRadius = 0.15f;
     private float maxFanAngle = 67.5f;
 
     public void Highlight() { outline.enabled = true; }
     public void Unhighlight() { outline.enabled = false; }
-    public void Interact(GameObject player) { player.GetComponent<Player>().SitOnChair(sitPoint.transform.position); }
+    public void Interact(GameObject player) 
+    {
+        player.GetComponent<Player>().SitOnChair(sitPoint.transform.position); 
+        this.player = player.GetComponent<Player>();
+    }
     public Vector3 GetExitPoint() => exitPoint.transform.position;
 
     public void DealtCard(GameObject card)
@@ -66,20 +72,33 @@ public class Chair : MonoBehaviour, IInteractable
             children[i].transform.SetSiblingIndex(i);
     }
 
-    public void PlayCards()
-    {
-        if (selectedCards.Count > 0)
-        {
-            Table.Instance.PlayCards(ref selectedCards);
-            ArrangeCardsInFan();
-        }
-    }
-
-    public void SelectedCard(GameObject card)
+    public void SelectedCard(Card card)
     {
         if (selectedCards.Contains(card))
             selectedCards.Remove(card);
         else
             selectedCards.Add(card);
     }
+
+    public void PlayCards()
+    {
+        if (selectedCards.Count > 0)
+        {
+            Table.Instance.PlayCards(selectedCards, this);
+            ResetSelected();
+            ArrangeCardsInFan();
+        }
+    }
+
+    private void ResetSelected()
+    {
+        foreach (Card card in selectedCards)
+            card.Selected = false;
+
+        selectedCards.Clear();
+    }
+
+    public int GetChairID() => chairID;
+    public GameObject GetHand() => hand;
+    public Player GetPlayer() => player;
 }

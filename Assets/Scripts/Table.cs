@@ -97,6 +97,7 @@ public class Table : MonoBehaviour
         currentType = cardType;
         cardsInPlay = cardsPlayed;
         numCards = numberCards;
+        GameStateUI.Instance.UpdateVisual(cardsPlayed, cardType);
     }
 
     public void RedrawHands()

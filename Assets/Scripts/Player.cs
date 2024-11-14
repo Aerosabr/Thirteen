@@ -27,8 +27,6 @@ public class Player : MonoBehaviour
     private bool cursorLocked = true;
     private bool cursorInputForLook = true;
 
-    private bool isPlaying;
-    private bool canMove = true;
     private bool canLook = true;
     private PlayerState playerState;
 
@@ -59,7 +57,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (canMove)
+        if (playerState == PlayerState.Walking)
             Move();
 
         InteractWithObject();
@@ -172,8 +170,6 @@ public class Player : MonoBehaviour
         transform.position = pos;
         transform.rotation = interactObject.transform.rotation;
         _controller.enabled = true;
-        canMove = false;
-        isPlaying = true;
         Chair = interactObject;
         interactObject.GetComponent<IInteractable>().Unhighlight();
 
@@ -184,7 +180,7 @@ public class Player : MonoBehaviour
 
     private void OnExitChair()
     {
-        if (!isPlaying)
+        if (playerState != PlayerState.Playing)
             return;
 
         _controller.enabled = false;
@@ -193,9 +189,6 @@ public class Player : MonoBehaviour
 
         Chair = null;
 
-        canMove = true;
-        isPlaying = false;
-
         interactableLayers = LayerMask.GetMask("Interactable");
 
         playerState = PlayerState.Walking;
@@ -203,7 +196,8 @@ public class Player : MonoBehaviour
 
     private void OnPlayCards()
     {
-        Chair.GetComponent<Chair>().PlayCards();
+        if (playerState == PlayerState.Playing)
+            Chair.GetComponent<Chair>().PlayCards();
     }
 
     public void OnToggleCursor()

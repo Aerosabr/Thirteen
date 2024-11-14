@@ -268,7 +268,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 5604884198273132817}
   highlight: {fileID: 1225408359698277352}
+  cardSprite: {fileID: 21300000, guid: f3999b7b63c9674419fc367b508440f9, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &1616995135922306642
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -393,7 +395,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 7360180449735319803}
   highlight: {fileID: 1171426430254408867}
+  cardSprite: {fileID: 21300000, guid: b2d0ba18f8b024a49a61be93bf9c89c0, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &8250911805564379525
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -684,7 +688,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 4751256820508146176}
   highlight: {fileID: 4680878125430896552}
+  cardSprite: {fileID: 21300000, guid: d0e626a1e8e53a14e908b9c98e23b8f6, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &4959352207804157226
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -975,7 +981,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 5117300980189169584}
   highlight: {fileID: 6826822045066056470}
+  cardSprite: {fileID: 21300000, guid: ccd65c16639c0954caf8f278f1d7ba93, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &2852197446871785156
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1183,7 +1191,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 603039300029942810}
   highlight: {fileID: 1345663764732644325}
+  cardSprite: {fileID: 21300000, guid: 4a885f25a9c7fea43a86646f6a5eaa5f, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &8567168665334109125
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1308,7 +1318,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 5725382741933510160}
   highlight: {fileID: 6647478505238593609}
+  cardSprite: {fileID: 21300000, guid: 8dfedddf2799c7b4d82bed3b2f9bd03c, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &7740555095537514902
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1516,7 +1528,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 676619027872112829}
   highlight: {fileID: 4477728237502875385}
+  cardSprite: {fileID: 21300000, guid: 3b941cb9883cb6d438d5ddf89cd51b69, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &8738686926026186559
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1641,7 +1655,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 3720167942134321781}
   highlight: {fileID: 7893574536029100588}
+  cardSprite: {fileID: 21300000, guid: 626366a4a0c7bca4084306eb5489123b, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &3794957481445806352
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2015,7 +2031,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 6280611452823842976}
   highlight: {fileID: 355655972799705982}
+  cardSprite: {fileID: 21300000, guid: 9302d42f098e67c41a201e19aa1d27d0, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &7786773642062675
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2140,7 +2158,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 7908812272569815284}
   highlight: {fileID: 7568276461290826260}
+  cardSprite: {fileID: 21300000, guid: 3ef19fb98bce74a48b277d5ac36ababc, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &988774703580297026
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2597,7 +2617,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 7324434206167524227}
   highlight: {fileID: 7975030075408154181}
+  cardSprite: {fileID: 21300000, guid: 3d4efa847b2131947bb10e09e044efcc, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &8196036020760177691
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2971,7 +2993,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 2143539557915316225}
   highlight: {fileID: 788118031099315942}
+  cardSprite: {fileID: 21300000, guid: e5537e23e6fdde94db19f34a73419df4, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &5803620445508343930
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3179,7 +3203,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 5700326767424058960}
   highlight: {fileID: 2152799898599570342}
+  cardSprite: {fileID: 21300000, guid: 8523d4368d550a947a1c3cb4168ed9ff, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &2012275365111771871
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3387,7 +3413,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 1725320871565869212}
   highlight: {fileID: 7800210515178049250}
+  cardSprite: {fileID: 21300000, guid: 523bc81d4f12c154594d9134dfd85f4f, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &5881394000637101029
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3512,7 +3540,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 8650902163185455189}
   highlight: {fileID: 528544339952394212}
+  cardSprite: {fileID: 21300000, guid: 2c1a6354d1d441c4e97d432a7edc557c, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &679866016656222433
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3637,7 +3667,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 6215938633537535700}
   highlight: {fileID: 3686853581443036337}
+  cardSprite: {fileID: 21300000, guid: 8da3770ed794a2440b5b91acc6d4cede, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &593117440160397312
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3845,7 +3877,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 785127919417680277}
   highlight: {fileID: 8663705207279430768}
+  cardSprite: {fileID: 21300000, guid: aac1d237a2ccd044b81768861f7730c5, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &8771118243675148861
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3970,7 +4004,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 5890021215228616527}
   highlight: {fileID: 8373941178723599543}
+  cardSprite: {fileID: 21300000, guid: 7b52a4d2a4cc48d45bc0c270ebffc24b, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &2629707607154932266
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4095,7 +4131,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 3434172107217277006}
   highlight: {fileID: 5059474105643513506}
+  cardSprite: {fileID: 21300000, guid: c223be1206095424885b1e1f058c1cf0, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &8588735362188988989
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4220,7 +4258,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 3351867554688885804}
   highlight: {fileID: 9029136197468049322}
+  cardSprite: {fileID: 21300000, guid: 62863de8fae47df4eadce3b755692c94, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &7328413248327155709
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4345,7 +4385,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 358330923420289783}
   highlight: {fileID: 6151294232990336682}
+  cardSprite: {fileID: 21300000, guid: 56b480213ded30244b28e72660856365, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &2600313496582038767
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4470,7 +4512,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 3626970966249483463}
   highlight: {fileID: 173203365845245896}
+  cardSprite: {fileID: 21300000, guid: 99f10cb705af6b348a812c1ab511d0ce, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &335014482264068009
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4595,7 +4639,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 2429029525509169802}
   highlight: {fileID: 1720082525803715791}
+  cardSprite: {fileID: 21300000, guid: a99f39bc317efcf4aae469b213d0d163, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &5747221567740350938
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4720,7 +4766,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 8567507180309687587}
   highlight: {fileID: 7146158723163649003}
+  cardSprite: {fileID: 21300000, guid: 78998314942cf794786a837260fddeeb, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &1668641409906200653
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4845,7 +4893,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 8525168626996801203}
   highlight: {fileID: 9133534485040658714}
+  cardSprite: {fileID: 21300000, guid: 0a6e3c6c40df41940ad2fb925fb0688c, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &4123663515087362441
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5302,7 +5352,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 493919247997503690}
   highlight: {fileID: 5261761179033539833}
+  cardSprite: {fileID: 21300000, guid: 6561daa10eb56e944b19b882914ba2ad, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &845762732989734899
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5427,7 +5479,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 1901361510744948914}
   highlight: {fileID: 1030411758000120924}
+  cardSprite: {fileID: 21300000, guid: f068beb6338e31243afd5b1a3ed6604f, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &3326327183775691609
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5635,7 +5689,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 8273560699847297493}
   highlight: {fileID: 318516649571996135}
+  cardSprite: {fileID: 21300000, guid: fd33bc056f8a8474893abf3c5ac74730, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &7998059051207695540
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5843,7 +5899,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 8743754547151554883}
   highlight: {fileID: 8664397505358137844}
+  cardSprite: {fileID: 21300000, guid: 4defcbd668b2bd9488ef72feb0bfd967, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &4651809624674742113
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6051,7 +6109,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 7719776724676102934}
   highlight: {fileID: 1022763231996513514}
+  cardSprite: {fileID: 21300000, guid: 02a559c0b6c879d4297056cef79f941b, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &2254527146237159504
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6425,7 +6485,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 637499013453841773}
   highlight: {fileID: 113881351518550742}
+  cardSprite: {fileID: 21300000, guid: 0902e26d89d447b4a8a85c382159f4e7, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &8783700165048807109
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6716,7 +6778,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 3358339454966834284}
   highlight: {fileID: 3810629839350325693}
+  cardSprite: {fileID: 21300000, guid: eb01a0c0319df854aa13366f4e1528a1, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &3261215630162823754
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6924,7 +6988,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 4051826445270103131}
   highlight: {fileID: 313398457946910614}
+  cardSprite: {fileID: 21300000, guid: 6a15298c71266594086136f6121ae454, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &3404428876703902321
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7049,7 +7115,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 1092829009592178114}
   highlight: {fileID: 2421513236966228402}
+  cardSprite: {fileID: 21300000, guid: 9e4fef354a531d446b72020d5125348d, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &2622745065237804222
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7174,7 +7242,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 811017090716401227}
   highlight: {fileID: 783179435125008629}
+  cardSprite: {fileID: 21300000, guid: c2a5726b287996745aacff7b182a521d, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &6699077073958983252
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7382,7 +7452,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 6153177877599469767}
   highlight: {fileID: 3728232624965468698}
+  cardSprite: {fileID: 21300000, guid: 7a310aaba26b180419909c4d90017b38, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &1815447107734386924
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7590,7 +7662,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 2926615144555636213}
   highlight: {fileID: 5366521660391321134}
+  cardSprite: {fileID: 21300000, guid: 7dd21bd4dee823b43b4a9d0eb3ea9825, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &452530010669187757
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7715,7 +7789,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 3755206347599176674}
   highlight: {fileID: 256304715949887102}
+  cardSprite: {fileID: 21300000, guid: 06584b76fb55b1b49a50ce8440ba18f9, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &3306459100577641508
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7840,7 +7916,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 6397153364992977930}
   highlight: {fileID: 7478544816056891316}
+  cardSprite: {fileID: 21300000, guid: 9c915f806d6d09845b4cc77519f902d7, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &4163512059382042663
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7965,7 +8043,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 789309860586675098}
   highlight: {fileID: 9172424984118361526}
+  cardSprite: {fileID: 21300000, guid: d87ecc733e1090e44ab67b3fdde3c4bf, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &8408171932046661503
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -8256,7 +8336,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 1595554082344823539}
   highlight: {fileID: 1347748902588689527}
+  cardSprite: {fileID: 21300000, guid: 77202bde798ef9241a53716b210fbd4e, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &3563968144450455781
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -8464,7 +8546,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 253604232495941442}
   highlight: {fileID: 733513783961985213}
+  cardSprite: {fileID: 21300000, guid: 7d810e281c1872648ad0c32733e27da7, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &5327194808154630972
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9170,7 +9254,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 211595991861210401}
   highlight: {fileID: 84165573929884918}
+  cardSprite: {fileID: 21300000, guid: 07517454cd8e340429110b2e89533e3a, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &1383429578030410740
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9295,7 +9381,9 @@ MonoBehaviour:
   Suit: 4
   meshRenderer: {fileID: 2621139719939105120}
   highlight: {fileID: 7742232587248808377}
+  cardSprite: {fileID: 21300000, guid: 3555e813e8cf67545908b0ac5a5834af, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &4070591202808997021
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9503,7 +9591,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 536341554343146563}
   highlight: {fileID: 902718132396647137}
+  cardSprite: {fileID: 21300000, guid: 0bcb19d93a016e94f93a7e2fac280bed, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &5526105446108529866
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9628,7 +9718,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 445967847124339242}
   highlight: {fileID: 8578292416646913224}
+  cardSprite: {fileID: 21300000, guid: 0bc0a39dce7af2d40b541dddf4ed86dc, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &7028418627944206298
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9836,7 +9928,9 @@ MonoBehaviour:
   Suit: 2
   meshRenderer: {fileID: 5807106785615697879}
   highlight: {fileID: 8045614327449069641}
+  cardSprite: {fileID: 21300000, guid: 80a0d0770e8bb9f4ba714d5c5e782039, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &3192963512792677385
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -10127,7 +10221,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 9010291035897528607}
   highlight: {fileID: 5990968761831446418}
+  cardSprite: {fileID: 21300000, guid: d9995266bb01ab64a856a46cc0e0534c, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &1789469978459630317
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -10252,7 +10348,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 4540100541264492250}
   highlight: {fileID: 3664681139585150671}
+  cardSprite: {fileID: 21300000, guid: da6a082efa6b6694f92fad9442f30fa9, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &5785713143305829746
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -10377,7 +10475,9 @@ MonoBehaviour:
   Suit: 1
   meshRenderer: {fileID: 2911019632814098490}
   highlight: {fileID: 3556988166202319888}
+  cardSprite: {fileID: 21300000, guid: 397fcc769693d0747ac7c79d662555d9, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &1115744065419650248
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -10502,7 +10602,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 2547496656017664329}
   highlight: {fileID: 4025125488145033515}
+  cardSprite: {fileID: 21300000, guid: 8423e4f3a72eff947aaffe2339fe204e, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &927497883709941869
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -10627,7 +10729,9 @@ MonoBehaviour:
   Suit: 3
   meshRenderer: {fileID: 8839144803321183535}
   highlight: {fileID: 4414092239255395023}
+  cardSprite: {fileID: 21300000, guid: e7911eba35b428243b3ac55d2f0ae830, type: 3}
   handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!64 &8484264669592113703
 MeshCollider:
   m_ObjectHideFlags: 0

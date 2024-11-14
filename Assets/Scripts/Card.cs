@@ -11,6 +11,7 @@ public class Card : MonoBehaviour, IInteractable
     [SerializeField] private Suit Suit;
     [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private GameObject highlight;
+    [SerializeField] private Sprite cardSprite;
 
     public Vector3 handPos;
 
@@ -48,8 +49,10 @@ public class Card : MonoBehaviour, IInteractable
     }
 
     public int GetValue() => (int)Rank + (int)Suit;
+    public Sprite GetSprite() => cardSprite;
     public Rank GetRank() => Rank;
     public Suit GetSuit() => Suit;
+
 }
 
 public enum Suit

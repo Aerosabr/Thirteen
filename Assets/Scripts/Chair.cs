@@ -12,18 +12,13 @@ public class Chair : MonoBehaviour, IInteractable
     [SerializeField] private int chairID;
 
     [SerializeField] private List<Card> selectedCards;
-    [SerializeField] private Player player;
 
     private float fanRadius = 0.15f;
     private float maxFanAngle = 67.5f;
 
     public void Highlight() { outline.enabled = true; }
     public void Unhighlight() { outline.enabled = false; }
-    public void Interact(GameObject player) 
-    {
-        player.GetComponent<Player>().SitOnChair(sitPoint.transform.position); 
-        this.player = player.GetComponent<Player>();
-    }
+    public void Interact(GameObject player) => player.GetComponent<Player>().SitOnChair(sitPoint.transform.position);
     public Vector3 GetExitPoint() => exitPoint.transform.position;
 
     public void DealtCard(GameObject card)
@@ -64,7 +59,10 @@ public class Chair : MonoBehaviour, IInteractable
 
     private void SortCardsByValue()
     {
-        List<GameObject> children = hand.GetComponentsInChildren<Transform>().Where(t => t != hand.transform).Select(t => t.gameObject).ToList();
+        List<Transform> children = new List<Transform>();
+        foreach (Transform cardInHand in hand.transform)
+            if (cardInHand.GetComponent<Card>() != null)
+               children.Add(cardInHand);
 
         children = children.OrderBy(child => child.GetComponent<Card>().GetValue()).ToList();
 
@@ -100,5 +98,4 @@ public class Chair : MonoBehaviour, IInteractable
 
     public int GetChairID() => chairID;
     public GameObject GetHand() => hand;
-    public Player GetPlayer() => player;
 }

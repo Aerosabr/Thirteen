@@ -83,18 +83,28 @@ public class Table : MonoBehaviour
         }
     }
 
+    private void SetBoardState(CardType cardType, List<Card> cardsPlayed, int numberCards)
+    {
+        if (cardsPlayed != null)
+        {
+            Debug.Log("Card Type: " + cardType);
+            foreach (Card card in cardsPlayed)
+                Debug.Log(card.GetRank() + " " + card.GetSuit());
+            Debug.Log("Num cards: " + numberCards);
+            Debug.Log("================================");
+        }
+
+        currentType = cardType;
+        cardsInPlay = cardsPlayed;
+        numCards = numberCards;
+    }
+
     public void RedrawHands()
     {
+        RemoveCardsOnTable();
+
         for (int i = 0; i < 4; i++)
         {
-            foreach (Chair chair in Chairs)
-            {
-                Player player = chair.GetPlayer();
-                if (player)
-                    player.RemoveInteractObject();
-            }
-                
-
             List<Transform> cards = new List<Transform>();
             foreach (Transform cardInHand in Chairs[i].GetHand().transform)
                 cards.Add(cardInHand);
@@ -108,6 +118,7 @@ public class Table : MonoBehaviour
         }
 
         DealCards();
+        SetBoardState(CardType.Any, null, 0);
     }
     #endregion
 
@@ -156,7 +167,7 @@ public class Table : MonoBehaviour
         // If free move OR round is singles + card played is higher than card on board
         if (currentType == CardType.Any || (currentType == CardType.Single && cards[0].GetValue() > cardsInPlay[0].GetValue()))
         {
-            SetCurrentCardsInPlay(CardType.Single, cards, 1);
+            SetBoardState(CardType.Single, cards, 1);
             return true;
         }
 
@@ -171,7 +182,7 @@ public class Table : MonoBehaviour
             // Rank of each card is the same
             if (cards[0].GetRank() == cards[1].GetRank())
             {
-                SetCurrentCardsInPlay(CardType.Double, cards, 2);
+                SetBoardState(CardType.Double, cards, 2);
                 return true;
             }
         }
@@ -187,7 +198,7 @@ public class Table : MonoBehaviour
             // Rank of each card is the same
             if (cards.All(card => card.GetRank() == cards[0].GetRank()))
             {
-                SetCurrentCardsInPlay(CardType.Triple, cards, 3);
+                SetBoardState(CardType.Triple, cards, 3);
                 return true;
             }
         }
@@ -206,7 +217,7 @@ public class Table : MonoBehaviour
             // Rank of each card is the same
             if (cards.All(card => card.GetRank() == cards[0].GetRank()))
             {
-                SetCurrentCardsInPlay(CardType.Quadruple, cards, 4);
+                SetBoardState(CardType.Quadruple, cards, 4);
                 return true;
             }
         }
@@ -236,7 +247,7 @@ public class Table : MonoBehaviour
                 rank += 4;
             }
 
-            SetCurrentCardsInPlay(CardType.Straight, cards, cards.Count);
+            SetBoardState(CardType.Straight, cards, cards.Count);
             return true;
         }
         return false;
@@ -267,7 +278,7 @@ public class Table : MonoBehaviour
                 rank += 4;
             }
 
-            SetCurrentCardsInPlay(CardType.Bomb, cards, cards.Count);
+            SetBoardState(CardType.Bomb, cards, cards.Count);
             return true;
         }
 
@@ -282,18 +293,6 @@ public class Table : MonoBehaviour
                 return true;
         
         return false;
-    }
-
-    private void SetCurrentCardsInPlay(CardType cardType, List<Card> cardsPlayed, int numberCards)
-    {
-        Debug.Log("Card Type: " + cardType);
-        foreach (Card card in cardsPlayed)
-            Debug.Log(card.GetRank() + " " + card.GetSuit());
-        Debug.Log("Num cards: " + numberCards);
-        Debug.Log("================================");
-        currentType = cardType;
-        cardsInPlay = cardsPlayed;
-        numCards = numberCards;
     }
     #endregion
 

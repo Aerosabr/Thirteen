@@ -121,6 +121,16 @@ public class Table : MonoBehaviour
         DealCards();
         SetBoardState(CardType.Any, null, 0);
     }
+
+    public void StartGame()
+    {
+
+    }
+
+    private void DetermineNextPlayer()
+    {
+
+    }
     #endregion
 
     #region Card Processing

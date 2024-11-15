@@ -13,13 +13,23 @@ public class Chair : MonoBehaviour, IInteractable
 
     [SerializeField] private List<Card> selectedCards;
 
+    private bool hasPlayer;
+
     private float fanRadius = 0.15f;
     private float maxFanAngle = 67.5f;
 
     public void Highlight() { outline.enabled = true; }
     public void Unhighlight() { outline.enabled = false; }
-    public void Interact(GameObject player) => player.GetComponent<Player>().SitOnChair(sitPoint.transform.position);
-    public Vector3 GetExitPoint() => exitPoint.transform.position;
+    public void Interact(GameObject player)
+    {
+        player.GetComponent<Player>().SitOnChair(sitPoint.transform.position);
+        hasPlayer = true;
+    }
+    public Vector3 GetExitPoint()
+    {
+        hasPlayer = false;
+        return exitPoint.transform.position;
+    }
 
     public void DealtCard(GameObject card)
     {
@@ -98,4 +108,5 @@ public class Chair : MonoBehaviour, IInteractable
 
     public int GetChairID() => chairID;
     public GameObject GetHand() => hand;
+    public bool HasPlayer() => hasPlayer;
 }

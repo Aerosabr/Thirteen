@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -17,6 +18,18 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
-        
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "GameScene") 
+        {
+            Debug.Log("Target scene loaded! Calling specific function.");
+            foreach (int key in Players.Keys)
+            {
+                Players[key].InitializePlayer(key);
+            }
+        }
     }
 }

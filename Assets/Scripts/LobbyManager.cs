@@ -51,7 +51,7 @@ public class LobbyManager : MonoBehaviour
     {
         if (PlayerManager.Instance.Players.ContainsKey(playerPos))
         {
-            Destroy(PlayerManager.Instance.Players[playerPos]);
+            Destroy(PlayerManager.Instance.Players[playerPos].gameObject);
             PlayerManager.Instance.Players.Remove(playerPos);
             return true;
         }

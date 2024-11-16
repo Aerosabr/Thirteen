@@ -40,10 +40,10 @@ public class Table : MonoBehaviour
         }
     }
 
-    public void PlayCards(List<Card> cards, Chair chair)
+    public bool PlayCards(List<Card> cards, Chair chair)
     {
         if (!CheckIfCardsValid(cards))
-            return;
+            return false;
 
         RemoveCardsOnTable();
 
@@ -63,6 +63,8 @@ public class Table : MonoBehaviour
             cards[i].transform.localPosition = cardPos;
             cards[i].transform.localRotation = Quaternion.Euler(Vector3.zero);
         }
+
+        return true;
     }
 
     private void RemoveCardsOnTable()
@@ -307,4 +309,6 @@ public class Table : MonoBehaviour
     }
     #endregion
 
+
+    public Chair GetChair(int chairNum) => Chairs[chairNum - 1];
 }

@@ -22,8 +22,13 @@ public class Chair : MonoBehaviour, IInteractable
     public void Unhighlight() { outline.enabled = false; }
     public void Interact(GameObject player)
     {
-        player.GetComponent<Player>().SitOnChair(sitPoint.transform.position);
+        player.GetComponent<Player>().SitOnChair(this);
         hasPlayer = true;
+    }
+    public GameObject GetSitPoint()
+    {
+        hasPlayer = true;
+        return sitPoint;
     }
     public Vector3 GetExitPoint()
     {
@@ -88,14 +93,17 @@ public class Chair : MonoBehaviour, IInteractable
             selectedCards.Add(card);
     }
 
-    public void PlayCards()
+    public bool PlayCards()
     {
         if (selectedCards.Count > 0)
         {
-            Table.Instance.PlayCards(selectedCards, this);
+            bool success = Table.Instance.PlayCards(selectedCards, this);
             ResetSelected();
             ArrangeCardsInFan();
+            return success;
         }
+
+        return false;
     }
 
     private void ResetSelected()

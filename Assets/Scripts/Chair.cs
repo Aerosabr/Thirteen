@@ -74,15 +74,12 @@ public class Chair : MonoBehaviour, IInteractable
 
     private void SortCardsByValue()
     {
-        List<Transform> children = new List<Transform>();
-        foreach (Transform cardInHand in hand.transform)
-            if (cardInHand.GetComponent<Card>() != null)
-               children.Add(cardInHand);
+        List<Card> cards = GetHand();
 
-        children = children.OrderBy(child => child.GetComponent<Card>().GetValue()).ToList();
+        cards = cards.OrderBy(child => child.GetValue()).ToList();
 
-        for (int i = 0; i < children.Count; i++)
-            children[i].transform.SetSiblingIndex(i);
+        for (int i = 0; i < cards.Count; i++)
+            cards[i].transform.SetSiblingIndex(i);
     }
 
     public void SelectedCard(Card card)
@@ -106,6 +103,19 @@ public class Chair : MonoBehaviour, IInteractable
         return false;
     }
 
+    public bool PlayCards(List<Card> selectedCards)
+    {
+        if (selectedCards.Count > 0)
+        {
+            bool success = Table.Instance.PlayCards(selectedCards, this);
+            ResetSelected();
+            ArrangeCardsInFan();
+            return success;
+        }
+
+        return false;
+    }
+
     private void ResetSelected()
     {
         foreach (Card card in selectedCards)
@@ -114,7 +124,16 @@ public class Chair : MonoBehaviour, IInteractable
         selectedCards.Clear();
     }
 
+    public List<Card> GetHand()
+    {
+        List<Card> cards = new List<Card>();
+        foreach (Transform cardInHand in hand.transform)
+            if (cardInHand.GetComponent<Card>() != null)
+                cards.Add(cardInHand.GetComponent<Card>());
+
+        return cards;
+    }
+
     public int GetChairID() => chairID;
-    public GameObject GetHand() => hand;
     public bool HasPlayer() => hasPlayer;
 }

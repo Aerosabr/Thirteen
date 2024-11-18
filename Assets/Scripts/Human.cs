@@ -239,6 +239,7 @@ public class Human : Player
         GetComponent<CharacterController>().enabled = true;
         GetComponent<PlayerInput>().enabled = true;
         cinemachineCameraTarget.SetActive(true);
+        playerID = playerPos;
         Table.Instance.GetChair(playerPos).Interact(gameObject);
     }
 }

@@ -55,6 +55,21 @@ public class Card : MonoBehaviour, IInteractable
 
 }
 
+[System.Serializable]
+public struct CardData
+{
+    public Rank rank;
+    public Suit suit;
+    public int value;
+
+    public CardData(Rank rank, Suit suit)
+    {
+        this.rank = rank;
+        this.suit = suit;
+        value = (int)rank + (int)suit;
+    }
+}
+
 public enum Suit
 {
     Spade = 1,

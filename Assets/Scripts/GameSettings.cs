@@ -6,9 +6,9 @@ public class GameSettings : MonoBehaviour
 {
     public static GameSettings Instance { get; private set; }
 
-    private bool winnerStart;
-    private bool suits;
-    private TurnOrder turnOrder;
+    public bool winnerStart;
+    public bool suits;
+    public TurnOrder turnOrder;
 
     private void Awake()
     {
@@ -17,6 +17,8 @@ public class GameSettings : MonoBehaviour
         winnerStart = false;
         suits = false;
         turnOrder = TurnOrder.Clockwise;
+
+        DontDestroyOnLoad(gameObject);
     }
 }
 

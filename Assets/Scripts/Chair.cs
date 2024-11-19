@@ -11,9 +11,8 @@ public class Chair : MonoBehaviour, IInteractable
     [SerializeField] private GameObject hand;
     [SerializeField] private int chairID;
 
-    [SerializeField] private List<Card> selectedCards;
-
     private bool hasPlayer;
+    public bool inRound = true;
 
     private float fanRadius = 0.15f;
     private float maxFanAngle = 67.5f;
@@ -82,47 +81,7 @@ public class Chair : MonoBehaviour, IInteractable
             cards[i].transform.SetSiblingIndex(i);
     }
 
-    public void SelectedCard(Card card)
-    {
-        if (selectedCards.Contains(card))
-            selectedCards.Remove(card);
-        else
-            selectedCards.Add(card);
-    }
-
-    public bool PlayCards()
-    {
-        if (selectedCards.Count > 0)
-        {
-            bool success = Table.Instance.PlayCards(selectedCards, this);
-            ResetSelected();
-            ArrangeCardsInFan();
-            return success;
-        }
-
-        return false;
-    }
-
-    public bool PlayCards(List<Card> selectedCards)
-    {
-        if (selectedCards.Count > 0)
-        {
-            bool success = Table.Instance.PlayCards(selectedCards, this);
-            ResetSelected();
-            ArrangeCardsInFan();
-            return success;
-        }
-
-        return false;
-    }
-
-    private void ResetSelected()
-    {
-        foreach (Card card in selectedCards)
-            card.Selected = false;
-
-        selectedCards.Clear();
-    }
+    public void CardsPlayed() => ArrangeCardsInFan();
 
     public List<Card> GetHand()
     {

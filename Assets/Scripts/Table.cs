@@ -2,16 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using UnityEngine;
 
 public class Table : MonoBehaviour
 {
     public static Table Instance { get; private set; }
 
+    public event EventHandler OnCardsDealt;
     public event EventHandler<OnPlayerTurnEventArgs> OnPlayerTurn;
     public class OnPlayerTurnEventArgs : EventArgs
     {
-        public List<int> currentPlayer;
+        public int currentPlayer;
     }
 
     [SerializeField] private GameObject tabletop;
@@ -20,23 +22,21 @@ public class Table : MonoBehaviour
 
     private List<Scores> scores = new List<Scores>();
 
-    private CardType currentType;
-    private List<Card> cardsInPlay;
-    private List<int> currentPlayer = new List<int>();
+    private CardType currentType = CardType.Any;
+    private List<Card> cardsInPlay = new List<Card>();
+    private int currentPlayer;
 
     private void Awake()
     {
         Instance = this;
-        currentType = CardType.Any;
     }
 
     void Start()
     {
-        DealCards();
-        StartRound();
+        DealCards();  
     }
 
-    #region Game Management
+    #region Card Management
     private void DealCards()
     {
         int chairNum = 0;
@@ -47,16 +47,13 @@ public class Table : MonoBehaviour
 
             chairNum = (chairNum < 3) ? chairNum + 1 : 0;
         }
+
+        OnCardsDealt?.Invoke(this, EventArgs.Empty);
+        StartGame();
     }
 
-    public bool PlayCards(List<Card> cards, Chair chair)
+    public void PlayCards(List<Card> cards)
     {
-        if (!currentPlayer.Contains(chair.GetChairID()))
-            return false;
-
-        if (!CheckIfCardsValid(cards))
-            return false;
-
         RemoveCardsOnTable();
 
         // Manage visual of card on table
@@ -76,9 +73,10 @@ public class Table : MonoBehaviour
             cards[i].transform.localRotation = Quaternion.Euler(Vector3.zero);
         }
 
-        DetermineNextPlayer();
+        cardsInPlay = new List<Card>(cards);
+        GameStateUI.Instance.UpdateVisual(cards, currentType);
 
-        return true;
+        DetermineNextPlayer();
     }
 
     private void RemoveCardsOnTable()
@@ -93,25 +91,9 @@ public class Table : MonoBehaviour
 
         foreach (Transform card in cards)
         {
-            Debug.Log(card.name);
             card.position = Vector3.zero;
             card.SetParent(Deck.transform); 
         }
-    }
-
-    private void SetBoardState(CardType cardType, List<Card> cardsPlayed)
-    {
-        if (cardsPlayed != null)
-        {
-            Debug.Log("Card Type: " + cardType);
-            foreach (Card card in cardsPlayed)
-                Debug.Log(card.GetRank() + " " + card.GetSuit());
-            Debug.Log("================================");
-        }
-
-        currentType = cardType;
-        cardsInPlay = cardsPlayed;
-        GameStateUI.Instance.UpdateVisual(cardsPlayed, cardType);
     }
 
     public void RedrawHands()
@@ -133,18 +115,41 @@ public class Table : MonoBehaviour
         }
 
         // Deal cards and reset game state
-        DealCards();
-        SetBoardState(CardType.Any, null);
-        StartRound();
+        DealCards();     
     }
 
-    public void StartRound()
+    private void SetBoardType(CardType cardType)
+    {
+        currentType = cardType;
+    }
+    #endregion
+
+    #region Turn Management
+    private void StartGame()
     {
         if (scores.Count > 0)
-            SetBoardState(CardType.Any, null);
+            SetBoardType(CardType.Any);
         else
-            SetBoardState(CardType.LowestThree, null);
+            SetBoardType(CardType.LowestThree);
 
+        GameStateUI.Instance.UpdateVisual(cardsInPlay, currentType);
+        DetermineNextPlayer();
+    }
+
+    private void EndRound()
+    {
+        foreach (Chair chair in Chairs)
+        {
+            if (chair.GetHand().Count != 0)
+                chair.inRound = true;
+        }
+
+        SetBoardType(CardType.Any);
+    }
+
+    public void SkipTurn()
+    {
+        Chairs[currentPlayer - 1].inRound = false;
         DetermineNextPlayer();
     }
 
@@ -153,8 +158,7 @@ public class Table : MonoBehaviour
         switch (currentType)
         {
             case CardType.Any: // Free move: get winner of previous round
-                currentPlayer.Clear();
-                currentPlayer.Add(scores[scores.Count - 1].GetWinner());
+                currentPlayer = scores[scores.Count - 1].GetWinner();
                 // visual stuff here
                 break;
             case CardType.LowestThree: // First move of the game: find player with lowest three
@@ -165,8 +169,7 @@ public class Table : MonoBehaviour
                     {
                         if (card.GetValue() == 1)
                         {
-                            currentPlayer.Clear();
-                            currentPlayer.Add(i + 1);
+                            currentPlayer = i + 1;
                             // visual
                         }
                         break;
@@ -186,25 +189,27 @@ public class Table : MonoBehaviour
 
     private void GetNextPlayerInRound()
     {
-        switch (GameSettings.Instance.turnOrder)
+        int playerCount = PlayerManager.Instance.Players.Count;
+        int nextPlayer = 1;
+
+        do
         {
-            case TurnOrder.Clockwise:
-                currentPlayer[0]++;
-                break;
+            Debug.Log(nextPlayer);
+            if (GameSettings.Instance.turnOrder == TurnOrder.Clockwise)
+                nextPlayer = (currentPlayer % playerCount) + 1;
+            else if (GameSettings.Instance.turnOrder == TurnOrder.CounterClockwise)
+                nextPlayer = (currentPlayer - 2 + playerCount) % playerCount + 1;
 
-            case TurnOrder.CounterClockwise:
-                currentPlayer[0]--;
-                break;
+            if (nextPlayer == currentPlayer)
+            {
+                EndRound();
+                currentPlayer = nextPlayer;
+                return;
+            }
+        } 
+        while (!Chairs[nextPlayer - 1].inRound);
 
-            case TurnOrder.FirstPlay:
-
-                break;
-        }
-
-        if (currentPlayer[0] > PlayerManager.Instance.Players.Count)
-            currentPlayer[0] = 1;
-        else if (currentPlayer[0] == 0)
-            currentPlayer[0] = PlayerManager.Instance.Players.Count;
+        currentPlayer = nextPlayer;
     }
     #endregion
 
@@ -253,7 +258,7 @@ public class Table : MonoBehaviour
         // If free move OR round is singles + card played is higher than card on board
         if (currentType == CardType.Any || currentType == CardType.LowestThree || (currentType == CardType.Single && cards[0].GetValue() > cardsInPlay[0].GetValue()))
         {
-            SetBoardState(CardType.Single, cards);
+            SetBoardType(CardType.Single);
             return true;
         }
 
@@ -268,7 +273,7 @@ public class Table : MonoBehaviour
             // Rank of each card is the same
             if (cards[0].GetRank() == cards[1].GetRank())
             {
-                SetBoardState(CardType.Double, cards);
+                SetBoardType(CardType.Double);
                 return true;
             }
         }
@@ -284,7 +289,7 @@ public class Table : MonoBehaviour
             // Rank of each card is the same
             if (cards.All(card => card.GetRank() == cards[0].GetRank()))
             {
-                SetBoardState(CardType.Triple, cards);
+                SetBoardType(CardType.Triple);
                 return true;
             }
         }
@@ -304,7 +309,7 @@ public class Table : MonoBehaviour
             // Rank of each card is the same
             if (cards.All(card => card.GetRank() == cards[0].GetRank()))
             {
-                SetBoardState(CardType.Quadruple, cards);
+                SetBoardType(CardType.Quadruple);
                 return true;
             }
         }
@@ -335,7 +340,7 @@ public class Table : MonoBehaviour
                 rank += 4;
             }
 
-            SetBoardState(CardType.Straight, cards);
+            SetBoardType(CardType.Straight);
             return true;
         }
         return false;
@@ -367,7 +372,7 @@ public class Table : MonoBehaviour
                 rank += 4;
             }
 
-            SetBoardState(CardType.Bomb, cards);
+            SetBoardType(CardType.Bomb);
             return true;
         }
 

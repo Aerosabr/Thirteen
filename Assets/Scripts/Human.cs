@@ -15,6 +15,7 @@ public class Human : Player
         Throwing,
     }
 
+    [Header("Movement Variables")]
     private float moveSpeed = 4.0f;
     private float sprintSpeed = 6.0f;
     private float cameraSensitivity = 1.5f;
@@ -24,22 +25,26 @@ public class Human : Player
     [SerializeField] private LayerMask interactableLayers;
     [SerializeField] private GameObject cinemachineCameraTarget;
 
+    private float _cinemachineTargetPitch;
+    private float _speed;
+    private float _rotationVelocity;
+
+    [SerializeField] private PlayerInput _playerInput;
+    [SerializeField] private CharacterController _controller;
+    [SerializeField] private GameObject _mainCamera;
+
     private Vector2 movementInput;
     private Vector2 lookInput;
     private bool isSprinting;
     private bool cursorEnabled;
 
-    private bool canLook = true;
+    [Header("Game Variables")]
+    private bool canPlay;
+    private bool canInteract = true;
     private PlayerState playerState;
 
-    private float _cinemachineTargetPitch;
-    private float _speed;
-    private float _rotationVelocity;
-    [SerializeField] private PlayerInput _playerInput;
-    [SerializeField] private CharacterController _controller;
-    [SerializeField] private GameObject _mainCamera;
-
     [SerializeField] private GameObject interactObject;
+    [SerializeField] private List<Card> selectedCards;
 
     private void Awake()
     {
@@ -158,13 +163,16 @@ public class Human : Player
     public void OnSprint(InputValue value) => isSprinting = value.isPressed;
     public void OnInteract(InputValue value)
     {
-        if (interactObject)
-        {
-            if (playerState == PlayerState.Sitting)
-                interactObject.GetComponent<IInteractable>().Interact(chair.gameObject);
-            else if (playerState == PlayerState.Walking)
-                interactObject.GetComponent<IInteractable>().Interact(gameObject);
-        }
+        if (interactObject && canInteract)
+            interactObject.GetComponent<IInteractable>().Interact(gameObject);
+    }
+
+    public void SelectedCard(Card card)
+    {
+        if (selectedCards.Contains(card))
+            selectedCards.Remove(card);
+        else
+            selectedCards.Add(card);
     }
 
     public override void SitOnChair(Chair chair)
@@ -201,11 +209,29 @@ public class Human : Player
 
     private void OnPlayCards()
     {
-        if (playerState == PlayerState.Sitting)
+        if (playerState == PlayerState.Sitting && canPlay)
         {
-            if (chair.PlayCards())
+            if (selectedCards.Count == 0)
+            {
+                Table.Instance.SkipTurn();
+                canPlay = false;
+            }
+            else if (Table.Instance.CheckIfCardsValid(selectedCards))
+            {
+                canPlay = false;
+                canInteract = false;
                 playerVisual.PlayAnimation("Throwing");
+            }
         }
+    }
+
+    public override void CardThrown()
+    {
+        Table.Instance.PlayCards(selectedCards);
+        selectedCards.Clear();
+        chair.CardsPlayed();
+
+        canInteract = true;
     }
 
     public void OnToggleCursor()
@@ -241,5 +267,12 @@ public class Human : Player
         cinemachineCameraTarget.SetActive(true);
         playerID = playerPos;
         Table.Instance.GetChair(playerPos).Interact(gameObject);
+        Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
+    }
+
+    private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e)
+    {
+        if (e.currentPlayer == playerID)
+            canPlay = true;
     }
 }

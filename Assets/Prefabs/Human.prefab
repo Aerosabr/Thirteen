@@ -823,6 +823,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 1095861038743467548}
+  player: {fileID: 5161976221189506544}
 --- !u!1 &2813211949617188732
 GameObject:
   m_ObjectHideFlags: 0
@@ -1907,7 +1908,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 318bbdf1703e61b45833173e1ce3709e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerType: 0
+  playerType: 1
   playerVisual: {fileID: 2063266410011508040}
   interactableLayers:
     serializedVersion: 2
@@ -1917,6 +1918,7 @@ MonoBehaviour:
   _controller: {fileID: 1978987907914391413}
   _mainCamera: {fileID: 7580273204281410296}
   interactObject: {fileID: 0}
+  selectedCards: []
 --- !u!1 &7323675779865552402
 GameObject:
   m_ObjectHideFlags: 0

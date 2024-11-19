@@ -25,9 +25,6 @@ public class PlayerOrderUI : MonoBehaviour
             temp.SetActive(false);
         }
 
-        foreach (int playerID in e.currentPlayer)
-        {
-            playerImages[playerID - 1].SetActive(true);
-        }
+        playerImages[e.currentPlayer - 1].SetActive(true);
     }
 }

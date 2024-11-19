@@ -32,18 +32,18 @@ public class Card : MonoBehaviour, IInteractable
         highlight.SetActive(false);
     }
 
-    public void Interact(GameObject chair)
+    public void Interact(GameObject player)
     {
         if (!Selected)
         {
             transform.localPosition = new Vector3(handPos.x * 0.175f, handPos.y, handPos.z * 0.175f);
-            chair.GetComponent<Chair>().SelectedCard(this);
+            player.GetComponent<Human>().SelectedCard(this);
             Selected = true;
         }
         else
         {
             transform.localPosition = new Vector3(handPos.x * 0.15f, handPos.y, handPos.z * 0.15f);
-            chair.GetComponent<Chair>().SelectedCard(this);
+            player.GetComponent<Human>().SelectedCard(this);
             Selected = false;
         }
     }
@@ -67,6 +67,17 @@ public struct CardData
         this.rank = rank;
         this.suit = suit;
         value = (int)rank + (int)suit;
+    }
+}
+
+[System.Serializable]
+public struct CardCombo
+{
+    public List<CardData> cards;
+
+    public CardCombo(List<CardData> cards)
+    { 
+        this.cards = cards; 
     }
 }
 

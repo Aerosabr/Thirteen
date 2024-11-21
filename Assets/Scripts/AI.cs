@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
 using UnityEngine.Playables;
+using static UnityEngine.Rendering.DebugUI;
 
 public class AI : Player
 {
     [SerializeField] private List<CardData> hand = new List<CardData>();
     [SerializeField] private List<CardData> isolatedSingles = new List<CardData>();
     [SerializeField] private List<CardData> twos = new List<CardData>();
-    [SerializeField] private List<CardData> cardsToBePlayed = new List<CardData>();
+    [SerializeField] private List<CardData> cardsToBePlayed = new List<CardData>();  
 
     public override void SitOnChair(Chair chair)
     {
@@ -31,7 +33,11 @@ public class AI : Player
         Table.Instance.GetChair(playerPos).Interact(gameObject);
     }
 
-    private void Table_OnCardsDealt(object sender, System.EventArgs e) => ProcessHand();
+    private void Table_OnCardsDealt(object sender, System.EventArgs e)
+    {
+        ProcessHand();
+        
+    }
 
     private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e)
     {
@@ -46,10 +52,11 @@ public class AI : Player
         switch (Table.Instance.GetCurrentType())
         {
             case CardType.LowestThree:
-
+                PlayLowestThree();
                 break;
-            case CardType.Any:
 
+            case CardType.Any:
+                PlayAny();
                 break;
 
             case CardType.Single:
@@ -57,19 +64,23 @@ public class AI : Player
                 break;
 
             case CardType.Double:
-
+                PlayDouble();
                 break;
+
             case CardType.Triple:
-
+                PlayTriple();
                 break;
+
             case CardType.Quadruple:
-
+                PlayQuadruple();
                 break;
+
             case CardType.Straight:
-
+                PlayStraight();
                 break;
-            case CardType.Bomb:
 
+            case CardType.Bomb:
+                PlayBomb();
                 break;
 
         }
@@ -104,6 +115,262 @@ public class AI : Player
         ProcessHand();
     }
 
+    #region Turn Actions
+    private void PlayLowestThree()
+    {
+        // Load all combos containing lowest three
+        List<CardCombo> lowestThrees = new List<CardCombo>();
+        lowestThrees.AddRange(FindBombs(hand.Except(twos).ToList(), -1).Where(combo => combo.cards.Any(card => card.value == 1)).ToList());
+        lowestThrees.AddRange(FindStraights(hand.Except(twos).ToList(), -1).Where(combo => combo.cards.Any(card => card.value == 1)).ToList());
+        lowestThrees.AddRange(FindDuplicates(hand, 2).Where(combo => combo.cards.Any(card => card.value == 1)).ToList());
+        lowestThrees.AddRange(FindDuplicates(hand, 3).Where(combo => combo.cards.Any(card => card.value == 1)).ToList());
+        lowestThrees.AddRange(FindDuplicates(hand, 4).Where(combo => combo.cards.Any(card => card.value == 1)).ToList());
+
+        cardsToBePlayed = new List<CardData>() { hand[0] };
+        float numIsolatedSingles = Mathf.Infinity;
+
+        foreach (CardCombo combo in lowestThrees)
+        {
+            List<CardData> comboIsolatedSingles = FindIsolatedSingles(combo.cards);
+            if (comboIsolatedSingles.Count <= numIsolatedSingles && combo.cards.Count > cardsToBePlayed.Count)
+            {
+                cardsToBePlayed = combo.cards;
+                numIsolatedSingles = comboIsolatedSingles.Count;
+            }
+        }
+
+        PlayCards();
+    }
+
+    private void PlayAny()
+    {
+        // Load all combos containing lowest card in hand
+        int lowestCardValue = hand[0].value;
+        List<CardCombo> lowestThrees = new List<CardCombo>();
+
+        lowestThrees.AddRange(FindBombs(hand.Except(twos).ToList(), -1).Where(combo => combo.cards.Any(card => card.value == lowestCardValue)).ToList());
+        lowestThrees.AddRange(FindStraights(hand.Except(twos).ToList(), -1).Where(combo => combo.cards.Any(card => card.value == lowestCardValue)).ToList());
+        lowestThrees.AddRange(FindDuplicates(hand, 2).Where(combo => combo.cards.Any(card => card.value == lowestCardValue)).ToList());
+        lowestThrees.AddRange(FindDuplicates(hand, 3).Where(combo => combo.cards.Any(card => card.value == lowestCardValue)).ToList());
+        lowestThrees.AddRange(FindDuplicates(hand, 4).Where(combo => combo.cards.Any(card => card.value == lowestCardValue)).ToList());
+
+        cardsToBePlayed = new List<CardData>() { hand[0] };
+        float numIsolatedSingles = Mathf.Infinity;
+
+        foreach (CardCombo combo in lowestThrees)
+        {
+            List<CardData> comboIsolatedSingles = FindIsolatedSingles(combo.cards);
+            if (comboIsolatedSingles.Count <= numIsolatedSingles && combo.cards.Count > cardsToBePlayed.Count)
+            {
+                cardsToBePlayed = combo.cards;
+                numIsolatedSingles = comboIsolatedSingles.Count;
+            }
+        }
+
+        PlayCards();
+    }
+
+    private void PlaySingle()
+    {
+        List<Card> cardsInPlay = Table.Instance.GetCardsInPlay();
+        int cardInPlayValue = cardsInPlay[0].GetValue();
+
+        foreach (CardData card in hand)
+        {
+            if (card.value > cardInPlayValue)
+            {
+                List<CardData> cardToPlay = new List<CardData>() { card };
+                if (FindIsolatedSingles(hand.Except(cardToPlay).ToList()).Count <= isolatedSingles.Count)
+                {
+                    cardsToBePlayed = cardToPlay;
+                    PlayCards();
+                    return;
+                }
+            }
+        }
+
+        if (cardInPlayValue >= 49) // Card in play is a two
+        {
+            if (FindDuplicates(hand, 4).ToList().Count == 0)
+                PlayBomb();
+            else
+                PlayQuadruple();
+
+            return;
+        }
+
+        Table.Instance.SkipTurn();
+    }
+
+    private void PlayDouble()
+    {
+        int cardInPlayValue = Table.Instance.GetCardsInPlay()[1].GetValue();
+
+        List<CardCombo> playableDoubles = FindDuplicates(hand, 2);
+
+        if (playableDoubles.Count == 0)
+        {
+            Table.Instance.SkipTurn();
+            return;
+        }
+
+        foreach (CardCombo combo in playableDoubles)
+        {
+            if (combo.cards[1].value > cardInPlayValue)
+            {               
+                if (FindIsolatedSingles(hand.Except(combo.cards).ToList()).Count <= isolatedSingles.Count)
+                {
+                    cardsToBePlayed = combo.cards;
+                    PlayCards();
+                    return;
+                }
+            }
+        }
+        
+        Table.Instance.SkipTurn();
+    }
+
+    private void PlayTriple()
+    {
+        int cardInPlayValue = Table.Instance.GetCardsInPlay()[2].GetValue();
+
+        List<CardCombo> playableTriples = FindDuplicates(hand, 3);
+
+        if (playableTriples.Count == 0)
+        {
+            Table.Instance.SkipTurn();
+            return;
+        }
+
+        foreach (CardCombo combo in playableTriples)
+        {
+            if (combo.cards[2].value > cardInPlayValue)
+            {
+                /*
+                if (FindIsolatedSingles(hand.Except(combo.cards).ToList()).Count <= isolatedSingles.Count)
+                {
+                    cardsToBePlayed = combo.cards;
+                    PlayCards();
+                    return;
+                }
+                */
+                cardsToBePlayed = combo.cards;
+                PlayCards();
+                return;
+            }
+        }
+
+        Table.Instance.SkipTurn();
+    }
+
+    private void PlayQuadruple()
+    {
+        int cardInPlayValue = Table.Instance.GetCardsInPlay()[3].GetValue();
+
+        List<CardCombo> playableQuadruples = FindDuplicates(hand, 4);
+
+        if (playableQuadruples.Count == 0)
+        {
+            Table.Instance.SkipTurn();
+            return;
+        }
+
+        foreach (CardCombo combo in playableQuadruples)
+        {
+            if (combo.cards[3].value > cardInPlayValue)
+            {
+                /*
+                if (FindIsolatedSingles(hand.Except(combo.cards).ToList()).Count <= isolatedSingles.Count)
+                {
+                    cardsToBePlayed = combo.cards;
+                    PlayCards();
+                    return;
+                }
+                */
+                cardsToBePlayed = combo.cards;
+                PlayCards();
+                return;
+            }
+        }
+
+        Table.Instance.SkipTurn();
+    }
+
+    private void PlayStraight()
+    {
+        List<Card> cardsInPlay = Table.Instance.GetCardsInPlay();
+        int straightLength = cardsInPlay.Count;
+        int cardInPlayValue = cardsInPlay[straightLength - 1].GetValue();
+
+        List<CardCombo> playableStraights = FindStraights(hand.Except(twos).ToList(), straightLength);
+
+        if (playableStraights.Count == 0)
+        {
+            Table.Instance.SkipTurn();
+            return;
+        }
+
+        foreach (CardCombo combo in playableStraights)
+        {
+            if (combo.cards[straightLength - 1].value > cardInPlayValue)
+            {
+                /*
+                if (FindIsolatedSingles(hand.Except(combo.cards).ToList()).Count <= isolatedSingles.Count)
+                {
+                    cardsToBePlayed = combo.cards;
+                    PlayCards();
+                    return;
+                }
+                */
+                cardsToBePlayed = combo.cards;
+                PlayCards();
+                return;
+            }
+        }
+
+        Table.Instance.SkipTurn();
+    }
+
+    private void PlayBomb()
+    {
+        List<Card> cardsInPlay = Table.Instance.GetCardsInPlay();
+        int cardInPlayValue = cardsInPlay[cardsInPlay.Count - 1].GetValue();
+
+        List<CardCombo> playableBombs = new List<CardCombo>();
+        if (Table.Instance.GetCurrentType() == CardType.Bomb)
+        {
+            playableBombs = FindBombs(hand, cardsInPlay.Count / 2);
+        }
+        else
+        {
+            playableBombs = FindBombs(hand, cardsInPlay.Count + 2);
+        }
+
+        if (playableBombs.Count == 0)
+        {
+            Table.Instance.SkipTurn();
+            return;
+        }
+
+        foreach (CardCombo combo in playableBombs)
+        {
+            if (combo.cards[combo.cards.Count - 1].value > cardInPlayValue)
+            {
+                cardsToBePlayed = combo.cards;
+                PlayCards();
+                return;
+            }
+        }
+
+        Table.Instance.SkipTurn();
+    }
+
+    private void PlayTwo()
+    {
+        // To be implemented later with more advanced AI
+    }
+    #endregion
+
     #region Hand Processing
     private void ProcessHand()
     {
@@ -125,10 +392,7 @@ public class AI : Player
         for (int i = hand.Count - 1; i >= 0; i--)
         {
             if (hand[i].rank == Rank.Two)
-            {
                 twos.Add(hand[i]);
-                hand.Remove(hand[i]);
-            }
         }
 
         // Get cards that are not apart of any combos 
@@ -153,51 +417,13 @@ public class AI : Player
         return isolatedSingles;
     }
 
-    private void PlaySingle()
+    private List<CardCombo> FindDuplicates(List<CardData> cardDatas, int amount)
     {
-        int cardInPlayValue = Table.Instance.GetCardsInPlay()[0].GetValue();
-        foreach (CardData card in hand)
-        {
-            if (card.value > cardInPlayValue)
-            {
-                List<CardData> cardToPlay = new List<CardData>() { card };
-                if (FindIsolatedSingles(hand.Except(cardToPlay).ToList()).Count <= isolatedSingles.Count)
-                {
-                    cardsToBePlayed = cardToPlay;
-                    PlayCards();
-                    return;
-                }             
-            }
-        }
-
-        Table.Instance.SkipTurn();
-    }
-
-    private List<CardCombo> FindDouble(List<CardData> cardDatas)
-    {
-        // Filter hand for doubles
-        var pairs = cardDatas.GroupBy(card => card.rank).Where(group => group.Count() == 2)
+        // Filter hand for cards with "amount" copies of the same rank
+        var duplicates = cardDatas.GroupBy(card => card.rank).Where(group => group.Count() == amount)
             .Select(group => new CardCombo(group.ToList())).ToList();
 
-        return pairs;
-    }
-
-    private List<CardCombo> FindTriple(List<CardData> cardDatas)
-    {
-        // Filter hand for triples
-        var triples = cardDatas.GroupBy(card => card.rank).Where(group => group.Count() == 3)
-            .Select(group => new CardCombo(group.ToList())).ToList();
-
-        return triples;
-    }
-
-    private List<CardCombo> FindQuadruples(List<CardData> cardDatas)
-    {
-        // Filter hand for quadruples
-        var quads = cardDatas.GroupBy(card => card.rank).Where(group => group.Count() == 4)
-            .Select(group => new CardCombo(group.ToList())) .ToList();
-
-        return quads;
+        return duplicates;
     }
 
     private List<CardCombo> FindStraights(List<CardData> cardDatas, int length)
@@ -239,13 +465,23 @@ public class AI : Player
         return straights;
     }
 
-
-
-    private List<CardCombo> FindBombs(List<CardData> cardDatas, int length)
+    public static List<CardCombo> FindBombs(List<CardData> cardDatas, int length)
     {
-        // Group cards by rank and filter for pairs
-        var pairs = cardDatas.GroupBy(card => card.rank).Where(group => group.Count() == 2)
-            .OrderBy(group => (int)group.Key).Select(group => group.ToList()).ToList();
+        var pairs = new List<List<CardData>>();
+        var groupedCards = cardDatas.GroupBy(card => card.rank).Where(group => group.Count() >= 2);
+
+        // Create pairs manually from groups
+        foreach (var group in groupedCards)
+        {
+            var cards = group.ToList();
+            for (int i = 0; i < cards.Count - 1; i += 2)
+            {
+                pairs.Add(new List<CardData> { cards[i], cards[i + 1] });
+            }
+        }
+
+        // Sort pairs by rank
+        pairs = pairs.OrderBy(pair => pair[0].rank).ToList();
 
         var consecutivePairs = new List<CardCombo>();
         var currentCombo = new List<CardData>();
@@ -253,13 +489,17 @@ public class AI : Player
         for (int i = 0; i < pairs.Count; i++)
         {
             // Add the current pair to the current sequence
-            if (currentCombo.Count == 0 ||
-                (int)pairs[i][0].rank == (int)pairs[i - 1][0].rank + 1)
+            if (currentCombo.Count == 0 || pairs[i][0].rank == pairs[i - 1][0].rank + 4)
             {
                 currentCombo.AddRange(pairs[i]);
 
-                // If we reached the desired sequence length, save it
-                if (currentCombo.Count == length * 2) // Each pair has 2 cards
+                // If length is -1, allow any bomb length of 3 or more pairs
+                if (length == -1 && currentCombo.Count >= 6)
+                {
+                    consecutivePairs.Add(new CardCombo(new List<CardData>(currentCombo)));
+                    currentCombo.Clear(); // Reset for new sequences
+                }
+                else if (length != -1 && currentCombo.Count == length * 2)
                 {
                     consecutivePairs.Add(new CardCombo(new List<CardData>(currentCombo)));
                     currentCombo.Clear(); // Reset for a new sequence
@@ -271,6 +511,12 @@ public class AI : Player
                 currentCombo.Clear();
                 currentCombo.AddRange(pairs[i]);
             }
+        }
+
+        // If length is -1, include any remaining combo of 3 or more pairs
+        if (length == -1 && currentCombo.Count >= 6)
+        {
+            consecutivePairs.Add(new CardCombo(new List<CardData>(currentCombo)));
         }
 
         return consecutivePairs;

@@ -12,10 +12,9 @@ public class Human : Player
         Sitting,
         Walking,
         Idle,
-        Throwing,
     }
 
-    [Header("Movement Variables")]
+    #region Camera & Movement
     private float moveSpeed = 4.0f;
     private float sprintSpeed = 6.0f;
     private float cameraSensitivity = 1.5f;
@@ -36,11 +35,13 @@ public class Human : Player
     private Vector2 movementInput;
     private Vector2 lookInput;
     private bool isSprinting;
-    private bool cursorEnabled;
+    #endregion
 
-    [Header("Game Variables")]
     private bool canPlay;
-    private bool canInteract = true;
+    private bool canInteract;
+    private bool canMove;
+    private bool canLook;
+    private bool cursorEnabled;
     private PlayerState playerState;
 
     [SerializeField] private GameObject interactObject;
@@ -58,22 +59,21 @@ public class Human : Player
 
     private void Update()
     {
-        if (playerState == PlayerState.Walking)
-            Move();
-
-        if (playerState != PlayerState.Idle)
-            InteractWithObject();
+        Move();
+        HighlightObject();
     }
 
     private void LateUpdate()
     {
-        if (playerState != PlayerState.Idle && !cursorEnabled)
-            CameraRotation();
-
+        CameraRotation();
     }
 
+    #region Camera, Movement, Interaction
     private void CameraRotation()
     {
+        if (!canLook)
+            return;
+
         float _threshold = 0.01f;
         if (lookInput.sqrMagnitude >= _threshold)
         {
@@ -90,6 +90,9 @@ public class Human : Player
 
     private void Move()
     {
+        if (!canMove)
+            return;
+
         float targetSpeed = isSprinting ? sprintSpeed : moveSpeed;
         if (movementInput == Vector2.zero)
             targetSpeed = 0.0f;
@@ -108,17 +111,20 @@ public class Human : Player
         Vector3 inputDirection = new Vector3(movementInput.x, 0.0f, movementInput.y).normalized;
         if (movementInput != Vector2.zero)
         {
-            playerVisual.PlayAnimation("Walking");
+            ChangePlayerState(PlayerState.Walking);
             inputDirection = transform.right * movementInput.x + transform.forward * movementInput.y;
         }
         else
-            playerVisual.PlayAnimation("Idle");
+            ChangePlayerState(PlayerState.Idle);
 
         _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + Vector3.zero * Time.deltaTime);
     }
 
-    private void InteractWithObject()
+    private void HighlightObject()
     {
+        if (!canInteract)
+            return;
+
         Ray ray = new Ray(_mainCamera.transform.position, _mainCamera.transform.forward);
         RaycastHit hit;
 
@@ -153,7 +159,9 @@ public class Human : Player
             lfAngle -= 360f;
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
+    #endregion
 
+    #region Player Inputs
     public void OnMove(InputValue value) => movementInput = value.Get<Vector2>();
     public void OnLook(InputValue value)
     {
@@ -166,7 +174,9 @@ public class Human : Player
         if (interactObject && canInteract)
             interactObject.GetComponent<IInteractable>().Interact(gameObject);
     }
+    #endregion
 
+    #region Object Interaction
     public void SelectedCard(Card card)
     {
         if (selectedCards.Contains(card))
@@ -177,19 +187,24 @@ public class Human : Player
 
     public override void SitOnChair(Chair chair)
     {
+        if (playerState == PlayerState.Sitting)
+            return;
+
         _controller.enabled = false;
         transform.position = chair.GetSitPoint().transform.position;
         transform.rotation = chair.GetSitPoint().transform.rotation;
         _controller.enabled = true;
 
         this.chair = chair;
+        canMove = false;
 
         interactableLayers = LayerMask.GetMask("Card");
 
-        playerState = PlayerState.Sitting;
-        playerVisual.PlayAnimation("Sitting");
+        ChangePlayerState(PlayerState.Sitting);
     }
+    #endregion
 
+    #region Other Inputs
     private void OnExitChair()
     {
         if (playerState != PlayerState.Sitting)
@@ -200,11 +215,11 @@ public class Human : Player
         _controller.enabled = true;
 
         chair = null;
+        canMove = true;
 
         interactableLayers = LayerMask.GetMask("Interactable");
 
-        playerState = PlayerState.Walking;
-        playerVisual.PlayAnimation("Idle");
+        ChangePlayerState(PlayerState.Idle);
     }
 
     private void OnPlayCards()
@@ -231,6 +246,8 @@ public class Human : Player
         selectedCards.Clear();
         chair.CardsPlayed();
 
+        // no cards left
+
         canInteract = true;
     }
 
@@ -241,30 +258,39 @@ public class Human : Player
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             cursorEnabled = true;
+            canLook = false;
         }
         else
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
             cursorEnabled = false;
+            canLook = true;
         }
     }
+    #endregion
 
-    public void RemoveInteractObject()
+    private void ChangePlayerState(PlayerState state)
     {
-        if (interactObject)
-            interactObject.GetComponent<IInteractable>().Highlight();
-
-        interactObject = null;
+        if (playerState != state)
+        {
+            playerState = state;
+            playerVisual.PlayAnimation(state.ToString());
+        }
     }
 
     public override void InitializePlayer(int playerPos)
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        canLook = true;
+        canInteract = true;
+
         GetComponent<CharacterController>().enabled = true;
         GetComponent<PlayerInput>().enabled = true;
         cinemachineCameraTarget.SetActive(true);
+
         playerID = playerPos;
         Table.Instance.GetChair(playerPos).Interact(gameObject);
         Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;

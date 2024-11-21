@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerOrderUI : MonoBehaviour
 {
     public static PlayerOrderUI Instance { get; private set; }
 
-    [SerializeField] private List<GameObject> playerImages;
+    [SerializeField] private List<GameObject> currentIndicator;
+    [SerializeField] private List<GameObject> skippedShadow;
+    [SerializeField] private List<TextMeshProUGUI> nameText;
 
     private void Awake()
     {
@@ -20,11 +23,11 @@ public class PlayerOrderUI : MonoBehaviour
 
     private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e)
     {
-        foreach (GameObject temp in playerImages)
+        foreach (GameObject temp in currentIndicator)
         {
             temp.SetActive(false);
         }
 
-        playerImages[e.currentPlayer - 1].SetActive(true);
+        currentIndicator[e.currentPlayer - 1].SetActive(true);
     }
 }

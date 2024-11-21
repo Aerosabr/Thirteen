@@ -94,6 +94,8 @@ public class Table : MonoBehaviour
             card.position = Vector3.zero;
             card.SetParent(Deck.transform); 
         }
+
+        cardsInPlay.Clear();
     }
 
     public void RedrawHands()
@@ -145,11 +147,17 @@ public class Table : MonoBehaviour
         }
 
         SetBoardType(CardType.Any);
+        RemoveCardsOnTable();
+        GameStateUI.Instance.UpdateVisual(cardsInPlay, currentType);
     }
 
     public void SkipTurn()
     {
         Chairs[currentPlayer - 1].inRound = false;
+
+        if (Chairs.Count(chair => !chair.inRound) == 3)
+            EndRound();
+
         DetermineNextPlayer();
     }
 
@@ -158,7 +166,10 @@ public class Table : MonoBehaviour
         switch (currentType)
         {
             case CardType.Any: // Free move: get winner of previous round
-                currentPlayer = scores[scores.Count - 1].GetWinner();
+                if (scores.Count > 0)
+                    currentPlayer = scores[scores.Count - 1].GetWinner();
+                else
+                    GetNextPlayerInRound();
                 // visual stuff here
                 break;
             case CardType.LowestThree: // First move of the game: find player with lowest three
@@ -194,11 +205,12 @@ public class Table : MonoBehaviour
 
         do
         {
-            Debug.Log(nextPlayer);
             if (GameSettings.Instance.turnOrder == TurnOrder.Clockwise)
                 nextPlayer = (currentPlayer % playerCount) + 1;
             else if (GameSettings.Instance.turnOrder == TurnOrder.CounterClockwise)
                 nextPlayer = (currentPlayer - 2 + playerCount) % playerCount + 1;
+
+            Debug.Log("next: " + nextPlayer + " current: " + currentPlayer);
 
             if (nextPlayer == currentPlayer)
             {
@@ -206,10 +218,10 @@ public class Table : MonoBehaviour
                 currentPlayer = nextPlayer;
                 return;
             }
+            else
+                currentPlayer = nextPlayer;
         } 
         while (!Chairs[nextPlayer - 1].inRound);
-
-        currentPlayer = nextPlayer;
     }
     #endregion
 

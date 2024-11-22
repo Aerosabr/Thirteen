@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerVisual : MonoBehaviour
@@ -23,7 +24,6 @@ public class PlayerVisual : MonoBehaviour
 
     public void PlayAnimation(string trigger)
     {
-        Debug.Log(player.gameObject.name + ": " + trigger);
         anim.SetTrigger(trigger);
     }
 }

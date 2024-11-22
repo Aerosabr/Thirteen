@@ -25,6 +25,8 @@ public class Table : MonoBehaviour
     private CardType currentType = CardType.Any;
     private List<Card> cardsInPlay = new List<Card>();
     private int currentPlayer;
+    private int lastPlayerPlayed;
+    private int numPlayers;
 
     private void Awake()
     {
@@ -39,13 +41,16 @@ public class Table : MonoBehaviour
     #region Card Management
     private void DealCards()
     {
+        numPlayers = PlayerManager.Instance.Players.Count;
+        int maxCards = 52 - (52 % numPlayers);
         int chairNum = 0;
-        for (int i = 0; i < 52; i++)
+
+        for (int i = 0; i < maxCards; i++)
         {
             GameObject Card = Deck.transform.GetChild(UnityEngine.Random.Range(0, Deck.transform.childCount)).gameObject;
             Chairs[chairNum].DealtCard(Card);
 
-            chairNum = (chairNum < 3) ? chairNum + 1 : 0;
+            chairNum = (chairNum < numPlayers - 1) ? chairNum + 1 : 0;
         }
 
         OnCardsDealt?.Invoke(this, EventArgs.Empty);
@@ -55,6 +60,7 @@ public class Table : MonoBehaviour
     public void PlayCards(List<Card> cards)
     {
         RemoveCardsOnTable();
+        lastPlayerPlayed = currentPlayer;
 
         // Manage visual of card on table
         tabletop.transform.rotation = Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360f), 0));
@@ -76,7 +82,10 @@ public class Table : MonoBehaviour
         cardsInPlay = new List<Card>(cards);
         GameStateUI.Instance.UpdateVisual(cards, currentType);
 
-        DetermineNextPlayer();
+        if (Chairs[currentPlayer - 1].GetHand().Count == 0)
+            EmptiedHand();
+        else
+            DetermineCurrentPlayer();
     }
 
     private void RemoveCardsOnTable()
@@ -129,23 +138,34 @@ public class Table : MonoBehaviour
     #region Turn Management
     private void StartGame()
     {
-        if (scores.Count > 0)
+        if (scores.Count > 0) // If there was a winner last round, give them free move
             SetBoardType(CardType.Any);
-        else
+        else // First round of the session, lowest three goes first
             SetBoardType(CardType.LowestThree);
 
+        scores.Add(new Scores(numPlayers));
         GameStateUI.Instance.UpdateVisual(cardsInPlay, currentType);
-        DetermineNextPlayer();
+        DetermineCurrentPlayer();
+    }
+
+    private void EndGame()
+    {
+        Debug.Log("Game ended");
     }
 
     private void EndRound()
     {
+        // Reset "skipped" players
         foreach (Chair chair in Chairs)
         {
             if (chair.GetHand().Count != 0)
+            {
                 chair.inRound = true;
+                PlayerOrderUI.Instance.RemoveSkipOverlay(chair.GetChairID());
+            }
         }
 
+        // Reset board state
         SetBoardType(CardType.Any);
         RemoveCardsOnTable();
         GameStateUI.Instance.UpdateVisual(cardsInPlay, currentType);
@@ -154,39 +174,61 @@ public class Table : MonoBehaviour
     public void SkipTurn()
     {
         Chairs[currentPlayer - 1].inRound = false;
-
-        if (Chairs.Count(chair => !chair.inRound) == 3)
-            EndRound();
-
-        DetermineNextPlayer();
+        PlayerOrderUI.Instance.PlayerSkipped(currentPlayer);
+        DetermineCurrentPlayer();
     }
 
-    private void DetermineNextPlayer()
+    public void EmptiedHand()
+    {
+        Chairs[currentPlayer - 1].inRound = false;
+        scores[scores.Count - 1].players[currentPlayer - 1] = scores[scores.Count - 1].players.Max() + 1;
+        numPlayers--;
+
+        PlayerOrderUI.Instance.PlayerHandEmptied(currentPlayer, scores[scores.Count - 1].players[currentPlayer - 1]);
+
+        if (numPlayers == 1)
+        {
+            scores[scores.Count - 1].players[GetNextInRotation() - 1] = scores[scores.Count - 1].players.Max() + 1;
+            PlayerOrderUI.Instance.PlayerHandEmptied(GetNextInRotation(), scores[scores.Count - 1].players[GetNextInRotation() - 1]);
+            EndGame();
+        }
+        else
+            DetermineCurrentPlayer();
+    }
+
+    private void DetermineCurrentPlayer()
     {
         switch (currentType)
         {
-            case CardType.Any: // Free move: get winner of previous round
-                if (scores.Count > 0)
+            case CardType.Any: // Free move
+                if (scores.Count > 0) // First move of game
                     currentPlayer = scores[scores.Count - 1].GetWinner();
-                else
+                else // First move of round
                     GetNextPlayerInRound();
-                // visual stuff here
                 break;
-            case CardType.LowestThree: // First move of the game: find player with lowest three
-                for (int i = 0; i < Chairs.Count; i++)
+
+            case CardType.LowestThree: // First move overall, search for hand with lowest three
+                for (int j = 1; j < 53; j++)
                 {
-                    List<Card> cards = Chairs[i].GetHand();
-                    foreach (Card card in cards)
+                    for (int i = 0; i < Chairs.Count; i++)
                     {
-                        if (card.GetValue() == 1)
+                        List<Card> cards = Chairs[i].GetHand();
+                        foreach (Card card in cards)
                         {
-                            currentPlayer = i + 1;
-                            // visual
+                            if (card.GetValue() == j)
+                            {
+                                currentPlayer = i + 1;
+                                OnPlayerTurn?.Invoke(this, new OnPlayerTurnEventArgs
+                                {
+                                    currentPlayer = currentPlayer
+                                });
+                                return;
+                            }
                         }
-                        break;
                     }
                 }
                 break;
+
             default: // Round in progress: get next player based on turn order
                 GetNextPlayerInRound();
                 break;
@@ -200,28 +242,47 @@ public class Table : MonoBehaviour
 
     private void GetNextPlayerInRound()
     {
-        int playerCount = PlayerManager.Instance.Players.Count;
-        int nextPlayer = 1;
-
-        do
+        for (int i = 0; i < numPlayers; i++)
         {
-            if (GameSettings.Instance.turnOrder == TurnOrder.Clockwise)
-                nextPlayer = (currentPlayer % playerCount) + 1;
-            else if (GameSettings.Instance.turnOrder == TurnOrder.CounterClockwise)
-                nextPlayer = (currentPlayer - 2 + playerCount) % playerCount + 1;
+            currentPlayer = GetNextInRotation();
 
-            Debug.Log("next: " + nextPlayer + " current: " + currentPlayer);
-
-            if (nextPlayer == currentPlayer)
+            if (Chairs[currentPlayer - 1].inRound)
             {
-                EndRound();
-                currentPlayer = nextPlayer;
+                if (currentPlayer == lastPlayerPlayed)
+                    EndRound();
+
                 return;
             }
-            else
-                currentPlayer = nextPlayer;
-        } 
-        while (!Chairs[nextPlayer - 1].inRound);
+
+            if (currentPlayer == lastPlayerPlayed)
+            {
+                if (Chairs[currentPlayer - 1].GetHand().Count == 0)
+                {
+                    for (int j = 0; j < numPlayers; j++)
+                    {
+                        currentPlayer = GetNextInRotation();
+
+                        if (Chairs[currentPlayer - 1].GetHand().Count > 0)
+                        {
+                            EndRound();
+                            return;
+                        }
+                    }
+                }
+
+                return;
+            }
+        }
+    }
+    
+    private int GetNextInRotation()
+    {
+        int playerCount = PlayerManager.Instance.Players.Count;
+
+        if (GameSettings.Instance.turnOrder == TurnOrder.Clockwise)
+            return (currentPlayer % playerCount) + 1;
+        //else if (GameSettings.Instance.turnOrder == TurnOrder.CounterClockwise)
+        return (currentPlayer - 2 + playerCount) % playerCount + 1;
     }
     #endregion
 
@@ -409,16 +470,17 @@ public class Table : MonoBehaviour
 
 public struct Scores
 {
-    int Player1;
-    int Player2;
-    int Player3;
-    int Player4;
+    public List<int> players;
+
+    public Scores(int numPlayers)
+    {
+        players = new List<int>();
+        for (int i = 0; i < numPlayers; i++)
+            players.Add(0);
+    }
 
     public int GetWinner()
     {
-        if (Player1 == 1) return 1;
-        if (Player2 == 1) return 2;
-        if (Player3 == 1) return 3;
-        return 4;
+        return players.IndexOf(players.Find(player => player == 1));
     }
 }

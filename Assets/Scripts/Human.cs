@@ -65,15 +65,13 @@ public class Human : Player
 
     private void LateUpdate()
     {
-        CameraRotation();
+        if (canLook)
+            CameraRotation();
     }
 
     #region Camera, Movement, Interaction
     private void CameraRotation()
     {
-        if (!canLook)
-            return;
-
         float _threshold = 0.01f;
         if (lookInput.sqrMagnitude >= _threshold)
         {
@@ -245,8 +243,6 @@ public class Human : Player
         Table.Instance.PlayCards(selectedCards);
         selectedCards.Clear();
         chair.CardsPlayed();
-
-        // no cards left
 
         canInteract = true;
     }

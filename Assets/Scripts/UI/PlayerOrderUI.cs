@@ -10,6 +10,7 @@ public class PlayerOrderUI : MonoBehaviour
     [SerializeField] private List<GameObject> currentIndicator;
     [SerializeField] private List<GameObject> skippedShadow;
     [SerializeField] private List<TextMeshProUGUI> nameText;
+    [SerializeField] private List<TextMeshProUGUI> placementText;
 
     private void Awake()
     {
@@ -30,4 +31,15 @@ public class PlayerOrderUI : MonoBehaviour
 
         currentIndicator[e.currentPlayer - 1].SetActive(true);
     }
+
+    public void PlayerHandEmptied(int playerID, int placement)
+    {
+        List<string> placements = new List<string>() { "1st", "2nd", "3rd", "4th" };
+
+        placementText[playerID - 1].text = placements[placement - 1];
+        placementText[playerID - 1].transform.parent.gameObject.SetActive(true);
+    }
+
+    public void PlayerSkipped(int playerID) => skippedShadow[playerID - 1].SetActive(true);
+    public void RemoveSkipOverlay(int playerID) => skippedShadow[playerID - 1].SetActive(false);
 }

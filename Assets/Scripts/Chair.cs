@@ -81,7 +81,7 @@ public class Chair : MonoBehaviour, IInteractable
             cards[i].transform.SetSiblingIndex(i);
     }
 
-    public void CardsPlayed() => ArrangeCardsInFan();
+    public void CardsPlayed() => ArrangeCardsInFan(); // Refan cards in hand
 
     public List<Card> GetHand()
     {

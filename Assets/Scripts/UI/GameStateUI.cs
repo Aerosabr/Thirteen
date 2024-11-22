@@ -34,7 +34,7 @@ public class GameStateUI : MonoBehaviour
                 imageTransform.gameObject.SetActive(true);
                 imageTransform.GetComponent<Image>().sprite = card.GetSprite();
             }
-        }      
+        }
 
         this.cardType.text = cardType.ToString();
     }

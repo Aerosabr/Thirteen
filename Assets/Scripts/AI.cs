@@ -43,11 +43,12 @@ public class AI : Player
     {
         if (e.currentPlayer == playerID)
             StartCoroutine(TakeAction());
+
     }
 
     private IEnumerator TakeAction()
     {
-        yield return new WaitForSeconds(Random.Range(2f, 5f));
+        yield return new WaitForSeconds(Random.Range(.1f, .1f));
 
         switch (Table.Instance.GetCurrentType())
         {
@@ -88,9 +89,6 @@ public class AI : Player
 
     private void PlayCards()
     {
-        Debug.Log(playerID + ": Playing");
-        Debug.Log("================================");
-        
         playerVisual.PlayAnimation("Throwing");
     }
 
@@ -372,14 +370,11 @@ public class AI : Player
     #endregion
 
     #region Hand Processing
-    private void ProcessHand()
+    private void ProcessHand() // Splits hand from chair into three groups: hand, twos, isolated singles
     {
         List<Card> cardsInHand = chair.GetHand();
-        if (cardsInHand.Count == 0) // Player's hand is empty, alert table 
-        {
-            Table.Instance.SkipTurn();
+        if (cardsInHand.Count == 0)
             return;
-        }
 
         // Load hand into CardData list
         hand.Clear();

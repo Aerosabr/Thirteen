@@ -60,9 +60,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ToggleCursor",
+                    "name": "EnableCursor",
                     "type": "Button",
                     "id": "c017f689-7748-4080-a3cf-18b7b4a0f4e7",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DisableCursor",
+                    "type": "Button",
+                    "id": "79d2bfb0-27a0-4d77-835f-f3ffa3c904db",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -260,11 +269,22 @@
                 {
                     "name": "",
                     "id": "428b5636-8a7f-459f-9728-e3aa756d8c10",
-                    "path": "<Keyboard>/tab",
-                    "interactions": "",
+                    "path": "<Keyboard>/leftAlt",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "ToggleCursor",
+                    "action": "EnableCursor",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0e5a6f3b-b8d4-4454-8c0e-7774a46e6dcf",
+                    "path": "<Keyboard>/leftAlt",
+                    "interactions": "Press(behavior=1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DisableCursor",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -27,6 +27,8 @@ public class Table : MonoBehaviour
     private int currentPlayer;
     private int lastPlayerPlayed;
     private int numPlayers;
+    private int lowestCardValue;
+    private int maxCards;
 
     private void Awake()
     {
@@ -35,14 +37,12 @@ public class Table : MonoBehaviour
 
     void Start()
     {
-        DealCards();  
+        StartGame();
     }
 
     #region Card Management
     private void DealCards()
     {
-        numPlayers = PlayerManager.Instance.Players.Count;
-        int maxCards = 52 - (52 % numPlayers);
         int chairNum = 0;
 
         for (int i = 0; i < maxCards; i++)
@@ -54,7 +54,6 @@ public class Table : MonoBehaviour
         }
 
         OnCardsDealt?.Invoke(this, EventArgs.Empty);
-        StartGame();
     }
 
     public void PlayCards(List<Card> cards)
@@ -107,12 +106,8 @@ public class Table : MonoBehaviour
         cardsInPlay.Clear();
     }
 
-    public void RedrawHands()
+    private void TakeCardsFromHands()
     {
-        // Move cards on table to deck
-        RemoveCardsOnTable();
-
-        // Move cards from hands to deck
         for (int i = 0; i < 4; i++)
         {
             List<Card> cards = Chairs[i].GetHand();
@@ -124,9 +119,6 @@ public class Table : MonoBehaviour
                 card.transform.localRotation = Quaternion.Euler(Vector3.zero);
             }
         }
-
-        // Deal cards and reset game state
-        DealCards();     
     }
 
     private void SetBoardType(CardType cardType)
@@ -135,9 +127,12 @@ public class Table : MonoBehaviour
     }
     #endregion
 
-    #region Turn Management
-    private void StartGame()
+    #region Game Management
+    public void StartGame()
     {
+        ResetGameState();
+        DealCards();
+
         if (scores.Count > 0) // If there was a winner last round, give them free move
             SetBoardType(CardType.Any);
         else // First round of the session, lowest three goes first
@@ -148,9 +143,30 @@ public class Table : MonoBehaviour
         DetermineCurrentPlayer();
     }
 
+    private void ResetGameState()
+    {
+        foreach (Chair chair in Chairs)
+            chair.inRound = true;
+
+        currentPlayer = 0;
+
+        lastPlayerPlayed = 0;
+
+        numPlayers = PlayerManager.Instance.Players.Count;
+
+        lowestCardValue = 0;
+
+        maxCards = 52 - (52 % numPlayers);
+        //maxCards = 24;
+
+        TakeCardsFromHands();
+        RemoveCardsOnTable();
+        PlayerOrderUI.Instance.ResetUI();
+    }
+
     private void EndGame()
     {
-        Debug.Log("Game ended");
+        StartNextGameUI.Instance.StartUI();
     }
 
     private void EndRound()
@@ -171,29 +187,33 @@ public class Table : MonoBehaviour
         GameStateUI.Instance.UpdateVisual(cardsInPlay, currentType);
     }
 
+    public void EmptiedHand()
+    {
+        int gameNum = scores.Count - 1;
+        Chairs[currentPlayer - 1].inRound = false;
+        scores[gameNum].players[currentPlayer - 1] = scores[gameNum].players.Max() + 1;
+        numPlayers--;
+
+        PlayerOrderUI.Instance.PlayerHandEmptied(currentPlayer, scores[gameNum].players[currentPlayer - 1]);
+
+        if (numPlayers == 1)
+        {
+            int remainingPlayer = scores[gameNum].players.FindIndex(player => player == 0);
+            scores[gameNum].players[remainingPlayer] = scores[gameNum].players.Max() + 1;
+            PlayerOrderUI.Instance.PlayerHandEmptied(remainingPlayer + 1, scores[gameNum].players[remainingPlayer]);
+            EndGame();
+        }
+        else
+            DetermineCurrentPlayer();
+    }
+    #endregion
+
+    #region Turn Management
     public void SkipTurn()
     {
         Chairs[currentPlayer - 1].inRound = false;
         PlayerOrderUI.Instance.PlayerSkipped(currentPlayer);
         DetermineCurrentPlayer();
-    }
-
-    public void EmptiedHand()
-    {
-        Chairs[currentPlayer - 1].inRound = false;
-        scores[scores.Count - 1].players[currentPlayer - 1] = scores[scores.Count - 1].players.Max() + 1;
-        numPlayers--;
-
-        PlayerOrderUI.Instance.PlayerHandEmptied(currentPlayer, scores[scores.Count - 1].players[currentPlayer - 1]);
-
-        if (numPlayers == 1)
-        {
-            scores[scores.Count - 1].players[GetNextInRotation() - 1] = scores[scores.Count - 1].players.Max() + 1;
-            PlayerOrderUI.Instance.PlayerHandEmptied(GetNextInRotation(), scores[scores.Count - 1].players[GetNextInRotation() - 1]);
-            EndGame();
-        }
-        else
-            DetermineCurrentPlayer();
     }
 
     private void DetermineCurrentPlayer()
@@ -202,7 +222,13 @@ public class Table : MonoBehaviour
         {
             case CardType.Any: // Free move
                 if (scores.Count > 0) // First move of game
-                    currentPlayer = scores[scores.Count - 1].GetWinner();
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (scores[scores.Count - 2].players[i] == 1)
+                            currentPlayer = i + 1;
+                    }
+                }
                 else // First move of round
                     GetNextPlayerInRound();
                 break;
@@ -222,6 +248,7 @@ public class Table : MonoBehaviour
                                 {
                                     currentPlayer = currentPlayer
                                 });
+                                lowestCardValue = j;
                                 return;
                             }
                         }
@@ -242,7 +269,8 @@ public class Table : MonoBehaviour
 
     private void GetNextPlayerInRound()
     {
-        for (int i = 0; i < numPlayers; i++)
+        int maxPlayers = PlayerManager.Instance.Players.Count;
+        for (int i = 0; i < maxPlayers; i++)
         {
             currentPlayer = GetNextInRotation();
 
@@ -258,7 +286,7 @@ public class Table : MonoBehaviour
             {
                 if (Chairs[currentPlayer - 1].GetHand().Count == 0)
                 {
-                    for (int j = 0; j < numPlayers; j++)
+                    for (int j = 0; j < maxPlayers; j++)
                     {
                         currentPlayer = GetNextInRotation();
 
@@ -456,7 +484,7 @@ public class Table : MonoBehaviour
     {
         // Approve if cards played contains Three of Spades
         foreach (Card card in cards)
-            if (card.GetValue() == 1) 
+            if (card.GetValue() == lowestCardValue) 
                 return true;
         
         return false;
@@ -466,8 +494,11 @@ public class Table : MonoBehaviour
     public Chair GetChair(int chairNum) => Chairs[chairNum - 1];
     public CardType GetCurrentType() => currentType;
     public List<Card> GetCardsInPlay() => cardsInPlay;
+    public int GetMaxCards() => maxCards;
+    public int GetNumberCardsPlayed() => Deck.transform.childCount - (52 % maxCards);
 }
 
+[System.Serializable]
 public struct Scores
 {
     public List<int> players;
@@ -477,10 +508,5 @@ public struct Scores
         players = new List<int>();
         for (int i = 0; i < numPlayers; i++)
             players.Add(0);
-    }
-
-    public int GetWinner()
-    {
-        return players.IndexOf(players.Find(player => player == 1));
     }
 }

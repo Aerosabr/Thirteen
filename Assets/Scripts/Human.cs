@@ -226,8 +226,11 @@ public class Human : Player
         {
             if (selectedCards.Count == 0)
             {
-                Table.Instance.SkipTurn();
-                canPlay = false;
+                if (Table.Instance.GetCurrentType() != CardType.LowestThree && Table.Instance.GetCurrentType() != CardType.Any)
+                {
+                    Table.Instance.SkipTurn();
+                    canPlay = false;
+                }
             }
             else if (Table.Instance.CheckIfCardsValid(selectedCards))
             {
@@ -236,6 +239,10 @@ public class Human : Player
                 playerVisual.PlayAnimation("Throwing");
             }
         }
+
+        if (StartNextGameUI.Instance.GetAwaitingReady())
+            StartNextGameUI.Instance.ReadyUp(this);
+            
     }
 
     public override void CardThrown()
@@ -247,22 +254,20 @@ public class Human : Player
         canInteract = true;
     }
 
-    public void OnToggleCursor()
+    public void OnEnableCursor()
     {
-        if (!cursorEnabled)
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-            cursorEnabled = true;
-            canLook = false;
-        }
-        else
-        {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-            cursorEnabled = false;
-            canLook = true;
-        }
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        cursorEnabled = true;
+        canLook = false;
+    }
+
+    public void OnDisableCursor()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        cursorEnabled = false;
+        canLook = true;
     }
     #endregion
 

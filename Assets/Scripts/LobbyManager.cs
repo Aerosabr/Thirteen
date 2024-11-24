@@ -19,7 +19,7 @@ public class LobbyManager : MonoBehaviour
 
     void Start()
     {
-        //SpawnHuman(1);
+        SpawnHuman(1);
     }
 
     public bool SpawnHuman(int playerPos)

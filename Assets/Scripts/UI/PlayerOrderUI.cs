@@ -38,8 +38,18 @@ public class PlayerOrderUI : MonoBehaviour
 
         placementText[playerID - 1].text = placements[placement - 1];
         placementText[playerID - 1].transform.parent.gameObject.SetActive(true);
+        currentIndicator[playerID - 1].SetActive(false);
     }
 
     public void PlayerSkipped(int playerID) => skippedShadow[playerID - 1].SetActive(true);
     public void RemoveSkipOverlay(int playerID) => skippedShadow[playerID - 1].SetActive(false);
+    public void ResetUI()
+    {
+        foreach (TextMeshProUGUI text in placementText)
+            text.transform.parent.gameObject.SetActive(false);
+
+        foreach (GameObject shadow in skippedShadow)
+            shadow.SetActive(false);
+    }
+
 }

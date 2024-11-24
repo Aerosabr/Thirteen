@@ -48,7 +48,7 @@ public class AI : Player
 
     private IEnumerator TakeAction()
     {
-        yield return new WaitForSeconds(Random.Range(.1f, .1f));
+        yield return new WaitForSeconds(Random.Range(2f, 4f));
 
         switch (Table.Instance.GetCurrentType())
         {
@@ -118,11 +118,12 @@ public class AI : Player
     {
         // Load all combos containing lowest three
         List<CardCombo> lowestThrees = new List<CardCombo>();
-        lowestThrees.AddRange(FindBombs(hand.Except(twos).ToList(), -1).Where(combo => combo.cards.Any(card => card.value == 1)).ToList());
-        lowestThrees.AddRange(FindStraights(hand.Except(twos).ToList(), -1).Where(combo => combo.cards.Any(card => card.value == 1)).ToList());
-        lowestThrees.AddRange(FindDuplicates(hand, 2).Where(combo => combo.cards.Any(card => card.value == 1)).ToList());
-        lowestThrees.AddRange(FindDuplicates(hand, 3).Where(combo => combo.cards.Any(card => card.value == 1)).ToList());
-        lowestThrees.AddRange(FindDuplicates(hand, 4).Where(combo => combo.cards.Any(card => card.value == 1)).ToList());
+        int lowestCardValue = hand[0].value;
+        lowestThrees.AddRange(FindBombs(hand.Except(twos).ToList(), -1).Where(combo => combo.cards.Any(card => card.value == lowestCardValue)).ToList());
+        lowestThrees.AddRange(FindStraights(hand.Except(twos).ToList(), -1).Where(combo => combo.cards.Any(card => card.value == lowestCardValue)).ToList());
+        lowestThrees.AddRange(FindDuplicates(hand, 2).Where(combo => combo.cards.Any(card => card.value == lowestCardValue)).ToList());
+        lowestThrees.AddRange(FindDuplicates(hand, 3).Where(combo => combo.cards.Any(card => card.value == lowestCardValue)).ToList());
+        lowestThrees.AddRange(FindDuplicates(hand, 4).Where(combo => combo.cards.Any(card => card.value == lowestCardValue)).ToList());
 
         cardsToBePlayed = new List<CardData>() { hand[0] };
         float numIsolatedSingles = Mathf.Infinity;
@@ -172,13 +173,14 @@ public class AI : Player
     {
         List<Card> cardsInPlay = Table.Instance.GetCardsInPlay();
         int cardInPlayValue = cardsInPlay[0].GetValue();
+        int cardsPlayedThreshold = CardsPlayedExceedsPercentage(50) ? 1 : 0;
 
         foreach (CardData card in hand)
         {
             if (card.value > cardInPlayValue)
             {
                 List<CardData> cardToPlay = new List<CardData>() { card };
-                if (FindIsolatedSingles(hand.Except(cardToPlay).ToList()).Count <= isolatedSingles.Count)
+                if (FindIsolatedSingles(hand.Except(cardToPlay).ToList()).Count <= isolatedSingles.Count + cardsPlayedThreshold)
                 {
                     cardsToBePlayed = cardToPlay;
                     PlayCards();
@@ -391,7 +393,7 @@ public class AI : Player
         }
 
         // Get cards that are not apart of any combos 
-        isolatedSingles = FindIsolatedSingles(hand);
+        isolatedSingles = FindIsolatedSingles(hand.Except(twos).ToList());
     }
 
     // NOTE: ensure list being passed in contains no Twos
@@ -515,6 +517,12 @@ public class AI : Player
         }
 
         return consecutivePairs;
+    }
+
+    public bool CardsPlayedExceedsPercentage(int percentage)
+    {
+        int percentageOfDeckAsNumCards = (Table.Instance.GetMaxCards() * percentage) / 100;
+        return Table.Instance.GetNumberCardsPlayed() >= percentageOfDeckAsNumCards;
     }
     #endregion
 }

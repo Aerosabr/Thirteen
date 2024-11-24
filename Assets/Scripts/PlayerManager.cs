@@ -32,4 +32,17 @@ public class PlayerManager : MonoBehaviour
             }
         }
     }
+
+    public int GetNumHumans()
+    {
+        int numHumans = 0;
+
+        foreach (Player player in Players.Values)
+        {
+            if (player.playerType == PlayerType.Player)
+                numHumans++;
+        }
+
+        return numHumans;
+    }
 }

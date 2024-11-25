@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInput))]
@@ -133,13 +134,13 @@ public class Human : Player
             if (!interactObject)
             {
                 interactObject = hit.collider.gameObject;
-                interactObject.GetComponent<IInteractable>().Highlight();
+                interactObject.GetComponent<IInteractable>().Highlight(gameObject);
             }
             else if (interactObject != hit.collider.gameObject)
             {
                 interactObject.GetComponent<IInteractable>().Unhighlight();
                 interactObject = hit.collider.gameObject;
-                interactObject.GetComponent<IInteractable>().Highlight();
+                interactObject.GetComponent<IInteractable>().Highlight(gameObject);
             }
         }
         else if (interactObject)
@@ -196,7 +197,7 @@ public class Human : Player
         this.chair = chair;
         canMove = false;
 
-        //interactableLayer = LayerMask.GetMask("Card");
+        interactableLayer = LayerMask.NameToLayer("Player" + playerID);
 
         ChangePlayerState(PlayerState.Sitting);
     }
@@ -215,7 +216,7 @@ public class Human : Player
         chair = null;
         canMove = true;
 
-        //interactableLayers = LayerMask.GetMask("Interactable");
+        interactableLayer = LayerMask.NameToLayer("Interactable");
 
         ChangePlayerState(PlayerState.Idle);
     }
@@ -285,14 +286,27 @@ public class Human : Player
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        interactableLayer = LayerMask.NameToLayer("Player" + playerPos);
-
         canLook = true;
         canInteract = true;
 
         GetComponent<CharacterController>().enabled = true;
         GetComponent<PlayerInput>().enabled = true;
         cinemachineCameraTarget.SetActive(true);
+
+        var children = transform.GetComponentsInChildren<Transform>(includeInactive: true);
+        foreach (var child in children)
+            child.gameObject.layer = LayerMask.NameToLayer("Player" + playerPos + "Blank"); 
+
+        int excludedLayers = 0;
+        for (int i = 1; i <= 4; i++)
+        {
+            if (i == playerPos)
+                excludedLayers |= 1 << LayerMask.NameToLayer("Player" + i + "Blank");
+            else
+                excludedLayers |= 1 << LayerMask.NameToLayer("Player" + i);
+        }
+
+        _mainCamera.GetComponent<Camera>().cullingMask = ~0 & ~excludedLayers;
 
         playerID = playerPos;
         Table.Instance.GetChair(playerPos).Interact(gameObject);

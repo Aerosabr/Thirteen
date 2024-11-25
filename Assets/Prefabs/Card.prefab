@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 01e1aea0d03567244a16f7b9080af24c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -100,7 +100,10 @@ MonoBehaviour:
   Rank: 0
   Suit: 0
   meshRenderer: {fileID: 2087317013042257933}
-  Outline: {fileID: 6762135755514445339}
+  highlight: {fileID: 0}
+  cardSprite: {fileID: 0}
+  handPos: {x: 0, y: 0, z: 0}
+  Selected: 0
 --- !u!114 &6762135755514445339
 MonoBehaviour:
   m_ObjectHideFlags: 0

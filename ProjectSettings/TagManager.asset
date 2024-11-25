@@ -15,14 +15,14 @@ TagManager:
   - Interactable
   - Card
   - Glow
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player1
+  - Player2
+  - Player3
+  - Player4
+  - Player1Blank
+  - Player2Blank
+  - Player3Blank
+  - Player4Blank
   - 
   - 
   - 

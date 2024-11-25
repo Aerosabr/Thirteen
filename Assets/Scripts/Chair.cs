@@ -17,7 +17,11 @@ public class Chair : MonoBehaviour, IInteractable
     private float fanRadius = 0.15f;
     private float maxFanAngle = 67.5f;
 
-    public void Highlight() { outline.enabled = true; }
+    public void Highlight(GameObject player) 
+    { 
+        if (player.GetComponent<Player>().GetPlayerID() == chairID)
+            outline.enabled = true; 
+    }
     public void Unhighlight() { outline.enabled = false; }
     public void Interact(GameObject player)
     {

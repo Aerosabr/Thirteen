@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     public virtual void InitializePlayer(int playerPos) => Debug.Log("Base Player InitializePlayer");
     public virtual void SitOnChair(Chair chair) => Debug.Log("Base Player SitOnChair");
     public virtual void CardThrown() => Debug.Log("Base Player CardThrown");
+    public int GetPlayerID() => playerID;
 }
 
 public enum PlayerType

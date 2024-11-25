@@ -13,8 +13,8 @@ public class Card : MonoBehaviour, IInteractable
     [SerializeField] private GameObject highlight;
     [SerializeField] private Sprite cardSprite;
 
+    public GameObject emptyCard;
     public Vector3 handPos;
-
     public bool Selected;
 
     private void Start()
@@ -22,7 +22,7 @@ public class Card : MonoBehaviour, IInteractable
 
     }
 
-    public void Highlight()
+    public void Highlight(GameObject player)
     {
         highlight.SetActive(true);
     }

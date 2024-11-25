@@ -49,6 +49,8 @@ public class Table : MonoBehaviour
         {
             GameObject Card = Deck.transform.GetChild(UnityEngine.Random.Range(0, Deck.transform.childCount)).gameObject;
             Chairs[chairNum].DealtCard(Card);
+            Card.GetComponent<Card>().emptyCard.layer = LayerMask.NameToLayer("Player" + (chairNum + 1) + "Blank");
+            Card.GetComponent<Card>().emptyCard.SetActive(true);
             Card.layer = LayerMask.NameToLayer("Player" + (chairNum + 1));
             chairNum = (chairNum < numPlayers - 1) ? chairNum + 1 : 0;
         }
@@ -77,6 +79,7 @@ public class Table : MonoBehaviour
             cards[i].transform.localPosition = cardPos;
             cards[i].transform.localRotation = Quaternion.Euler(Vector3.zero);
             cards[i].gameObject.layer = LayerMask.NameToLayer("Card");
+            cards[i].emptyCard.SetActive(false);
         }
 
         cardsInPlay = new List<Card>(cards);

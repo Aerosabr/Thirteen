@@ -21,7 +21,7 @@ public class Human : Player
     private float speedChangeRate = 10.0f;
     private float interactionDistance = 2.5f;
 
-    [SerializeField] private LayerMask interactableLayers;
+    [SerializeField] private int interactableLayer;
     [SerializeField] private GameObject cinemachineCameraTarget;
 
     private float _cinemachineTargetPitch;
@@ -128,7 +128,7 @@ public class Human : Player
 
         Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.green);
 
-        if (Physics.Raycast(ray, out hit, interactionDistance, interactableLayers))
+        if (Physics.Raycast(ray, out hit, interactionDistance, 1 << interactableLayer))
         {
             if (!interactObject)
             {
@@ -196,7 +196,7 @@ public class Human : Player
         this.chair = chair;
         canMove = false;
 
-        interactableLayers = LayerMask.GetMask("Card");
+        //interactableLayer = LayerMask.GetMask("Card");
 
         ChangePlayerState(PlayerState.Sitting);
     }
@@ -215,7 +215,7 @@ public class Human : Player
         chair = null;
         canMove = true;
 
-        interactableLayers = LayerMask.GetMask("Interactable");
+        //interactableLayers = LayerMask.GetMask("Interactable");
 
         ChangePlayerState(PlayerState.Idle);
     }
@@ -284,6 +284,8 @@ public class Human : Player
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        interactableLayer = LayerMask.NameToLayer("Player" + playerPos);
 
         canLook = true;
         canInteract = true;

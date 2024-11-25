@@ -49,7 +49,7 @@ public class Table : MonoBehaviour
         {
             GameObject Card = Deck.transform.GetChild(UnityEngine.Random.Range(0, Deck.transform.childCount)).gameObject;
             Chairs[chairNum].DealtCard(Card);
-
+            Card.layer = LayerMask.NameToLayer("Player" + (chairNum + 1));
             chairNum = (chairNum < numPlayers - 1) ? chairNum + 1 : 0;
         }
 
@@ -76,6 +76,7 @@ public class Table : MonoBehaviour
             Vector3 cardPos = new Vector3(startPos + (cardWidthSpacing * i), i * cardHeightSpacing, 0);
             cards[i].transform.localPosition = cardPos;
             cards[i].transform.localRotation = Quaternion.Euler(Vector3.zero);
+            cards[i].gameObject.layer = LayerMask.NameToLayer("Card");
         }
 
         cardsInPlay = new List<Card>(cards);

@@ -3876,7 +3876,7 @@ MonoBehaviour:
   playerVisual: {fileID: 1715644781690217009}
   interactableLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
   cinemachineCameraTarget: {fileID: 7184011836167222234}
   _playerInput: {fileID: 5813352357258521771}
   _controller: {fileID: 5409863270872415850}

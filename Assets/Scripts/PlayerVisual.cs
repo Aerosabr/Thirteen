@@ -9,9 +9,18 @@ public class PlayerVisual : MonoBehaviour
     [SerializeField] private Player player;
     [SerializeField] private List<PlayerModels> models;
 
-    private void Awake()
+    private int modelNum = 0;
+
+    public void LoadModel(int num)
     {
-        foreach (GameObject bodyPart in models[Random.Range(0, models.Count)].bodyParts)
+        foreach (GameObject bodyPart in models[modelNum].bodyParts)
+        {
+            bodyPart.SetActive(false);
+        }
+
+        modelNum = num;
+
+        foreach (GameObject bodyPart in models[modelNum].bodyParts)
         {
             bodyPart.SetActive(true);
         }

@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.Experimental.GraphView.GraphView;
+using Cinemachine;
 
 [RequireComponent(typeof(CharacterController))]
-[RequireComponent(typeof(PlayerInput))]
 public class Human : Player
 {
     private enum PlayerState
@@ -24,12 +23,13 @@ public class Human : Player
 
     [SerializeField] private int interactableLayer;
     [SerializeField] private GameObject cinemachineCameraTarget;
+    [SerializeField] private CinemachineVirtualCamera virtualCamera;
+    [SerializeField] private AudioListener audioListener;
 
     private float _cinemachineTargetPitch;
     private float _speed;
     private float _rotationVelocity;
 
-    [SerializeField] private PlayerInput _playerInput;
     [SerializeField] private CharacterController _controller;
     [SerializeField] private GameObject _mainCamera;
 
@@ -55,17 +55,39 @@ public class Human : Player
 
     private void Start()
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        canMove = true;
+        canLook = true;
+    }
 
+    public override void OnNetworkSpawn()
+    {
+        if (IsOwner)
+        {
+            audioListener.enabled = true;
+            virtualCamera.Priority = 1;
+        }
+        else
+        {
+            virtualCamera.Priority = 0;
+        }
     }
 
     private void Update()
     {
+        if (!IsOwner)
+            return;
+
         Move();
         HighlightObject();
     }
 
     private void LateUpdate()
     {
+        if (!IsOwner)
+            return;
+
         if (canLook)
             CameraRotation();
     }
@@ -74,6 +96,8 @@ public class Human : Player
     private void CameraRotation()
     {
         float _threshold = 0.01f;
+        lookInput = GameInput.Instance.GetLookVector();
+
         if (lookInput.sqrMagnitude >= _threshold)
         {
             float TopClamp = 90.0f;
@@ -91,6 +115,8 @@ public class Human : Player
     {
         if (!canMove)
             return;
+
+        movementInput = GameInput.Instance.GetMovementVector();
 
         float targetSpeed = isSprinting ? sprintSpeed : moveSpeed;
         if (movementInput == Vector2.zero)
@@ -161,12 +187,6 @@ public class Human : Player
     #endregion
 
     #region Player Inputs
-    public void OnMove(InputValue value) => movementInput = value.Get<Vector2>();
-    public void OnLook(InputValue value)
-    {
-        if (!cursorEnabled)
-            lookInput = value.Get<Vector2>();
-    }
     public void OnSprint(InputValue value) => isSprinting = value.isPressed;
     public void OnInteract(InputValue value)
     {
@@ -290,7 +310,6 @@ public class Human : Player
         canInteract = true;
 
         GetComponent<CharacterController>().enabled = true;
-        GetComponent<PlayerInput>().enabled = true;
         cinemachineCameraTarget.SetActive(true);
 
         var children = transform.GetComponentsInChildren<Transform>(includeInactive: true);

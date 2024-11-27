@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,15 +8,27 @@ public class LobbyUI : MonoBehaviour
 {
     public static LobbyUI Instance { get; private set; }
 
-    [SerializeField] private Button startGame;
+    [SerializeField] private Button startGameButton;
+    [SerializeField] private Button mainMenuButton;
+    [SerializeField] private Button readyButton;
+
 
     private void Awake()
     {
         Instance = this;
 
-        startGame.onClick.AddListener(() =>
+        startGameButton.onClick.AddListener(() =>
         {
-            StartGame();
+            
+        });
+        mainMenuButton.onClick.AddListener(() =>
+        {
+            NetworkManager.Singleton.Shutdown();
+            SceneLoader.Load(SceneLoader.Scene.MenuScene);
+        });
+        readyButton.onClick.AddListener(() =>
+        {
+            LobbyManager.Instance.SetPlayerReady();
         });
     }
 
@@ -24,8 +37,4 @@ public class LobbyUI : MonoBehaviour
         
     }
 
-    private void StartGame()
-    {
-        SceneLoader.Load(SceneLoader.Scene.GameScene);
-    }
 }

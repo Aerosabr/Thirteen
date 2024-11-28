@@ -1,21 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Burst.Intrinsics;
+using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.Playables;
-using static UnityEngine.Rendering.DebugUI;
+
 
 public class AI : Player
 {
     [SerializeField] private List<CardData> hand = new List<CardData>();
     [SerializeField] private List<CardData> isolatedSingles = new List<CardData>();
     [SerializeField] private List<CardData> twos = new List<CardData>();
-    [SerializeField] private List<CardData> cardsToBePlayed = new List<CardData>();  
-
-    public override void SitOnChair(Chair chair)
+    [SerializeField] private List<CardData> cardsToBePlayed = new List<CardData>();
+    [ServerRpc(RequireOwnership = false)]
+    public override void SitOnChairServerRpc(NetworkObjectReference chairRef)
     {
+        chairRef.TryGet(out NetworkObject chairObj);
+        Chair chair = chairObj.GetComponent<Chair>();
+
         transform.position = chair.GetSitPoint().transform.position;
         transform.rotation = chair.GetSitPoint().transform.rotation;
         this.chair = chair;
@@ -23,14 +24,15 @@ public class AI : Player
         playerVisual.PlayAnimation("Sitting");
     }
 
-    public override void InitializePlayer(int playerPos)
+    [ServerRpc(RequireOwnership = false)]
+    public override void InitializePlayerServerRpc(int playerPos)
     {
         playerID = playerPos;
 
         Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
         Table.Instance.OnCardsDealt += Table_OnCardsDealt;
 
-        Table.Instance.GetChair(playerPos).Interact(gameObject);
+        Table.Instance.GetChair(playerPos).InteractServerRpc(NetworkObject);
     }
 
     private void Table_OnCardsDealt(object sender, System.EventArgs e)

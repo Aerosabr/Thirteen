@@ -25,7 +25,7 @@ public class LobbyManager : NetworkBehaviour
 
     void Start()
     {
-        //SpawnHuman(1);
+        
     }
 
     public void SetPlayerReady()
@@ -66,21 +66,6 @@ public class LobbyManager : NetworkBehaviour
     public bool IsPlayerReady(ulong clientId)
     {
         return playerReadyDictionary.ContainsKey(clientId) && playerReadyDictionary[clientId];
-    }
-
-
-
-    public bool SpawnHuman(int playerPos)
-    {
-        if (!PlayerManager.Instance.Players.ContainsKey(playerPos))
-        {
-            Transform player = Instantiate(humanTemplate, playerSlots[playerPos - 1].transform.position, playerSlots[playerPos - 1].transform.rotation, PlayerManager.Instance.transform);
-            PlayerManager.Instance.Players.Add(playerPos, player.GetComponent<Player>());
-            playerSlots[playerPos - 1].HumanSpawned();
-            return true;
-        }
-
-        return false;
     }
 
     public bool SpawnAI(int playerPos)

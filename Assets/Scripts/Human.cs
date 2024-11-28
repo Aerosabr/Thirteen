@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Cinemachine;
+using Unity.Netcode;
 
 [RequireComponent(typeof(CharacterController))]
 public class Human : Player
@@ -55,10 +56,7 @@ public class Human : Player
 
     private void Start()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        canMove = true;
-        canLook = true;
+
     }
 
     public override void OnNetworkSpawn()
@@ -191,7 +189,7 @@ public class Human : Player
     public void OnInteract(InputValue value)
     {
         if (interactObject && canInteract)
-            interactObject.GetComponent<IInteractable>().Interact(gameObject);
+            interactObject.GetComponent<IInteractable>().InteractServerRpc(NetworkObject);
     }
     #endregion
 
@@ -204,11 +202,18 @@ public class Human : Player
             selectedCards.Add(card);
     }
 
-    public override void SitOnChair(Chair chair)
+    [ServerRpc(RequireOwnership = false)]
+    public override void SitOnChairServerRpc(NetworkObjectReference chairRef)
     {
         if (playerState == PlayerState.Sitting)
             return;
 
+        chairRef.TryGet(out NetworkObject chairObj);
+        Chair chair = chairObj.GetComponent<Chair>();
+
+        Debug.Log(chair.name + " " + chair.GetSitPoint().transform.position);
+
+        // Update position and rotation on the server
         _controller.enabled = false;
         transform.position = chair.GetSitPoint().transform.position;
         transform.rotation = chair.GetSitPoint().transform.rotation;
@@ -217,9 +222,24 @@ public class Human : Player
         this.chair = chair;
         canMove = false;
 
+        playerVisual.LoadModel(ThirteenMultiplayer.Instance.GetPlayerDataIndexFromClientId(NetworkManager.Singleton.LocalClientId));
+
         interactableLayer = LayerMask.NameToLayer("Player" + playerID);
 
         ChangePlayerState(PlayerState.Sitting);
+
+        // Call a ClientRpc to notify clients
+        SitOnChairClientRpc(transform.position, transform.rotation);
+    }
+
+    [ClientRpc]
+    private void SitOnChairClientRpc(Vector3 position, Quaternion rotation)
+    {
+        // Update the client's position and rotation
+        _controller.enabled = false;
+        transform.position = position;
+        transform.rotation = rotation;
+        _controller.enabled = true;
     }
     #endregion
 
@@ -301,16 +321,14 @@ public class Human : Player
         }
     }
 
-    public override void InitializePlayer(int playerPos)
+    [ServerRpc(RequireOwnership = false)]
+    public override void InitializePlayerServerRpc(int playerPos)
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
         canLook = true;
         canInteract = true;
-
-        GetComponent<CharacterController>().enabled = true;
-        cinemachineCameraTarget.SetActive(true);
 
         var children = transform.GetComponentsInChildren<Transform>(includeInactive: true);
         foreach (var child in children)
@@ -328,7 +346,7 @@ public class Human : Player
         _mainCamera.GetComponent<Camera>().cullingMask = ~0 & ~excludedLayers;
 
         playerID = playerPos;
-        Table.Instance.GetChair(playerPos).Interact(gameObject);
+        Table.Instance.GetChair(playerPos).InteractServerRpc(NetworkObject);
         Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
     }
 

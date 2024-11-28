@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Netcode;
 using System;
 using UnityEngine.SceneManagement;
+using Mono.Cecil;
 
 public class ThirteenMultiplayer : NetworkBehaviour
 {
@@ -86,5 +87,30 @@ public class ThirteenMultiplayer : NetworkBehaviour
     public PlayerData GetPlayerDataFromPlayerIndex(int playerIndex)
     {
         return playerDataNetworkList[playerIndex];
+    }
+
+    public int GetPlayerDataIndexFromClientId(ulong clientId)
+    {
+        for (int i = 0; i < playerDataNetworkList.Count; i++)
+        {
+            if (playerDataNetworkList[i].clientID == clientId)
+                return i;
+        }
+        return -1;
+    }
+
+    public void ChangeModelNum(int modelNum)
+    {
+        ChangeModelNumServerRpc(modelNum);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ChangeModelNumServerRpc(int modelNum, ServerRpcParams serverRpcParams = default)
+    {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+        playerData.modelNum = modelNum;
+        playerDataNetworkList[playerDataIndex] = playerData;
     }
 }

@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Chair : MonoBehaviour, IInteractable
+public class Chair : NetworkBehaviour, IInteractable
 {
     [SerializeField] private Outline outline;
     [SerializeField] private GameObject sitPoint;
@@ -23,9 +24,13 @@ public class Chair : MonoBehaviour, IInteractable
             outline.enabled = true; 
     }
     public void Unhighlight() { outline.enabled = false; }
-    public void Interact(GameObject player)
+
+    [ServerRpc(RequireOwnership = false)]
+    public void InteractServerRpc(NetworkObjectReference playerRef)
     {
-        player.GetComponent<Player>().SitOnChair(this);
+        playerRef.TryGet(out NetworkObject playerObj);
+        Player player = playerObj.GetComponent<Player>();
+        player.GetComponent<Player>().SitOnChairServerRpc(NetworkObject);
         hasPlayer = true;
     }
     public GameObject GetSitPoint()

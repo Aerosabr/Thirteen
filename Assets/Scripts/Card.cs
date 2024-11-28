@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,8 +33,11 @@ public class Card : MonoBehaviour, IInteractable
         highlight.SetActive(false);
     }
 
-    public void Interact(GameObject player)
+    [ServerRpc(RequireOwnership = false)]
+    public void InteractServerRpc(NetworkObjectReference playerRef)
     {
+        playerRef.TryGet(out NetworkObject playerObj);
+        Player player = playerObj.GetComponent<Player>();
         if (!Selected)
         {
             transform.localPosition = new Vector3(handPos.x * 0.175f, handPos.y, handPos.z * 0.175f);

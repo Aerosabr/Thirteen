@@ -1,11 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Table : MonoBehaviour
+public class Table : NetworkBehaviour
 {
     public static Table Instance { get; private set; }
 
@@ -37,7 +36,8 @@ public class Table : MonoBehaviour
 
     void Start()
     {
-        StartGame();
+        if (IsServer)
+            StartGame();
     }
 
     #region Card Management

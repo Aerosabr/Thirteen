@@ -51,7 +51,7 @@ public class LobbyManager : NetworkBehaviour
 
         if (allClientsReady)
         {
-            SceneLoader.LoadNetwork(SceneLoader.Scene.GameScene);
+            SceneLoader.LoadNetwork(SceneLoader.Scene.GameScene2);
         }
     }
 

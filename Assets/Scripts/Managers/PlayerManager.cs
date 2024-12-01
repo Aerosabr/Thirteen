@@ -40,7 +40,7 @@ public class PlayerManager : NetworkBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "GameScene") 
+        if (scene.name == "GameScene2") 
         {
             Debug.Log("Target scene loaded! Calling specific function.");
             foreach (int key in Players.Keys)

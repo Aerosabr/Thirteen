@@ -36,8 +36,8 @@ public class Table : NetworkBehaviour
 
     void Start()
     {
-        if (IsServer)
-            StartGame();
+        //if (IsServer)
+        //   StartGame();
     }
 
     #region Card Management

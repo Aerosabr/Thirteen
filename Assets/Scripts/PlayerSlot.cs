@@ -21,6 +21,7 @@ public class PlayerSlot : MonoBehaviour
 
     private void Start()
     {
+        return;
         ThirteenMultiplayer.Instance.OnPlayerDataNetworkListChanged += ThirteenMultiplayer_OnPlayerDataNetworkListChanged;
         LobbyManager.Instance.OnReadyChanged += LobbyManager_OnReadyChanged;
 
@@ -33,7 +34,7 @@ public class PlayerSlot : MonoBehaviour
             ChangeModel(1);
         });
 
-        UpdatePlayer();
+        //UpdatePlayer();
     }
 
     private void LobbyManager_OnReadyChanged(object sender, System.EventArgs e)

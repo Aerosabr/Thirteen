@@ -969,11 +969,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 0920e077-eb19-4db5-8c07-4a64fc34f276
+  cloudProjectId: 3267630e-f970-4e23-8a38-f57cd0833e48
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Thirteen 2024-11-10_23-56-21
-  organizationId: ferosquad
+  projectName: Thirteen
+  organizationId: jhn100550
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

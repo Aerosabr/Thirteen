@@ -12,6 +12,7 @@ public static class SceneLoader
         LoadingScene,
         LobbyScene,
         GameScene,
+        GameScene2,
     }
 
     private static Scene targetScene;

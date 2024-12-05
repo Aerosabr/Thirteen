@@ -19,7 +19,8 @@ public class PlayerOrderUI : MonoBehaviour
 
     private void Start()
     {
-        Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
+        Hide();
+        //Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
     }
 
     private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e)
@@ -52,4 +53,6 @@ public class PlayerOrderUI : MonoBehaviour
             shadow.SetActive(false);
     }
 
+    public void Show() => gameObject.SetActive(true);
+    public void Hide() => gameObject.SetActive(false);
 }

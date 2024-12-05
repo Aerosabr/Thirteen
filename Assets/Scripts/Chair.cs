@@ -12,16 +12,15 @@ public class Chair : NetworkBehaviour, IInteractable
     [SerializeField] private GameObject hand;
     [SerializeField] private int chairID;
 
-    private bool hasPlayer;
-    public bool inRound = true;
+    private NetworkVariable<bool> hasPlayer = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Owner, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> inRound = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Owner, NetworkVariableWritePermission.Server);
 
     private float fanRadius = 0.15f;
     private float maxFanAngle = 67.5f;
 
     public void Highlight(GameObject player) 
-    { 
-        if (player.GetComponent<Player>().GetPlayerID() == chairID)
-            outline.enabled = true; 
+    {
+        outline.enabled = true;
     }
     public void Unhighlight() { outline.enabled = false; }
 
@@ -31,16 +30,16 @@ public class Chair : NetworkBehaviour, IInteractable
         playerRef.TryGet(out NetworkObject playerObj);
         Player player = playerObj.GetComponent<Player>();
         player.GetComponent<Player>().SitOnChairServerRpc(NetworkObject);
-        hasPlayer = true;
+        hasPlayer.Value = true;
     }
     public GameObject GetSitPoint()
     {
-        hasPlayer = true;
+        hasPlayer.Value = true;
         return sitPoint;
     }
     public Vector3 GetExitPoint()
     {
-        hasPlayer = false;
+        hasPlayer.Value = false;
         return exitPoint.transform.position;
     }
 
@@ -103,5 +102,5 @@ public class Chair : NetworkBehaviour, IInteractable
     }
 
     public int GetChairID() => chairID;
-    public bool HasPlayer() => hasPlayer;
+    public bool HasPlayer() => hasPlayer.Value;
 }

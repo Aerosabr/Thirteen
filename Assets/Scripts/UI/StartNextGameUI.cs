@@ -16,6 +16,11 @@ public class StartNextGameUI : MonoBehaviour
         Instance = this;
     }
 
+    private void Start()
+    {
+        Hide();
+    }
+
     public void StartUI()
     {
         awaitingReady = true;
@@ -42,4 +47,6 @@ public class StartNextGameUI : MonoBehaviour
     }
 
     public bool GetAwaitingReady() => awaitingReady;
+    public void Show() => gameObject.SetActive(true);
+    public void Hide() => gameObject.SetActive(false);
 }

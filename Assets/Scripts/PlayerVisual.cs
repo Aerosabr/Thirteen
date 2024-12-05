@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Unity.Netcode;
 
-public class PlayerVisual : MonoBehaviour
+public class PlayerVisual : NetworkBehaviour
 {
     [SerializeField] private Animator anim;
     [SerializeField] private Player player;

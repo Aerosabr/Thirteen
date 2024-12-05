@@ -6,7 +6,7 @@ using Mono.Cecil;
 
 public class ThirteenMultiplayer : NetworkBehaviour
 {
-    private const int MAX_PLAYER_AMOUNT = 4;
+    public const int MAX_PLAYER_AMOUNT = 4;
 
     public static ThirteenMultiplayer Instance { get; private set; }
 

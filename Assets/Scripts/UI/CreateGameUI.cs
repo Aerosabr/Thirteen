@@ -1,9 +1,18 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CreateGameUI : MonoBehaviour
 {
+    [SerializeField] private Button startGame;
+    [SerializeField] private TMP_InputField lobbyNameInput;
+
     private void Start()
     {
+        startGame.onClick.AddListener(() => {
+            ThirteenLobby.Instance.CreateLobby(lobbyNameInput.text, false);
+        });
+
         MenuManager.Instance.OnStateChanged += MenuManager_OnStateChanged;
         Hide();
     }

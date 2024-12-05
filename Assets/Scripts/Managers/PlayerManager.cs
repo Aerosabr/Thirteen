@@ -17,14 +17,16 @@ public class PlayerManager : NetworkBehaviour
         Instance = this;
     }
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
-        if (NetworkManager.Singleton.IsServer)
-            InitializePlayersServerRpc();
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback += SpawnPlayerServerRpc;
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
+        }
     }
 
-    [ServerRpc]
-    private void InitializePlayersServerRpc()
+    private void SceneManager_OnLoadEventCompleted(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
         foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
         {
@@ -34,10 +36,37 @@ public class PlayerManager : NetworkBehaviour
             PlayerData playerData = ThirteenMultiplayer.Instance.GetPlayerDataFromPlayerIndex(ThirteenMultiplayer.Instance.GetPlayerDataIndexFromClientId(clientId));
             Players.Add(numPlayers + 1, playerTransform.GetComponent<Player>());
             numPlayers++;
-            playerTransform.GetComponent<Player>().InitializePlayerServerRpc(numPlayers);
+            //playerTransform.GetComponent<Player>().InitializePlayerServerRpc(numPlayers);
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    private void SpawnPlayerServerRpc(ulong clientId)
+    {
+        if (playerPrefab != null)
+        {
+            Debug.Log(clientId);
+            Transform playerTransform = Instantiate(playerPrefab);
+            playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+            PlayerData playerData = ThirteenMultiplayer.Instance.GetPlayerDataFromPlayerIndex(ThirteenMultiplayer.Instance.GetPlayerDataIndexFromClientId(clientId));
+            Players.Add(numPlayers + 1, playerTransform.GetComponent<Player>());
+            numPlayers++;
+            //playerTransform.GetComponent<Player>().InitializePlayerServerRpc(numPlayers);
+        }
+        else
+        {
+            Debug.LogError("Player Prefab is not assigned!");
+        }
+    }
+
+    public override void OnDestroy()
+    {
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback -= SpawnPlayerServerRpc;
+        }
+    }
+    /*
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "GameScene2") 
@@ -49,7 +78,7 @@ public class PlayerManager : NetworkBehaviour
             }
         }
     }
-
+    */
     public int GetNumHumans()
     {
         int numHumans = 0;

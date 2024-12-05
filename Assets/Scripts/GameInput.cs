@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class GameInput : MonoBehaviour
 {
@@ -6,12 +7,41 @@ public class GameInput : MonoBehaviour
 
     private PlayerInput playerInput;
 
+    public event EventHandler OnInteractAction;
+    public event EventHandler OnExitChairAction;
+    public event EventHandler OnPlayCardsAction;
+
     private void Awake()
     {
         Instance = this;
 
         playerInput = new PlayerInput();
         playerInput.Player.Enable();
+        playerInput.Player.Interact.performed += Interact_performed;
+        playerInput.Player.ExitChair.performed += ExitChair_performed;
+        playerInput.Player.PlayCards.performed += PlayCards_performed;
+    }
+
+    private void OnDestroy()
+    {
+        playerInput.Player.Interact.performed -= Interact_performed;
+
+        playerInput.Dispose();
+    }
+
+    private void Interact_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        OnInteractAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void ExitChair_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        OnExitChairAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void PlayCards_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        OnPlayCardsAction?.Invoke(this, EventArgs.Empty);
     }
 
     public Vector2 GetMovementVector()

@@ -17,6 +17,11 @@ public class GameStateUI : MonoBehaviour
         Instance = this;
     }
 
+    private void Start()
+    {
+        Hide();
+    }
+
     public void UpdateVisual(List <Card> Cards = null, CardType cardType = CardType.Any)
     {
         foreach (Transform child in cardImages)

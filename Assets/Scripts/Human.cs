@@ -56,7 +56,15 @@ public class Human : Player
 
     private void Start()
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        canMove = true;
+        canLook = true;
+        canInteract = true;
+        playerVisual.LoadModel(Random.Range(0, 6));
 
+        GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
+        GameInput.Instance.OnExitChairAction += GameInput_OnExitChairAction;
     }
 
     public override void OnNetworkSpawn()
@@ -87,26 +95,60 @@ public class Human : Player
             return;
 
         if (canLook)
-            CameraRotation();
+            Look();
     }
 
     #region Camera, Movement, Interaction
-    private void CameraRotation()
+    private void Look()
     {
         float _threshold = 0.01f;
         lookInput = GameInput.Instance.GetLookVector();
 
         if (lookInput.sqrMagnitude >= _threshold)
         {
-            float TopClamp = 90.0f;
-            float BottomClamp = -90.0f;
+            if (canMove)
+            {
+                float TopClamp = 90.0f;
+                float BottomClamp = -90.0f;
 
-            _cinemachineTargetPitch += lookInput.y * cameraSensitivity;
-            _rotationVelocity = lookInput.x * cameraSensitivity;
-            _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
-            cinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
-            transform.Rotate(Vector3.up * _rotationVelocity);
+                _cinemachineTargetPitch += lookInput.y * cameraSensitivity;
+                _rotationVelocity = lookInput.x * cameraSensitivity;
+
+                _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+
+                cinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
+
+                transform.Rotate(Vector3.up * _rotationVelocity);
+            }
+            else
+            {
+                // Default clamp values for vertical (pitch) and horizontal (yaw)
+                float TopClamp = 60.0f;
+                float BottomClamp = -45.0f;
+                float leftClamp = -60.0f;
+                float rightClamp = 60.0f;
+
+                // Update vertical look (pitch)
+                _cinemachineTargetPitch += lookInput.y * cameraSensitivity;
+                _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+
+                // Update horizontal look (yaw)
+                float currentYaw = cinemachineCameraTarget.transform.localRotation.eulerAngles.y;
+                float newYaw = currentYaw + (lookInput.x * cameraSensitivity);
+                newYaw = ClampAngle(newYaw, leftClamp, rightClamp);
+
+                // Apply pitch and yaw to cinemachineCameraTarget only
+                cinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, newYaw, 0.0f);
+            }
+           
         }
+    }
+
+    private float ClampAngle(float angle, float min, float max)
+    {
+        angle = (angle + 360.0f) % 360.0f; // Normalize angle to 0-360
+        if (angle > 180.0f) angle -= 360.0f; // Convert to -180 to 180
+        return Mathf.Clamp(angle, min, max);
     }
 
     private void Move()
@@ -140,7 +182,7 @@ public class Human : Player
         else
             ChangePlayerState(PlayerState.Idle);
 
-        _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + Vector3.zero * Time.deltaTime);
+        _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime));
     }
 
     private void HighlightObject()
@@ -173,23 +215,30 @@ public class Human : Player
             interactObject = null;
         }
     }
-
-    private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
-    {
-        if (lfAngle < -360f)
-            lfAngle += 360f;
-        if (lfAngle > 360f)
-            lfAngle -= 360f;
-        return Mathf.Clamp(lfAngle, lfMin, lfMax);
-    }
     #endregion
 
     #region Player Inputs
-    public void OnSprint(InputValue value) => isSprinting = value.isPressed;
-    public void OnInteract(InputValue value)
+    private void GameInput_OnInteractAction(object sender, System.EventArgs e)
     {
         if (interactObject && canInteract)
             interactObject.GetComponent<IInteractable>().InteractServerRpc(NetworkObject);
+    }
+
+    private void GameInput_OnExitChairAction(object sender, System.EventArgs e)
+    {
+        if (playerState != PlayerState.Sitting)
+            return;
+
+        _controller.enabled = false;
+        transform.position = chair.GetExitPoint();
+        _controller.enabled = true;
+
+        chair = null;
+        canMove = true;
+
+        interactableLayer = LayerMask.NameToLayer("Interactable");
+
+        ChangePlayerState(PlayerState.Idle);
     }
     #endregion
 
@@ -244,23 +293,6 @@ public class Human : Player
     #endregion
 
     #region Other Inputs
-    private void OnExitChair()
-    {
-        if (playerState != PlayerState.Sitting)
-            return;
-
-        _controller.enabled = false;
-        transform.position = chair.GetExitPoint();
-        _controller.enabled = true;
-
-        chair = null;
-        canMove = true;
-
-        interactableLayer = LayerMask.NameToLayer("Interactable");
-
-        ChangePlayerState(PlayerState.Idle);
-    }
-
     private void OnPlayCards()
     {
         if (playerState == PlayerState.Sitting && canPlay)

@@ -1,9 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class JoinGameUI : MonoBehaviour
 {
+    [SerializeField] private Button joinGame;
+
     private void Start()
     {
+        joinGame.onClick.AddListener(() => {
+            ThirteenLobby.Instance.QuickJoin();
+        });
+
         MenuManager.Instance.OnStateChanged += MenuManager_OnStateChanged;
         Hide();
     }

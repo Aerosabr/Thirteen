@@ -1,20 +1,23 @@
 using System;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public struct PlayerData : IEquatable<PlayerData>, INetworkSerializable
+public class PlayerData : NetworkBehaviour
 {
-    public ulong clientID;
+    public static PlayerData Instance { get; private set; }
+    public string playerName;
     public int modelNum;
 
-    public bool Equals(PlayerData other)
+    private void Awake()
     {
-        return clientID == other.clientID && modelNum == other.modelNum;
+        Instance = this;
+
+        DontDestroyOnLoad(this);
     }
 
-    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    public void SpawnCharacter(ulong clientId)
     {
-        serializer.SerializeValue(ref clientID);
-        serializer.SerializeValue(ref modelNum);
+        PlayerManager.Instance.SpawnPlayerServerRpc(clientId, playerName, modelNum);
     }
 }

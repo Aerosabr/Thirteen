@@ -12,36 +12,54 @@ public class Chair : NetworkBehaviour, IInteractable
     [SerializeField] private GameObject hand;
     [SerializeField] private int chairID;
 
-    private NetworkVariable<bool> hasPlayer = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Owner, NetworkVariableWritePermission.Server);
-    public NetworkVariable<bool> inRound = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Owner, NetworkVariableWritePermission.Server);
+    public bool hasPlayer;
+    public bool inRound = true;
 
     private float fanRadius = 0.15f;
     private float maxFanAngle = 67.5f;
 
-    public void Highlight(GameObject player) 
+    public bool Highlight(GameObject player) 
     {
-        outline.enabled = true;
+        if (!hasPlayer)
+        {
+            outline.enabled = true;
+            return true;
+        }
+
+        return false;
     }
     public void Unhighlight() { outline.enabled = false; }
 
     [ServerRpc(RequireOwnership = false)]
     public void InteractServerRpc(NetworkObjectReference playerRef)
     {
+        if (!hasPlayer)
+            InteractClientRpc(playerRef);
+    }
+
+    [ClientRpc]
+    private void InteractClientRpc(NetworkObjectReference playerRef)
+    {
         playerRef.TryGet(out NetworkObject playerObj);
         Player player = playerObj.GetComponent<Player>();
-        player.GetComponent<Player>().SitOnChairServerRpc(NetworkObject);
-        hasPlayer.Value = true;
+        player.GetComponent<Player>().SitOnChair(NetworkObject);
+        ToggleHasPlayer(true);
     }
-    public GameObject GetSitPoint()
+
+    [ServerRpc(RequireOwnership = false)]
+    public void PlayerExitServerRpc(NetworkObjectReference playerRef) => PlayerExitClientRpc(playerRef);
+
+    [ClientRpc]
+    private void PlayerExitClientRpc(NetworkObjectReference playerRef)
     {
-        hasPlayer.Value = true;
-        return sitPoint;
+        playerRef.TryGet(out NetworkObject playerObj);
+        Player player = playerObj.GetComponent<Player>();
+        player.GetComponent<Player>().ExitChair();
+        ToggleHasPlayer(false);
     }
-    public Vector3 GetExitPoint()
-    {
-        hasPlayer.Value = false;
-        return exitPoint.transform.position;
-    }
+
+    public GameObject GetSitPoint() => sitPoint;
+    public Vector3 GetExitPoint() => exitPoint.transform.position;
 
     public void DealtCard(GameObject card)
     {
@@ -101,6 +119,11 @@ public class Chair : NetworkBehaviour, IInteractable
         return cards;
     }
 
+    private void ToggleHasPlayer(bool toggle)
+    {
+        hasPlayer = toggle;
+    }
+
     public int GetChairID() => chairID;
-    public bool HasPlayer() => hasPlayer.Value;
+    public bool HasPlayer() => hasPlayer;
 }

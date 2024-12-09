@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,7 +22,7 @@ public class PlayerManager : NetworkBehaviour
     {
         if (IsServer)
         {
-            NetworkManager.Singleton.OnClientConnectedCallback += SpawnPlayerServerRpc;
+            NetworkManager.Singleton.OnClientConnectedCallback += PlayerConnectedServerRpc;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
         }
     }
@@ -29,29 +30,29 @@ public class PlayerManager : NetworkBehaviour
     private void SceneManager_OnLoadEventCompleted(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
         foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
-        {
-            Debug.Log(clientId);
-            Transform playerTransform = Instantiate(playerPrefab);
-            playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-            PlayerData playerData = ThirteenMultiplayer.Instance.GetPlayerDataFromPlayerIndex(ThirteenMultiplayer.Instance.GetPlayerDataIndexFromClientId(clientId));
-            Players.Add(numPlayers + 1, playerTransform.GetComponent<Player>());
-            numPlayers++;
-            //playerTransform.GetComponent<Player>().InitializePlayerServerRpc(numPlayers);
-        }
+            PlayerData.Instance.SpawnCharacter(clientId);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SpawnPlayerServerRpc(ulong clientId)
+    private void PlayerConnectedServerRpc(ulong clientId) => PlayerConnectedClientRpc(clientId);
+
+    [ClientRpc]
+    private void PlayerConnectedClientRpc(ulong clientId)
+    {
+        if (NetworkManager.Singleton.LocalClientId == clientId)
+            PlayerData.Instance.SpawnCharacter(clientId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnPlayerServerRpc(ulong clientId, string playerName, int modelNum)
     {
         if (playerPrefab != null)
         {
-            Debug.Log(clientId);
             Transform playerTransform = Instantiate(playerPrefab);
             playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-            PlayerData playerData = ThirteenMultiplayer.Instance.GetPlayerDataFromPlayerIndex(ThirteenMultiplayer.Instance.GetPlayerDataIndexFromClientId(clientId));
             Players.Add(numPlayers + 1, playerTransform.GetComponent<Player>());
             numPlayers++;
-            //playerTransform.GetComponent<Player>().InitializePlayerServerRpc(numPlayers);
+            playerTransform.GetComponent<Player>().InitializePlayerServerRpc(playerName, modelNum);
         }
         else
         {
@@ -59,13 +60,6 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
-    public override void OnDestroy()
-    {
-        if (IsServer)
-        {
-            NetworkManager.Singleton.OnClientConnectedCallback -= SpawnPlayerServerRpc;
-        }
-    }
     /*
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {

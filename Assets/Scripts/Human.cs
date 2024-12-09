@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Cinemachine;
 using Unity.Netcode;
+using TMPro;
 
 [RequireComponent(typeof(CharacterController))]
 public class Human : Player
@@ -40,12 +41,13 @@ public class Human : Player
     #endregion
 
     private bool canPlay;
-    private bool canInteract;
-    private bool canMove;
+    public bool canInteract;
+    public bool canMove;
     private bool canLook;
     private bool cursorEnabled;
     private PlayerState playerState;
 
+    [SerializeField] private TextMeshProUGUI nametag;
     [SerializeField] private GameObject interactObject;
     [SerializeField] private List<Card> selectedCards;
 
@@ -56,15 +58,9 @@ public class Human : Player
 
     private void Start()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        canMove = true;
-        canLook = true;
-        canInteract = true;
-        playerVisual.LoadModel(Random.Range(0, 6));
-
         GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
         GameInput.Instance.OnExitChairAction += GameInput_OnExitChairAction;
+        GameInput.Instance.OnPlayCardsAction += GameInput_OnPlayCardsAction;
     }
 
     public override void OnNetworkSpawn()
@@ -197,17 +193,14 @@ public class Human : Player
 
         if (Physics.Raycast(ray, out hit, interactionDistance, 1 << interactableLayer))
         {
-            if (!interactObject)
-            {
-                interactObject = hit.collider.gameObject;
-                interactObject.GetComponent<IInteractable>().Highlight(gameObject);
-            }
-            else if (interactObject != hit.collider.gameObject)
+            if (interactObject != null && interactObject != hit.collider.gameObject)
             {
                 interactObject.GetComponent<IInteractable>().Unhighlight();
-                interactObject = hit.collider.gameObject;
-                interactObject.GetComponent<IInteractable>().Highlight(gameObject);
+                interactObject = null;
             }
+
+            if (!interactObject && hit.collider.gameObject.GetComponent<IInteractable>().Highlight(gameObject))
+                interactObject = hit.collider.gameObject;
         }
         else if (interactObject)
         {
@@ -220,82 +213,24 @@ public class Human : Player
     #region Player Inputs
     private void GameInput_OnInteractAction(object sender, System.EventArgs e)
     {
+        if (!IsOwner)
+            return;
+
         if (interactObject && canInteract)
             interactObject.GetComponent<IInteractable>().InteractServerRpc(NetworkObject);
     }
 
     private void GameInput_OnExitChairAction(object sender, System.EventArgs e)
     {
-        if (playerState != PlayerState.Sitting)
+        if (playerState != PlayerState.Sitting || !IsOwner)
             return;
 
-        _controller.enabled = false;
-        transform.position = chair.GetExitPoint();
-        _controller.enabled = true;
-
-        chair = null;
-        canMove = true;
-
-        interactableLayer = LayerMask.NameToLayer("Interactable");
-
-        ChangePlayerState(PlayerState.Idle);
-    }
-    #endregion
-
-    #region Object Interaction
-    public void SelectedCard(Card card)
-    {
-        if (selectedCards.Contains(card))
-            selectedCards.Remove(card);
-        else
-            selectedCards.Add(card);
+        chair.PlayerExitServerRpc(NetworkObject);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public override void SitOnChairServerRpc(NetworkObjectReference chairRef)
+    private void GameInput_OnPlayCardsAction(object sender, System.EventArgs e)
     {
-        if (playerState == PlayerState.Sitting)
-            return;
-
-        chairRef.TryGet(out NetworkObject chairObj);
-        Chair chair = chairObj.GetComponent<Chair>();
-
-        Debug.Log(chair.name + " " + chair.GetSitPoint().transform.position);
-
-        // Update position and rotation on the server
-        _controller.enabled = false;
-        transform.position = chair.GetSitPoint().transform.position;
-        transform.rotation = chair.GetSitPoint().transform.rotation;
-        _controller.enabled = true;
-
-        this.chair = chair;
-        canMove = false;
-
-        playerVisual.LoadModel(ThirteenMultiplayer.Instance.GetPlayerDataIndexFromClientId(NetworkManager.Singleton.LocalClientId));
-
-        interactableLayer = LayerMask.NameToLayer("Player" + playerID);
-
-        ChangePlayerState(PlayerState.Sitting);
-
-        // Call a ClientRpc to notify clients
-        SitOnChairClientRpc(transform.position, transform.rotation);
-    }
-
-    [ClientRpc]
-    private void SitOnChairClientRpc(Vector3 position, Quaternion rotation)
-    {
-        // Update the client's position and rotation
-        _controller.enabled = false;
-        transform.position = position;
-        transform.rotation = rotation;
-        _controller.enabled = true;
-    }
-    #endregion
-
-    #region Other Inputs
-    private void OnPlayCards()
-    {
-        if (playerState == PlayerState.Sitting && canPlay)
+        if (playerState == PlayerState.Sitting && canPlay && IsOwner)
         {
             if (selectedCards.Count == 0)
             {
@@ -315,9 +250,59 @@ public class Human : Player
 
         if (StartNextGameUI.Instance.GetAwaitingReady())
             StartNextGameUI.Instance.ReadyUp(this);
-            
+    }
+    #endregion
+
+    #region Object Interaction
+    public void SelectedCard(Card card)
+    {
+        if (selectedCards.Contains(card))
+            selectedCards.Remove(card);
+        else
+            selectedCards.Add(card);
     }
 
+    public override void SitOnChair(NetworkObjectReference chairRef)
+    {
+        if (playerState == PlayerState.Sitting)
+            return;
+
+        chairRef.TryGet(out NetworkObject chairObj);
+        Chair chair = chairObj.GetComponent<Chair>();
+
+        _controller.enabled = false;
+        transform.position = chair.GetSitPoint().transform.position;
+        transform.rotation = chair.GetSitPoint().transform.rotation;
+        _controller.enabled = true;
+
+        this.chair = chair;
+        canMove = false;
+
+        interactableLayer = LayerMask.NameToLayer("Player" + playerID);
+
+        ToggleGameUI(true);
+
+        ChangePlayerState(PlayerState.Sitting);
+    }
+
+    public override void ExitChair()
+    {
+        _controller.enabled = false;
+        transform.position = chair.GetExitPoint();
+        _controller.enabled = true;
+
+        chair = null;
+        canMove = true;
+
+        interactableLayer = LayerMask.NameToLayer("Interactable");
+
+        ToggleGameUI(false);
+
+        ChangePlayerState(PlayerState.Idle);
+    }
+    #endregion
+
+    #region Other Inputs
     public override void CardThrown()
     {
         Table.Instance.PlayCards(selectedCards);
@@ -344,6 +329,25 @@ public class Human : Player
     }
     #endregion
 
+    private void ToggleGameUI(bool toggle)
+    {
+        if (!IsOwner)
+            return;
+
+        if (toggle)
+        {
+            GameStateUI.Instance.Show();
+            PlayerOrderUI.Instance.Show();
+            StartNextGameUI.Instance.Show();
+        }
+        else
+        {
+            GameStateUI.Instance.Hide();
+            PlayerOrderUI.Instance.Hide();
+            StartNextGameUI.Instance.Hide();
+        }
+    }
+
     private void ChangePlayerState(PlayerState state)
     {
         if (playerState != state)
@@ -354,14 +358,17 @@ public class Human : Player
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public override void InitializePlayerServerRpc(int playerPos)
+    public override void InitializePlayerServerRpc(string playerName, int modelNum)
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-
+        canMove = true;
         canLook = true;
         canInteract = true;
-
+        interactObject = null;
+        playerVisual.LoadModel(modelNum);
+        nametag.text = playerName;
+        /*
         var children = transform.GetComponentsInChildren<Transform>(includeInactive: true);
         foreach (var child in children)
             child.gameObject.layer = LayerMask.NameToLayer("Player" + playerPos + "Blank"); 
@@ -380,6 +387,7 @@ public class Human : Player
         playerID = playerPos;
         Table.Instance.GetChair(playerPos).InteractServerRpc(NetworkObject);
         Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
+        */
     }
 
     private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e)

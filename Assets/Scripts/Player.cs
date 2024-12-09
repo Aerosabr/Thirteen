@@ -10,9 +10,9 @@ public class Player : NetworkBehaviour
     [SerializeField] protected PlayerVisual playerVisual;
 
     [ServerRpc(RequireOwnership = false)]
-    public virtual void InitializePlayerServerRpc(int playerPos) => Debug.Log("Base Player InitializePlayer");
-    [ServerRpc(RequireOwnership = false)]
-    public virtual void SitOnChairServerRpc(NetworkObjectReference chairRef) => Debug.Log("Base Player SitOnChair");
+    public virtual void InitializePlayerServerRpc(string playerName, int modelNum) => Debug.Log("Base Player InitializePlayer");
+    public virtual void SitOnChair(NetworkObjectReference chairRef) => Debug.Log("Base Player SitOnChair");
+    public virtual void ExitChair() => Debug.Log("Base Player ExitChair");
     public virtual void CardThrown() => Debug.Log("Base Player CardThrown");
     public int GetPlayerID() => playerID;
 }

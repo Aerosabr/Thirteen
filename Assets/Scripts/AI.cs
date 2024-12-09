@@ -11,8 +11,8 @@ public class AI : Player
     [SerializeField] private List<CardData> isolatedSingles = new List<CardData>();
     [SerializeField] private List<CardData> twos = new List<CardData>();
     [SerializeField] private List<CardData> cardsToBePlayed = new List<CardData>();
-    [ServerRpc(RequireOwnership = false)]
-    public override void SitOnChairServerRpc(NetworkObjectReference chairRef)
+
+    public override void SitOnChair(NetworkObjectReference chairRef)
     {
         chairRef.TryGet(out NetworkObject chairObj);
         Chair chair = chairObj.GetComponent<Chair>();
@@ -25,14 +25,16 @@ public class AI : Player
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public override void InitializePlayerServerRpc(int playerPos)
+    public override void InitializePlayerServerRpc(string playerName, int modelNums)
     {
+        /*
         playerID = playerPos;
 
         Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
         Table.Instance.OnCardsDealt += Table_OnCardsDealt;
 
         Table.Instance.GetChair(playerPos).InteractServerRpc(NetworkObject);
+        */
     }
 
     private void Table_OnCardsDealt(object sender, System.EventArgs e)

@@ -23,9 +23,10 @@ public class Card : MonoBehaviour, IInteractable
 
     }
 
-    public void Highlight(GameObject player)
+    public bool Highlight(GameObject player)
     {
         highlight.SetActive(true);
+        return true;
     }
 
     public void Unhighlight()

@@ -150,7 +150,7 @@ public class Table : NetworkBehaviour
     private void ResetGameState()
     {
         foreach (Chair chair in Chairs)
-            chair.inRound.Value = true;
+            chair.inRound = true;
 
         currentPlayer = 0;
 
@@ -180,7 +180,7 @@ public class Table : NetworkBehaviour
         {
             if (chair.GetHand().Count != 0)
             {
-                chair.inRound.Value = true;
+                chair.inRound = true;
                 PlayerOrderUI.Instance.RemoveSkipOverlay(chair.GetChairID());
             }
         }
@@ -194,7 +194,7 @@ public class Table : NetworkBehaviour
     public void EmptiedHand()
     {
         int gameNum = scores.Count - 1;
-        Chairs[currentPlayer - 1].inRound.Value = false;
+        Chairs[currentPlayer - 1].inRound = false;
         scores[gameNum].players[currentPlayer - 1] = scores[gameNum].players.Max() + 1;
         numPlayers--;
 
@@ -215,7 +215,7 @@ public class Table : NetworkBehaviour
     #region Turn Management
     public void SkipTurn()
     {
-        Chairs[currentPlayer - 1].inRound.Value = false;
+        Chairs[currentPlayer - 1].inRound = false;
         PlayerOrderUI.Instance.PlayerSkipped(currentPlayer);
         DetermineCurrentPlayer();
     }
@@ -278,7 +278,7 @@ public class Table : NetworkBehaviour
         {
             currentPlayer = GetNextInRotation();
 
-            if (Chairs[currentPlayer - 1].inRound.Value)
+            if (Chairs[currentPlayer - 1].inRound)
             {
                 if (currentPlayer == lastPlayerPlayed)
                     EndRound();

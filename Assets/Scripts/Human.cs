@@ -46,6 +46,7 @@ public class Human : Player
     private bool canLook;
     private bool cursorEnabled;
     private PlayerState playerState;
+    [SerializeField] private PlayerInfo playerInfo;
 
     [SerializeField] private TextMeshProUGUI nametag;
     [SerializeField] private GameObject interactObject;
@@ -61,10 +62,44 @@ public class Human : Player
         GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
         GameInput.Instance.OnExitChairAction += GameInput_OnExitChairAction;
         GameInput.Instance.OnPlayCardsAction += GameInput_OnPlayCardsAction;
+        if (IsServer)
+            GameInput.Instance.OnAlternateInteractAction += GameInput_OnAlternateInteractAction;
     }
 
     public override void OnNetworkSpawn()
     {
+        Debug.Log("On network spawn: " + OwnerClientId);
+        playerInfo = PlayerManager.Instance.GetPlayerInfoFromID(OwnerClientId);
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        canMove = true;
+        canLook = true;
+        canInteract = true;
+        interactObject = null;
+        playerVisual.LoadModel(playerInfo.modelNum);
+        nametag.text = playerInfo.playerName.ToString();
+        /*
+        var children = transform.GetComponentsInChildren<Transform>(includeInactive: true);
+        foreach (var child in children)
+            child.gameObject.layer = LayerMask.NameToLayer("Player" + playerPos + "Blank"); 
+
+        int excludedLayers = 0;
+        for (int i = 1; i <= 4; i++)
+        {
+            if (i == playerPos)
+                excludedLayers |= 1 << LayerMask.NameToLayer("Player" + i + "Blank");
+            else
+                excludedLayers |= 1 << LayerMask.NameToLayer("Player" + i);
+        }
+
+        _mainCamera.GetComponent<Camera>().cullingMask = ~0 & ~excludedLayers;
+
+        playerID = playerPos;
+        Table.Instance.GetChair(playerPos).InteractServerRpc(NetworkObject);
+        Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
+        */
+
         if (IsOwner)
         {
             audioListener.enabled = true;
@@ -136,7 +171,7 @@ public class Human : Player
                 // Apply pitch and yaw to cinemachineCameraTarget only
                 cinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, newYaw, 0.0f);
             }
-           
+
         }
     }
 
@@ -195,17 +230,22 @@ public class Human : Player
         {
             if (interactObject != null && interactObject != hit.collider.gameObject)
             {
-                interactObject.GetComponent<IInteractable>().Unhighlight();
+                interactObject.GetComponent<InteractableObject>().Unhighlight();
                 interactObject = null;
+                InteractionUI.Instance.Hide();
             }
 
-            if (!interactObject && hit.collider.gameObject.GetComponent<IInteractable>().Highlight(gameObject))
+            if (!interactObject && hit.collider.gameObject.GetComponent<InteractableObject>().Highlight(gameObject))
+            {
                 interactObject = hit.collider.gameObject;
+                InteractionUI.Instance.Show(interactObject.GetComponent<InteractableObject>().GetInteractType(), IsServer);
+            }
         }
         else if (interactObject)
         {
-            interactObject.GetComponent<IInteractable>().Unhighlight();
+            interactObject.GetComponent<InteractableObject>().Unhighlight();
             interactObject = null;
+            InteractionUI.Instance.Hide();
         }
     }
     #endregion
@@ -217,7 +257,7 @@ public class Human : Player
             return;
 
         if (interactObject && canInteract)
-            interactObject.GetComponent<IInteractable>().InteractServerRpc(NetworkObject);
+            interactObject.GetComponent<InteractableObject>().Interact(NetworkObject);
     }
 
     private void GameInput_OnExitChairAction(object sender, System.EventArgs e)
@@ -250,6 +290,19 @@ public class Human : Player
 
         if (StartNextGameUI.Instance.GetAwaitingReady())
             StartNextGameUI.Instance.ReadyUp(this);
+    }
+
+    private void GameInput_OnAlternateInteractAction(object sender, System.EventArgs e)
+    {
+        if (!IsOwner)
+            return;
+
+        if (interactObject != null && 
+            interactObject.GetComponent<InteractableObject>().GetInteractType() == InteractableObject.InteractType.Chair)
+        {
+            if (interactObject.GetComponent<Chair>().GetPlayerType() != PlayerType.Player)
+                interactObject.GetComponent<Chair>().AlternateInteractServerRpc();
+        }
     }
     #endregion
 
@@ -355,39 +408,6 @@ public class Human : Player
             playerState = state;
             playerVisual.PlayAnimation(state.ToString());
         }
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    public override void InitializePlayerServerRpc(string playerName, int modelNum)
-    {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        canMove = true;
-        canLook = true;
-        canInteract = true;
-        interactObject = null;
-        playerVisual.LoadModel(modelNum);
-        nametag.text = playerName;
-        /*
-        var children = transform.GetComponentsInChildren<Transform>(includeInactive: true);
-        foreach (var child in children)
-            child.gameObject.layer = LayerMask.NameToLayer("Player" + playerPos + "Blank"); 
-
-        int excludedLayers = 0;
-        for (int i = 1; i <= 4; i++)
-        {
-            if (i == playerPos)
-                excludedLayers |= 1 << LayerMask.NameToLayer("Player" + i + "Blank");
-            else
-                excludedLayers |= 1 << LayerMask.NameToLayer("Player" + i);
-        }
-
-        _mainCamera.GetComponent<Camera>().cullingMask = ~0 & ~excludedLayers;
-
-        playerID = playerPos;
-        Table.Instance.GetChair(playerPos).InteractServerRpc(NetworkObject);
-        Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
-        */
     }
 
     private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e)

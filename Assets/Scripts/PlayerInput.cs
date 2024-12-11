@@ -64,6 +64,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""AlternateInteract"",
+                    ""type"": ""Button"",
+                    ""id"": ""e9ad33b3-99c5-4730-8092-a6d3fa315e36"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""ExitChair"",
                     ""type"": ""Button"",
                     ""id"": ""0574bb6f-e828-43a4-8435-6667d00fd4d3"",
@@ -94,7 +103,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""name"": ""DisableCursor"",
                     ""type"": ""Button"",
                     ""id"": ""79d2bfb0-27a0-4d77-835f-f3ffa3c904db"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -153,6 +162,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""KeyboardMouse"",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e22e2323-a8d1-419e-a0c6-e52d023f9561"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardMouse"",
+                    ""action"": ""AlternateInteract"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -314,6 +334,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_AlternateInteract = m_Player.FindAction("AlternateInteract", throwIfNotFound: true);
         m_Player_ExitChair = m_Player.FindAction("ExitChair", throwIfNotFound: true);
         m_Player_PlayCards = m_Player.FindAction("PlayCards", throwIfNotFound: true);
         m_Player_EnableCursor = m_Player.FindAction("EnableCursor", throwIfNotFound: true);
@@ -388,6 +409,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_AlternateInteract;
     private readonly InputAction m_Player_ExitChair;
     private readonly InputAction m_Player_PlayCards;
     private readonly InputAction m_Player_EnableCursor;
@@ -400,6 +422,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        public InputAction @AlternateInteract => m_Wrapper.m_Player_AlternateInteract;
         public InputAction @ExitChair => m_Wrapper.m_Player_ExitChair;
         public InputAction @PlayCards => m_Wrapper.m_Player_PlayCards;
         public InputAction @EnableCursor => m_Wrapper.m_Player_EnableCursor;
@@ -425,6 +448,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
+            @AlternateInteract.started += instance.OnAlternateInteract;
+            @AlternateInteract.performed += instance.OnAlternateInteract;
+            @AlternateInteract.canceled += instance.OnAlternateInteract;
             @ExitChair.started += instance.OnExitChair;
             @ExitChair.performed += instance.OnExitChair;
             @ExitChair.canceled += instance.OnExitChair;
@@ -453,6 +479,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
+            @AlternateInteract.started -= instance.OnAlternateInteract;
+            @AlternateInteract.performed -= instance.OnAlternateInteract;
+            @AlternateInteract.canceled -= instance.OnAlternateInteract;
             @ExitChair.started -= instance.OnExitChair;
             @ExitChair.performed -= instance.OnExitChair;
             @ExitChair.canceled -= instance.OnExitChair;
@@ -524,6 +553,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnAlternateInteract(InputAction.CallbackContext context);
         void OnExitChair(InputAction.CallbackContext context);
         void OnPlayCards(InputAction.CallbackContext context);
         void OnEnableCursor(InputAction.CallbackContext context);

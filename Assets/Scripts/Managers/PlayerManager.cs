@@ -10,12 +10,14 @@ public class PlayerManager : NetworkBehaviour
     public static PlayerManager Instance { get; private set; }
 
     [SerializeField] private Transform playerPrefab;
-    public Dictionary<int, Player> Players = new Dictionary<int, Player>();
+    [SerializeField] private Transform aiPrefab;
+    private NetworkList<PlayerInfo> Players;
     public int numPlayers = 0;
 
     private void Awake()
     {
         Instance = this;
+        Players = new NetworkList<PlayerInfo>();
     }
 
     public override void OnNetworkSpawn()
@@ -44,20 +46,13 @@ public class PlayerManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnPlayerServerRpc(ulong clientId, string playerName, int modelNum)
+    public void SpawnPlayerServerRpc(ulong clientId, PlayerInfo playerInfo)
     {
-        if (playerPrefab != null)
-        {
-            Transform playerTransform = Instantiate(playerPrefab);
-            playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-            Players.Add(numPlayers + 1, playerTransform.GetComponent<Player>());
-            numPlayers++;
-            playerTransform.GetComponent<Player>().InitializePlayerServerRpc(playerName, modelNum);
-        }
-        else
-        {
-            Debug.LogError("Player Prefab is not assigned!");
-        }
+        Debug.Log("Spawn player: " + clientId);
+        Players.Add(playerInfo);
+        numPlayers++;
+        Transform playerTransform = Instantiate(playerPrefab);
+        playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
     }
 
     /*
@@ -73,16 +68,15 @@ public class PlayerManager : NetworkBehaviour
         }
     }
     */
-    public int GetNumHumans()
+    public PlayerInfo GetPlayerInfoFromID(ulong clientId)
     {
-        int numHumans = 0;
-
-        foreach (Player player in Players.Values)
+        foreach (PlayerInfo playerData in Players)
         {
-            if (player.playerType == PlayerType.Player)
-                numHumans++;
+            if (playerData.clientId == clientId)
+                return playerData;
         }
-
-        return numHumans;
+        return default;
     }
+
+    public Transform GetAIPrefab() => aiPrefab;
 }

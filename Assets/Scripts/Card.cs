@@ -5,7 +5,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Card : MonoBehaviour, IInteractable
+public class Card : InteractableObject
 {
 
     [SerializeField] private Rank Rank;
@@ -20,19 +20,21 @@ public class Card : MonoBehaviour, IInteractable
 
     private void Start()
     {
-
+        interactType = InteractType.Card;
     }
 
-    public bool Highlight(GameObject player)
+    public override bool Highlight(GameObject player)
     {
         highlight.SetActive(true);
         return true;
     }
 
-    public void Unhighlight()
+    public override void Unhighlight()
     {
         highlight.SetActive(false);
     }
+
+    public override void Interact(NetworkObjectReference playerRef) => InteractServerRpc(playerRef);
 
     [ServerRpc(RequireOwnership = false)]
     public void InteractServerRpc(NetworkObjectReference playerRef)

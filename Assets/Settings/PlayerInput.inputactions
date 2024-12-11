@@ -42,6 +42,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "AlternateInteract",
+                    "type": "Button",
+                    "id": "e9ad33b3-99c5-4730-8092-a6d3fa315e36",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "ExitChair",
                     "type": "Button",
                     "id": "0574bb6f-e828-43a4-8435-6667d00fd4d3",
@@ -72,7 +81,7 @@
                     "name": "DisableCursor",
                     "type": "Button",
                     "id": "79d2bfb0-27a0-4d77-835f-f3ffa3c904db",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -131,6 +140,17 @@
                     "processors": "",
                     "groups": "KeyboardMouse",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e22e2323-a8d1-419e-a0c6-e52d023f9561",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "AlternateInteract",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

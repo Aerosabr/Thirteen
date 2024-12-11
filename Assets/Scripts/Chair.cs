@@ -4,7 +4,7 @@ using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Chair : NetworkBehaviour, IInteractable
+public class Chair : InteractableObject
 {
     [SerializeField] private Outline outline;
     [SerializeField] private GameObject sitPoint;
@@ -12,15 +12,22 @@ public class Chair : NetworkBehaviour, IInteractable
     [SerializeField] private GameObject hand;
     [SerializeField] private int chairID;
 
-    public bool hasPlayer;
+    private Transform aiTransform;
+    private PlayerType playerType;
     public bool inRound = true;
 
     private float fanRadius = 0.15f;
     private float maxFanAngle = 67.5f;
 
-    public bool Highlight(GameObject player) 
+    private void Start()
     {
-        if (!hasPlayer)
+        interactType = InteractType.Chair;
+        playerType = PlayerType.None;
+    }
+
+    public override bool Highlight(GameObject player) 
+    {
+        if (playerType != PlayerType.Player)
         {
             outline.enabled = true;
             return true;
@@ -28,12 +35,14 @@ public class Chair : NetworkBehaviour, IInteractable
 
         return false;
     }
-    public void Unhighlight() { outline.enabled = false; }
+    public override void Unhighlight() { outline.enabled = false; }
+
+    public override void Interact(NetworkObjectReference playerRef) => InteractServerRpc(playerRef);
 
     [ServerRpc(RequireOwnership = false)]
     public void InteractServerRpc(NetworkObjectReference playerRef)
     {
-        if (!hasPlayer)
+        if (playerType != PlayerType.Player)
             InteractClientRpc(playerRef);
     }
 
@@ -43,7 +52,7 @@ public class Chair : NetworkBehaviour, IInteractable
         playerRef.TryGet(out NetworkObject playerObj);
         Player player = playerObj.GetComponent<Player>();
         player.GetComponent<Player>().SitOnChair(NetworkObject);
-        ToggleHasPlayer(true);
+        playerType = PlayerType.Player;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -55,7 +64,26 @@ public class Chair : NetworkBehaviour, IInteractable
         playerRef.TryGet(out NetworkObject playerObj);
         Player player = playerObj.GetComponent<Player>();
         player.GetComponent<Player>().ExitChair();
-        ToggleHasPlayer(false);
+        playerType = PlayerType.None;
+    }
+
+    [ServerRpc]
+    public void AlternateInteractServerRpc() => AlternateInteractClientRpc();
+
+    [ClientRpc]
+    private void AlternateInteractClientRpc()
+    {
+        if (playerType == PlayerType.AI)
+        {
+            Destroy(aiTransform);
+            playerType = PlayerType.None;
+        }
+        else
+        {
+            aiTransform = Instantiate(PlayerManager.Instance.GetAIPrefab());
+            aiTransform.GetComponent<AI>().SitOnChair(NetworkObject);
+            playerType = PlayerType.AI;
+        }
     }
 
     public GameObject GetSitPoint() => sitPoint;
@@ -119,11 +147,6 @@ public class Chair : NetworkBehaviour, IInteractable
         return cards;
     }
 
-    private void ToggleHasPlayer(bool toggle)
-    {
-        hasPlayer = toggle;
-    }
-
     public int GetChairID() => chairID;
-    public bool HasPlayer() => hasPlayer;
+    public PlayerType GetPlayerType() => playerType;
 }

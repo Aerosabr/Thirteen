@@ -9,8 +9,6 @@ public class Player : NetworkBehaviour
     protected int playerID;
     [SerializeField] protected PlayerVisual playerVisual;
 
-    [ServerRpc(RequireOwnership = false)]
-    public virtual void InitializePlayerServerRpc(string playerName, int modelNum) => Debug.Log("Base Player InitializePlayer");
     public virtual void SitOnChair(NetworkObjectReference chairRef) => Debug.Log("Base Player SitOnChair");
     public virtual void ExitChair() => Debug.Log("Base Player ExitChair");
     public virtual void CardThrown() => Debug.Log("Base Player CardThrown");
@@ -20,5 +18,6 @@ public class Player : NetworkBehaviour
 public enum PlayerType
 {
     AI,
-    Player
+    Player,
+    None
 }

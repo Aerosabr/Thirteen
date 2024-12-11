@@ -21,20 +21,13 @@ public class AI : Player
         transform.rotation = chair.GetSitPoint().transform.rotation;
         this.chair = chair;
 
+        playerVisual.LoadModel(Random.Range(0, 6));
         playerVisual.PlayAnimation("Sitting");
-    }
 
-    [ServerRpc(RequireOwnership = false)]
-    public override void InitializePlayerServerRpc(string playerName, int modelNums)
-    {
-        /*
-        playerID = playerPos;
+        playerID = chair.GetChairID();
 
         Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
         Table.Instance.OnCardsDealt += Table_OnCardsDealt;
-
-        Table.Instance.GetChair(playerPos).InteractServerRpc(NetworkObject);
-        */
     }
 
     private void Table_OnCardsDealt(object sender, System.EventArgs e)

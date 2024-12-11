@@ -34,14 +34,14 @@ public class PlayerSlot : MonoBehaviour
 
     private void OnPlayerNameChanged(string newName)
     {
-        PlayerData.Instance.playerName = newName;
+        PlayerData.Instance.playerInfo.playerName = newName;
     }
 
     private void ChangeModelNum(int newModelNum)
     {
         modelNum = newModelNum;
         playerVisual.LoadModel(modelNum);
-        PlayerData.Instance.modelNum = newModelNum;
+        PlayerData.Instance.playerInfo.modelNum = newModelNum;
     }
 
     private void ChangeModel(int direction)

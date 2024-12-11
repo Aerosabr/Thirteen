@@ -1,4 +1,5 @@
 using System;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,8 +7,7 @@ using UnityEngine.SceneManagement;
 public class PlayerData : NetworkBehaviour
 {
     public static PlayerData Instance { get; private set; }
-    public string playerName;
-    public int modelNum;
+    public PlayerInfo playerInfo;
 
     private void Awake()
     {
@@ -16,8 +16,39 @@ public class PlayerData : NetworkBehaviour
         DontDestroyOnLoad(this);
     }
 
+    private void Start()
+    {
+        playerInfo.playerName = "Player";
+    }
+
     public void SpawnCharacter(ulong clientId)
     {
-        PlayerManager.Instance.SpawnPlayerServerRpc(clientId, playerName, modelNum);
+        playerInfo.clientId = clientId;
+        PlayerManager.Instance.SpawnPlayerServerRpc(clientId, playerInfo);
     }
+}
+
+[System.Serializable]
+public struct PlayerInfo : IEquatable<PlayerInfo>, INetworkSerializable
+{
+    public ulong clientId;
+    public FixedString64Bytes playerName;
+    public int modelNum;
+
+
+    public bool Equals(PlayerInfo other)
+    {
+        return
+            clientId == other.clientId &&
+            playerName == other.playerName &&
+            modelNum == other.modelNum;
+    }
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref clientId);
+        serializer.SerializeValue(ref playerName);
+        serializer.SerializeValue(ref modelNum);
+    }
+
 }

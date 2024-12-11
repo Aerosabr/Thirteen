@@ -10,6 +10,7 @@ public class GameInput : MonoBehaviour
     public event EventHandler OnInteractAction;
     public event EventHandler OnExitChairAction;
     public event EventHandler OnPlayCardsAction;
+    public event EventHandler OnAlternateInteractAction;
 
     private void Awake()
     {
@@ -20,6 +21,7 @@ public class GameInput : MonoBehaviour
         playerInput.Player.Interact.performed += Interact_performed;
         playerInput.Player.ExitChair.performed += ExitChair_performed;
         playerInput.Player.PlayCards.performed += PlayCards_performed;
+        playerInput.Player.AlternateInteract.performed += AlternateInteract_performed;
     }
 
     private void OnDestroy()
@@ -42,6 +44,11 @@ public class GameInput : MonoBehaviour
     private void PlayCards_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         OnPlayCardsAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void AlternateInteract_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        OnAlternateInteractAction?.Invoke(this, EventArgs.Empty);
     }
 
     public Vector2 GetMovementVector()

@@ -25,7 +25,7 @@ public class StartNextGameUI : MonoBehaviour
     {
         awaitingReady = true;
         text.gameObject.SetActive(true);
-        text.text = $"Press SPACE To Start Next Game: {playersReady.Count}/{PlayerManager.Instance.GetNumHumans()}";
+        text.text = $"Press SPACE To Start Next Game: {playersReady.Count}/{PlayerManager.Instance.numPlayers}";
     }
 
     public void ReadyUp(Player player)
@@ -35,9 +35,9 @@ public class StartNextGameUI : MonoBehaviour
         else
             playersReady.Add(player);
 
-        text.text = $"Press SPACE To Start Next Game: {playersReady.Count}/{PlayerManager.Instance.GetNumHumans()}";
+        text.text = $"Press SPACE To Start Next Game: {playersReady.Count}/{PlayerManager.Instance.numPlayers}";
 
-        if (playersReady.Count == PlayerManager.Instance.GetNumHumans())
+        if (playersReady.Count == PlayerManager.Instance.numPlayers)
         {
             Table.Instance.StartGame();
             awaitingReady = false;

@@ -156,7 +156,7 @@ public class Table : NetworkBehaviour
 
         lastPlayerPlayed = 0;
 
-        numPlayers = PlayerManager.Instance.Players.Count;
+        numPlayers = PlayerManager.Instance.numPlayers;
 
         lowestCardValue = 0;
 
@@ -273,7 +273,7 @@ public class Table : NetworkBehaviour
 
     private void GetNextPlayerInRound()
     {
-        int maxPlayers = PlayerManager.Instance.Players.Count;
+        int maxPlayers = PlayerManager.Instance.numPlayers;
         for (int i = 0; i < maxPlayers; i++)
         {
             currentPlayer = GetNextInRotation();
@@ -309,7 +309,7 @@ public class Table : NetworkBehaviour
     
     private int GetNextInRotation()
     {
-        int playerCount = PlayerManager.Instance.Players.Count;
+        int playerCount = PlayerManager.Instance.numPlayers;
 
         if (GameSettings.Instance.turnOrder == TurnOrder.Clockwise)
             return (currentPlayer % playerCount) + 1;

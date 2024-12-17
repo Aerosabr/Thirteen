@@ -46,7 +46,6 @@ public class Human : Player
     private bool canLook;
     private bool cursorEnabled;
     private PlayerState playerState;
-    [SerializeField] private PlayerInfo playerInfo;
 
     [SerializeField] private TextMeshProUGUI nametag;
     [SerializeField] private GameObject interactObject;
@@ -77,6 +76,7 @@ public class Human : Player
         canLook = true;
         canInteract = true;
         interactObject = null;
+
         playerVisual.LoadModel(playerInfo.modelNum);
         nametag.text = playerInfo.playerName.ToString();
         /*

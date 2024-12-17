@@ -8,11 +8,13 @@ public class Player : NetworkBehaviour
     protected Chair chair;
     protected int playerID;
     [SerializeField] protected PlayerVisual playerVisual;
+    [SerializeField] protected PlayerInfo playerInfo;
 
     public virtual void SitOnChair(NetworkObjectReference chairRef) => Debug.Log("Base Player SitOnChair");
     public virtual void ExitChair() => Debug.Log("Base Player ExitChair");
     public virtual void CardThrown() => Debug.Log("Base Player CardThrown");
     public int GetPlayerID() => playerID;
+    public PlayerInfo GetPlayerInfo() => playerInfo;
 }
 
 public enum PlayerType

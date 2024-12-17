@@ -11,7 +11,7 @@ public class PlayerManager : NetworkBehaviour
 
     [SerializeField] private Transform playerPrefab;
     [SerializeField] private Transform aiPrefab;
-    private NetworkList<PlayerInfo> Players;
+    public NetworkList<PlayerInfo> Players;
     public int numPlayers = 0;
 
     private void Awake()
@@ -41,6 +41,7 @@ public class PlayerManager : NetworkBehaviour
     [ClientRpc]
     private void PlayerConnectedClientRpc(ulong clientId)
     {
+        Debug.Log("Player connected");
         if (NetworkManager.Singleton.LocalClientId == clientId)
             PlayerData.Instance.SpawnCharacter(clientId);
     }
@@ -48,11 +49,12 @@ public class PlayerManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void SpawnPlayerServerRpc(ulong clientId, PlayerInfo playerInfo)
     {
-        Debug.Log("Spawn player: " + clientId);
+        Debug.Log("Adding player " + clientId + ": " + playerInfo.playerName + " " + playerInfo.modelNum + " " + playerInfo.clientId);
         Players.Add(playerInfo);
         numPlayers++;
         Transform playerTransform = Instantiate(playerPrefab);
         playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+        
     }
 
     /*

@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Unity.Netcode;
+using UnityEngine.UI;
 
-public class PlayerOrderUI : MonoBehaviour
+public class PlayerOrderUI : NetworkBehaviour
 {
     public static PlayerOrderUI Instance { get; private set; }
 
@@ -11,7 +13,8 @@ public class PlayerOrderUI : MonoBehaviour
     [SerializeField] private List<GameObject> skippedShadow;
     [SerializeField] private List<TextMeshProUGUI> nameText;
     [SerializeField] private List<TextMeshProUGUI> placementText;
-
+    [SerializeField] private List<Sprite> characterBackgrounds;
+    [SerializeField] private List<Image> playerBackground;
     private void Awake()
     {
         Instance = this;
@@ -51,6 +54,37 @@ public class PlayerOrderUI : MonoBehaviour
 
         foreach (GameObject shadow in skippedShadow)
             shadow.SetActive(false);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ChairStateChangedServerRpc()
+    {
+        ChairStateChangedClientRpc();
+    }
+
+    [ClientRpc]
+    private void ChairStateChangedClientRpc()
+    {
+        for (int i = 1; i <= 4; i++)
+        {
+            Chair chair = Table.Instance.GetChair(i);
+            switch (chair.GetPlayerType())
+            {
+                case PlayerType.AI:
+                    nameText[i - 1].text = "AI";
+                    playerBackground[i - 1].gameObject.SetActive(false);
+                    break;
+                case PlayerType.Player:
+                    nameText[i - 1].text = PlayerManager.Instance.Players[(int)chair.playerID].playerName.ToString();
+                    playerBackground[i - 1].gameObject.SetActive(true);
+                    playerBackground[i - 1].sprite = characterBackgrounds[PlayerManager.Instance.Players[(int)chair.playerID].modelNum];
+                    break;
+                case PlayerType.None:
+                    nameText[i - 1].text = "";
+                    playerBackground[i - 1].gameObject.SetActive(false);
+                    break;
+            }
+        }
     }
 
     public void Show() => gameObject.SetActive(true);

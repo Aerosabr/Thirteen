@@ -24,6 +24,7 @@ public class PlayerData : NetworkBehaviour
     public void SpawnCharacter(ulong clientId)
     {
         playerInfo.clientId = clientId;
+        Debug.Log(playerInfo.playerName);
         PlayerManager.Instance.SpawnPlayerServerRpc(clientId, playerInfo);
     }
 }

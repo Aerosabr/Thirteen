@@ -15,6 +15,7 @@ public class Chair : InteractableObject
     private Transform aiTransform;
     private PlayerType playerType;
     public bool inRound = true;
+    public ulong playerID = ulong.MaxValue;
 
     private float fanRadius = 0.15f;
     private float maxFanAngle = 67.5f;
@@ -43,16 +44,20 @@ public class Chair : InteractableObject
     public void InteractServerRpc(NetworkObjectReference playerRef)
     {
         if (playerType != PlayerType.Player)
+        {
             InteractClientRpc(playerRef);
+        }
     }
 
     [ClientRpc]
     private void InteractClientRpc(NetworkObjectReference playerRef)
     {
         playerRef.TryGet(out NetworkObject playerObj);
+        playerID = playerObj.OwnerClientId;
         Player player = playerObj.GetComponent<Player>();
         player.GetComponent<Player>().SitOnChair(NetworkObject);
         playerType = PlayerType.Player;
+        PlayerOrderUI.Instance.ChairStateChangedServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -62,9 +67,11 @@ public class Chair : InteractableObject
     private void PlayerExitClientRpc(NetworkObjectReference playerRef)
     {
         playerRef.TryGet(out NetworkObject playerObj);
+        playerID = ulong.MaxValue;
         Player player = playerObj.GetComponent<Player>();
         player.GetComponent<Player>().ExitChair();
         playerType = PlayerType.None;
+        PlayerOrderUI.Instance.ChairStateChangedServerRpc();
     }
 
     [ServerRpc]
@@ -77,12 +84,17 @@ public class Chair : InteractableObject
         {
             Destroy(aiTransform);
             playerType = PlayerType.None;
+            PlayerOrderUI.Instance.ChairStateChangedServerRpc();
         }
         else
         {
             aiTransform = Instantiate(PlayerManager.Instance.GetAIPrefab());
             aiTransform.GetComponent<AI>().SitOnChair(NetworkObject);
+            PlayerInfo aiInfo = new PlayerInfo();
+            aiInfo.playerName = "AI";
+            aiInfo.modelNum = aiTransform.GetComponent<AI>().modelNum;
             playerType = PlayerType.AI;
+            PlayerOrderUI.Instance.ChairStateChangedServerRpc();
         }
     }
 

@@ -12,6 +12,8 @@ public class AI : Player
     [SerializeField] private List<CardData> twos = new List<CardData>();
     [SerializeField] private List<CardData> cardsToBePlayed = new List<CardData>();
 
+    public int modelNum;
+
     public override void SitOnChair(NetworkObjectReference chairRef)
     {
         chairRef.TryGet(out NetworkObject chairObj);
@@ -21,7 +23,8 @@ public class AI : Player
         transform.rotation = chair.GetSitPoint().transform.rotation;
         this.chair = chair;
 
-        playerVisual.LoadModel(Random.Range(0, 6));
+        modelNum = Random.Range(0, 6);
+        playerVisual.LoadModel(modelNum);
         playerVisual.PlayAnimation("Sitting");
 
         playerID = chair.GetChairID();

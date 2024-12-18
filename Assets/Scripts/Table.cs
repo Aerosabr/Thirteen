@@ -20,6 +20,7 @@ public class Table : NetworkBehaviour
     [SerializeField] private List<Chair> Chairs;
 
     private List<Scores> scores = new List<Scores>();
+    private Dictionary<int, Transform> spawnedAI = new Dictionary<int, Transform>();
 
     private CardType currentType = CardType.Any;
     private List<Card> cardsInPlay = new List<Card>();
@@ -495,10 +496,26 @@ public class Table : NetworkBehaviour
     }
     #endregion
 
+    #region AI Spawning
+    public void SpawnAI(int chairID)
+    {
+        Transform aiTransform = Instantiate(PlayerManager.Instance.GetAIPrefab());
+        aiTransform.GetComponent<AI>().SitOnChair(Chairs[chairID - 1].NetworkObject);
+        spawnedAI.Add(chairID, aiTransform);
+    }
+
+    public void RemoveAI(int chairID)
+    {
+        Destroy(spawnedAI[chairID].gameObject);
+        spawnedAI.Remove(chairID);
+    }
+    #endregion
+
     public Chair GetChair(int chairNum) => Chairs[chairNum - 1];
     public CardType GetCurrentType() => currentType;
     public List<Card> GetCardsInPlay() => cardsInPlay;
     public int GetMaxCards() => maxCards;
+    public Transform GetAIOnChair(int chairID) => spawnedAI[chairID];
     public int GetNumberCardsPlayed() => Deck.transform.childCount - (52 % maxCards);
 }
 

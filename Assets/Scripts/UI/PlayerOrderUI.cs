@@ -72,7 +72,8 @@ public class PlayerOrderUI : NetworkBehaviour
             {
                 case PlayerType.AI:
                     nameText[i - 1].text = "AI";
-                    playerBackground[i - 1].gameObject.SetActive(false);
+                    playerBackground[i - 1].gameObject.SetActive(true);
+                    playerBackground[i - 1].sprite = characterBackgrounds[Table.Instance.GetAIOnChair(i).GetComponent<AI>().modelNum];
                     break;
                 case PlayerType.Player:
                     nameText[i - 1].text = PlayerManager.Instance.Players[(int)chair.playerID].playerName.ToString();

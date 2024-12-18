@@ -12,7 +12,6 @@ public class Chair : InteractableObject
     [SerializeField] private GameObject hand;
     [SerializeField] private int chairID;
 
-    private Transform aiTransform;
     private PlayerType playerType;
     public bool inRound = true;
     public ulong playerID = ulong.MaxValue;
@@ -82,17 +81,13 @@ public class Chair : InteractableObject
     {
         if (playerType == PlayerType.AI)
         {
-            Destroy(aiTransform);
+            Table.Instance.RemoveAI(chairID);
             playerType = PlayerType.None;
             PlayerOrderUI.Instance.ChairStateChangedServerRpc();
         }
         else
         {
-            aiTransform = Instantiate(PlayerManager.Instance.GetAIPrefab());
-            aiTransform.GetComponent<AI>().SitOnChair(NetworkObject);
-            PlayerInfo aiInfo = new PlayerInfo();
-            aiInfo.playerName = "AI";
-            aiInfo.modelNum = aiTransform.GetComponent<AI>().modelNum;
+            Table.Instance.SpawnAI(chairID);
             playerType = PlayerType.AI;
             PlayerOrderUI.Instance.ChairStateChangedServerRpc();
         }

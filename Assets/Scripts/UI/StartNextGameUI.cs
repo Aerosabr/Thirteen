@@ -9,7 +9,6 @@ public class StartNextGameUI : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI text;
     private List<Player> playersReady = new List<Player>();
-    private bool awaitingReady;
 
     private void Awake()
     {
@@ -21,32 +20,19 @@ public class StartNextGameUI : MonoBehaviour
         Hide();
     }
 
-    public void StartUI()
+    public void UpdateUI(int playersReady, int maxPlayers)
     {
-        awaitingReady = true;
-        text.gameObject.SetActive(true);
-        text.text = $"Press SPACE To Start Next Game: {playersReady.Count}/{PlayerManager.Instance.numPlayers}";
-    }
-
-    public void ReadyUp(Player player)
-    {
-        if (playersReady.Contains(player))
-            playersReady.Remove(player);
-        else
-            playersReady.Add(player);
-
-        text.text = $"Press SPACE To Start Next Game: {playersReady.Count}/{PlayerManager.Instance.numPlayers}";
-
-        if (playersReady.Count == PlayerManager.Instance.numPlayers)
+        Debug.Log(playersReady + " " + maxPlayers);
+        if (playersReady == maxPlayers)
         {
-            Table.Instance.StartGame();
-            awaitingReady = false;
-            playersReady.Clear();
-            text.gameObject.SetActive(false);
+            Hide();
+            return;
         }
+
+        text.text = $"Press SPACE To Start Next Game: {playersReady}/{maxPlayers}";
+        Show();
     }
 
-    public bool GetAwaitingReady() => awaitingReady;
     public void Show() => gameObject.SetActive(true);
     public void Hide() => gameObject.SetActive(false);
 }

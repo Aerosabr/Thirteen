@@ -19,10 +19,11 @@ public class Table : NetworkBehaviour
     [SerializeField] private GameObject Deck;
     [SerializeField] private List<Chair> Chairs;
 
+    private List<int> playersReady = new List<int>();
     private List<Scores> scores = new List<Scores>();
     private Dictionary<int, Transform> spawnedAI = new Dictionary<int, Transform>();
 
-    private CardType currentType = CardType.Any;
+    private CardType currentType = CardType.None;
     private List<Card> cardsInPlay = new List<Card>();
     private int currentPlayer;
     private int lastPlayerPlayed;
@@ -133,6 +134,31 @@ public class Table : NetworkBehaviour
     #endregion
 
     #region Game Management
+    [ServerRpc(RequireOwnership = false)]
+    public void ReadyUpServerRpc(int chairID)
+    {
+        ReadyUpClientRpc(chairID);
+
+        if (playersReady.Count == GetNumHumansAtTable())
+        {
+            //StartGame();
+
+            Debug.Log("Starting Game");
+            playersReady.Clear();
+        }
+    }
+
+    [ClientRpc]
+    private void ReadyUpClientRpc(int chairID)
+    {
+        if (playersReady.Contains(chairID))
+            playersReady.Remove(chairID);
+        else
+            playersReady.Add(chairID);
+
+        StartNextGameUI.Instance.UpdateUI(playersReady.Count, GetNumHumansAtTable());
+    }
+
     public void StartGame()
     {
         ResetGameState();
@@ -157,7 +183,7 @@ public class Table : NetworkBehaviour
 
         lastPlayerPlayed = 0;
 
-        numPlayers = PlayerManager.Instance.numPlayers;
+        numPlayers = GetNumPlayersAtTable();
 
         lowestCardValue = 0;
 
@@ -171,7 +197,7 @@ public class Table : NetworkBehaviour
 
     private void EndGame()
     {
-        StartNextGameUI.Instance.StartUI();
+        StartNextGameUI.Instance.UpdateUI(playersReady.Count, GetNumHumansAtTable());
     }
 
     private void EndRound()
@@ -210,6 +236,44 @@ public class Table : NetworkBehaviour
         }
         else
             DetermineCurrentPlayer();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ChairStateChangedServerRpc()
+    {
+        ChairStateChangedClientRpc();
+        PlayerOrderUI.Instance.ChairStateChangedServerRpc();
+    }
+
+    [ClientRpc]
+    private void ChairStateChangedClientRpc()
+    {
+        playersReady.Clear();
+        StartNextGameUI.Instance.UpdateUI(playersReady.Count, GetNumHumansAtTable());
+    }
+
+    private int GetNumPlayersAtTable()
+    {
+        int numPlayers = 0;
+        foreach (Chair chair in Chairs)
+        {
+            if (chair.GetPlayerType() == PlayerType.Player || chair.GetPlayerType() == PlayerType.AI)
+                numPlayers++;
+        }
+
+        return numPlayers;
+    }
+
+    private int GetNumHumansAtTable()
+    {
+        int numHumans = 0;
+        foreach (Chair chair in Chairs)
+        {
+            if (chair.GetPlayerType() == PlayerType.Player)
+                numHumans++;
+        }
+
+        return numHumans;
     }
     #endregion
 
@@ -274,7 +338,7 @@ public class Table : NetworkBehaviour
 
     private void GetNextPlayerInRound()
     {
-        int maxPlayers = PlayerManager.Instance.numPlayers;
+        int maxPlayers = GetNumPlayersAtTable();
         for (int i = 0; i < maxPlayers; i++)
         {
             currentPlayer = GetNextInRotation();
@@ -310,7 +374,7 @@ public class Table : NetworkBehaviour
     
     private int GetNextInRotation()
     {
-        int playerCount = PlayerManager.Instance.numPlayers;
+        int playerCount = GetNumPlayersAtTable();
 
         if (GameSettings.Instance.turnOrder == TurnOrder.Clockwise)
             return (currentPlayer % playerCount) + 1;
@@ -511,6 +575,7 @@ public class Table : NetworkBehaviour
     }
     #endregion
 
+    public bool GetAwaitingReady() => currentType == CardType.None;
     public Chair GetChair(int chairNum) => Chairs[chairNum - 1];
     public CardType GetCurrentType() => currentType;
     public List<Card> GetCardsInPlay() => cardsInPlay;

@@ -12,7 +12,7 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField] private Transform playerPrefab;
     [SerializeField] private Transform aiPrefab;
     public NetworkList<PlayerInfo> Players;
-    public int numPlayers = 0;
+    //public int numPlayers = 0;
 
     private void Awake()
     {
@@ -51,7 +51,7 @@ public class PlayerManager : NetworkBehaviour
     {
         Debug.Log("Adding player " + clientId + ": " + playerInfo.playerName + " " + playerInfo.modelNum + " " + playerInfo.clientId);
         Players.Add(playerInfo);
-        numPlayers++;
+        //numPlayers++;
         Transform playerTransform = Instantiate(playerPrefab);
         playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
         

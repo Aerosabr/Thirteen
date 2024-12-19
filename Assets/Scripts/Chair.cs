@@ -18,7 +18,6 @@ public class Chair : InteractableObject
     public bool inRound = true;
     public ulong playerID = ulong.MaxValue;
     private bool canPlay = false;
-    private bool isReady = false;
     private Player player;
     [SerializeField] private List<Card> selectedCards;
 
@@ -51,6 +50,7 @@ public class Chair : InteractableObject
         if (playerType != PlayerType.Player)
         {
             InteractClientRpc(playerRef);
+            Table.Instance.ChairStateChangedServerRpc();
         }
     }
 
@@ -63,13 +63,10 @@ public class Chair : InteractableObject
         player.GetComponent<Player>().SitOnChair(NetworkObject);
         playerType = PlayerType.Player;
         player.GetComponent<Human>().OnSpaceBarPressed += Human_OnSpaceBarPressed;
-        PlayerOrderUI.Instance.ChairStateChangedServerRpc();
     }
 
     private void Human_OnSpaceBarPressed(object sender, System.EventArgs e)
     {
-        player.GetComponent<Human>().ThrowingCardServerRpc();
-
         if (canPlay)
         {
             if (selectedCards.Count == 0)
@@ -87,25 +84,26 @@ public class Chair : InteractableObject
             }
         }
 
-        /*
-        if (StartNextGameUI.Instance.GetAwaitingReady())
-            StartNextGameUI.Instance.ReadyUp(this);
-        */
+        
+        if (Table.Instance.GetAwaitingReady())
+            Table.Instance.ReadyUpServerRpc(chairID);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void PlayerExitServerRpc() => PlayerExitClientRpc();
+    public void PlayerExitServerRpc()
+    {
+        PlayerExitClientRpc();
+        Table.Instance.ChairStateChangedServerRpc();
+    }
 
     [ClientRpc]
     private void PlayerExitClientRpc()
     {
-        isReady = false;
         playerID = ulong.MaxValue;
         player.GetComponent<Player>().ExitChair();
         playerType = PlayerType.None;
         player.GetComponent<Human>().OnSpaceBarPressed -= Human_OnSpaceBarPressed;
         player = null;
-        PlayerOrderUI.Instance.ChairStateChangedServerRpc();
     }
 
     [ServerRpc]
@@ -189,7 +187,6 @@ public class Chair : InteractableObject
         return cards;
     }
 
-    public bool GetReadyState() => isReady;
     public int GetChairID() => chairID;
     public PlayerType GetPlayerType() => playerType;
 }

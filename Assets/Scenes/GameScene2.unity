@@ -978,6 +978,7 @@ MonoBehaviour:
   chairID: 1
   inRound: 1
   playerID: 18446744073709551615
+  selectedCards: []
 --- !u!114 &217157704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1246,6 +1247,7 @@ MonoBehaviour:
   chairID: 3
   inRound: 1
   playerID: 18446744073709551615
+  selectedCards: []
 --- !u!64 &272660159
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3310,7 +3312,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &544446414
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3399,7 +3401,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -7978,6 +7980,7 @@ MonoBehaviour:
   chairID: 2
   inRound: 1
   playerID: 18446744073709551615
+  selectedCards: []
 --- !u!64 &1031968552
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -11021,7 +11024,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 637855157820357929, guid: bbc78df4c13f362488122e1d62a96146, type: 3}
   aiPrefab: {fileID: 8577213869083456516, guid: 2475a821642fda847a9503a7f2100681, type: 3}
-  numPlayers: 0
 --- !u!4 &1384503206
 Transform:
   m_ObjectHideFlags: 0
@@ -16606,6 +16608,7 @@ MonoBehaviour:
   chairID: 4
   inRound: 1
   playerID: 18446744073709551615
+  selectedCards: []
 --- !u!64 &1991487317
 MeshCollider:
   m_ObjectHideFlags: 0

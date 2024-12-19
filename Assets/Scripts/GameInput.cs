@@ -9,7 +9,7 @@ public class GameInput : MonoBehaviour
 
     public event EventHandler OnInteractAction;
     public event EventHandler OnExitChairAction;
-    public event EventHandler OnPlayCardsAction;
+    public event EventHandler OnSpaceBarAction;
     public event EventHandler OnAlternateInteractAction;
 
     private void Awake()
@@ -20,7 +20,7 @@ public class GameInput : MonoBehaviour
         playerInput.Player.Enable();
         playerInput.Player.Interact.performed += Interact_performed;
         playerInput.Player.ExitChair.performed += ExitChair_performed;
-        playerInput.Player.PlayCards.performed += PlayCards_performed;
+        playerInput.Player.SpaceBar.performed += SpaceBar_performed;
         playerInput.Player.AlternateInteract.performed += AlternateInteract_performed;
     }
 
@@ -41,9 +41,9 @@ public class GameInput : MonoBehaviour
         OnExitChairAction?.Invoke(this, EventArgs.Empty);
     }
 
-    private void PlayCards_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void SpaceBar_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        OnPlayCardsAction?.Invoke(this, EventArgs.Empty);
+        OnSpaceBarAction?.Invoke(this, EventArgs.Empty);
     }
 
     private void AlternateInteract_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)

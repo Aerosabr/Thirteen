@@ -82,10 +82,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""PlayCards"",
+                    ""name"": ""SpaceBar"",
                     ""type"": ""Button"",
                     ""id"": ""fa0bdb57-09fd-4512-bfef-e14082ba397c"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -194,7 +194,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""PlayCards"",
+                    ""action"": ""SpaceBar"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -336,7 +336,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_AlternateInteract = m_Player.FindAction("AlternateInteract", throwIfNotFound: true);
         m_Player_ExitChair = m_Player.FindAction("ExitChair", throwIfNotFound: true);
-        m_Player_PlayCards = m_Player.FindAction("PlayCards", throwIfNotFound: true);
+        m_Player_SpaceBar = m_Player.FindAction("SpaceBar", throwIfNotFound: true);
         m_Player_EnableCursor = m_Player.FindAction("EnableCursor", throwIfNotFound: true);
         m_Player_DisableCursor = m_Player.FindAction("DisableCursor", throwIfNotFound: true);
     }
@@ -411,7 +411,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_AlternateInteract;
     private readonly InputAction m_Player_ExitChair;
-    private readonly InputAction m_Player_PlayCards;
+    private readonly InputAction m_Player_SpaceBar;
     private readonly InputAction m_Player_EnableCursor;
     private readonly InputAction m_Player_DisableCursor;
     public struct PlayerActions
@@ -424,7 +424,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @AlternateInteract => m_Wrapper.m_Player_AlternateInteract;
         public InputAction @ExitChair => m_Wrapper.m_Player_ExitChair;
-        public InputAction @PlayCards => m_Wrapper.m_Player_PlayCards;
+        public InputAction @SpaceBar => m_Wrapper.m_Player_SpaceBar;
         public InputAction @EnableCursor => m_Wrapper.m_Player_EnableCursor;
         public InputAction @DisableCursor => m_Wrapper.m_Player_DisableCursor;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -454,9 +454,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @ExitChair.started += instance.OnExitChair;
             @ExitChair.performed += instance.OnExitChair;
             @ExitChair.canceled += instance.OnExitChair;
-            @PlayCards.started += instance.OnPlayCards;
-            @PlayCards.performed += instance.OnPlayCards;
-            @PlayCards.canceled += instance.OnPlayCards;
+            @SpaceBar.started += instance.OnSpaceBar;
+            @SpaceBar.performed += instance.OnSpaceBar;
+            @SpaceBar.canceled += instance.OnSpaceBar;
             @EnableCursor.started += instance.OnEnableCursor;
             @EnableCursor.performed += instance.OnEnableCursor;
             @EnableCursor.canceled += instance.OnEnableCursor;
@@ -485,9 +485,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @ExitChair.started -= instance.OnExitChair;
             @ExitChair.performed -= instance.OnExitChair;
             @ExitChair.canceled -= instance.OnExitChair;
-            @PlayCards.started -= instance.OnPlayCards;
-            @PlayCards.performed -= instance.OnPlayCards;
-            @PlayCards.canceled -= instance.OnPlayCards;
+            @SpaceBar.started -= instance.OnSpaceBar;
+            @SpaceBar.performed -= instance.OnSpaceBar;
+            @SpaceBar.canceled -= instance.OnSpaceBar;
             @EnableCursor.started -= instance.OnEnableCursor;
             @EnableCursor.performed -= instance.OnEnableCursor;
             @EnableCursor.canceled -= instance.OnEnableCursor;
@@ -555,7 +555,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnAlternateInteract(InputAction.CallbackContext context);
         void OnExitChair(InputAction.CallbackContext context);
-        void OnPlayCards(InputAction.CallbackContext context);
+        void OnSpaceBar(InputAction.CallbackContext context);
         void OnEnableCursor(InputAction.CallbackContext context);
         void OnDisableCursor(InputAction.CallbackContext context);
     }

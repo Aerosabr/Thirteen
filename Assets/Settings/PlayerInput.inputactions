@@ -60,10 +60,10 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "PlayCards",
+                    "name": "SpaceBar",
                     "type": "Button",
                     "id": "fa0bdb57-09fd-4512-bfef-e14082ba397c",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -172,7 +172,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "PlayCards",
+                    "action": "SpaceBar",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

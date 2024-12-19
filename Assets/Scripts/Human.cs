@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using Cinemachine;
 using Unity.Netcode;
 using TMPro;
+using System;
 
 [RequireComponent(typeof(CharacterController))]
 public class Human : Player
@@ -40,6 +41,8 @@ public class Human : Player
     private bool isSprinting;
     #endregion
 
+    public event EventHandler OnSpaceBarPressed;
+
     private bool canPlay;
     public bool canInteract;
     public bool canMove;
@@ -60,7 +63,7 @@ public class Human : Player
     {
         GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
         GameInput.Instance.OnExitChairAction += GameInput_OnExitChairAction;
-        GameInput.Instance.OnPlayCardsAction += GameInput_OnPlayCardsAction;
+        GameInput.Instance.OnSpaceBarAction += GameInput_OnSpaceBarAction;
         if (IsServer)
             GameInput.Instance.OnAlternateInteractAction += GameInput_OnAlternateInteractAction;
     }
@@ -265,31 +268,13 @@ public class Human : Player
         if (playerState != PlayerState.Sitting || !IsOwner)
             return;
 
-        chair.PlayerExitServerRpc(NetworkObject);
+        chair.PlayerExitServerRpc();
     }
 
-    private void GameInput_OnPlayCardsAction(object sender, System.EventArgs e)
+    private void GameInput_OnSpaceBarAction(object sender, System.EventArgs e)
     {
-        if (playerState == PlayerState.Sitting && canPlay && IsOwner)
-        {
-            if (selectedCards.Count == 0)
-            {
-                if (Table.Instance.GetCurrentType() != CardType.LowestThree && Table.Instance.GetCurrentType() != CardType.Any)
-                {
-                    Table.Instance.SkipTurn();
-                    canPlay = false;
-                }
-            }
-            else if (Table.Instance.CheckIfCardsValid(selectedCards))
-            {
-                canPlay = false;
-                canInteract = false;
-                playerVisual.PlayAnimation("Throwing");
-            }
-        }
-
-        if (StartNextGameUI.Instance.GetAwaitingReady())
-            StartNextGameUI.Instance.ReadyUp(this);
+        if (playerState == PlayerState.Sitting && IsOwner)
+            OnSpaceBarPressed?.Invoke(this, EventArgs.Empty);
     }
 
     private void GameInput_OnAlternateInteractAction(object sender, System.EventArgs e)
@@ -381,6 +366,16 @@ public class Human : Player
         canLook = true;
     }
     #endregion
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ThrowingCardServerRpc() => ThrowingCardClientRpc();
+
+    [ClientRpc]
+    private void ThrowingCardClientRpc()
+    {
+        canInteract = false;
+        playerVisual.PlayAnimation("Throwing");
+    }
 
     private void ToggleGameUI(bool toggle)
     {

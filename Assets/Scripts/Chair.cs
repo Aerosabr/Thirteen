@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class Chair : InteractableObject
 {
@@ -15,6 +17,10 @@ public class Chair : InteractableObject
     private PlayerType playerType;
     public bool inRound = true;
     public ulong playerID = ulong.MaxValue;
+    private bool canPlay = false;
+    private bool isReady = false;
+    private Player player;
+    [SerializeField] private List<Card> selectedCards;
 
     private float fanRadius = 0.15f;
     private float maxFanAngle = 67.5f;
@@ -53,23 +59,52 @@ public class Chair : InteractableObject
     {
         playerRef.TryGet(out NetworkObject playerObj);
         playerID = playerObj.OwnerClientId;
-        Player player = playerObj.GetComponent<Player>();
+        player = playerObj.GetComponent<Player>();
         player.GetComponent<Player>().SitOnChair(NetworkObject);
         playerType = PlayerType.Player;
+        player.GetComponent<Human>().OnSpaceBarPressed += Human_OnSpaceBarPressed;
         PlayerOrderUI.Instance.ChairStateChangedServerRpc();
     }
 
+    private void Human_OnSpaceBarPressed(object sender, System.EventArgs e)
+    {
+        player.GetComponent<Human>().ThrowingCardServerRpc();
+
+        if (canPlay)
+        {
+            if (selectedCards.Count == 0)
+            {
+                if (Table.Instance.GetCurrentType() != CardType.LowestThree && Table.Instance.GetCurrentType() != CardType.Any)
+                {
+                    Table.Instance.SkipTurn();
+                    canPlay = false;
+                }
+            }
+            else if (Table.Instance.CheckIfCardsValid(selectedCards))
+            {
+                canPlay = false;
+                player.GetComponent<Human>().ThrowingCardServerRpc();
+            }
+        }
+
+        /*
+        if (StartNextGameUI.Instance.GetAwaitingReady())
+            StartNextGameUI.Instance.ReadyUp(this);
+        */
+    }
+
     [ServerRpc(RequireOwnership = false)]
-    public void PlayerExitServerRpc(NetworkObjectReference playerRef) => PlayerExitClientRpc(playerRef);
+    public void PlayerExitServerRpc() => PlayerExitClientRpc();
 
     [ClientRpc]
-    private void PlayerExitClientRpc(NetworkObjectReference playerRef)
+    private void PlayerExitClientRpc()
     {
-        playerRef.TryGet(out NetworkObject playerObj);
+        isReady = false;
         playerID = ulong.MaxValue;
-        Player player = playerObj.GetComponent<Player>();
         player.GetComponent<Player>().ExitChair();
         playerType = PlayerType.None;
+        player.GetComponent<Human>().OnSpaceBarPressed -= Human_OnSpaceBarPressed;
+        player = null;
         PlayerOrderUI.Instance.ChairStateChangedServerRpc();
     }
 
@@ -154,6 +189,7 @@ public class Chair : InteractableObject
         return cards;
     }
 
+    public bool GetReadyState() => isReady;
     public int GetChairID() => chairID;
     public PlayerType GetPlayerType() => playerType;
 }

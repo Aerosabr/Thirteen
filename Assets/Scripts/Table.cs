@@ -145,6 +145,9 @@ public class Table : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void ReadyUpServerRpc(int chairID)
     {
+        if (GetNumPlayersAtTable() != 4)
+            return;
+        
         ReadyUpClientRpc(chairID);
 
         if (playersReady.Count == GetNumHumansAtTable())
@@ -162,7 +165,7 @@ public class Table : NetworkBehaviour
         else
             playersReady.Add(chairID);
 
-        StartNextGameUI.Instance.UpdateUI(playersReady.Count, GetNumHumansAtTable());
+        StartNextGameUI.Instance.UpdateUI();
     }
 
     [ServerRpc]
@@ -206,7 +209,7 @@ public class Table : NetworkBehaviour
 
     private void EndGame()
     {
-        StartNextGameUI.Instance.UpdateUI(playersReady.Count, GetNumHumansAtTable());
+        StartNextGameUI.Instance.UpdateUI();
     }
 
     private void EndRound()
@@ -257,11 +260,10 @@ public class Table : NetworkBehaviour
     [ClientRpc]
     private void ChairStateChangedClientRpc()
     {
-        playersReady.Clear();
-        StartNextGameUI.Instance.UpdateUI(playersReady.Count, GetNumHumansAtTable());
+        StartNextGameUI.Instance.UpdateUI();
     }
 
-    private int GetNumPlayersAtTable()
+    public int GetNumPlayersAtTable()
     {
         int numPlayers = 0;
         foreach (Chair chair in Chairs)
@@ -273,7 +275,7 @@ public class Table : NetworkBehaviour
         return numPlayers;
     }
 
-    private int GetNumHumansAtTable()
+    public int GetNumHumansAtTable()
     {
         int numHumans = 0;
         foreach (Chair chair in Chairs)
@@ -284,6 +286,8 @@ public class Table : NetworkBehaviour
 
         return numHumans;
     }
+
+    public int GetNumHumansReady() => playersReady.Count;
     #endregion
 
     #region Turn Management

@@ -241,7 +241,7 @@ public class Human : Player
             if (!interactObject && hit.collider.gameObject.GetComponent<InteractableObject>().Highlight(gameObject))
             {
                 interactObject = hit.collider.gameObject;
-                InteractionUI.Instance.Show(interactObject.GetComponent<InteractableObject>().GetInteractType(), IsServer);
+                InteractionUI.Instance.Show(interactObject.GetComponent<InteractableObject>(), IsServer);
             }
         }
         else if (interactObject)
@@ -317,9 +317,7 @@ public class Human : Player
         this.chair = chair;
         canMove = false;
 
-        interactableLayer = LayerMask.NameToLayer("Player" + playerID);
-
-        ToggleGameUI(true);
+        interactableLayer = LayerMask.NameToLayer("Player" + chair.GetChairID());
 
         ChangePlayerState(PlayerState.Sitting);
     }
@@ -334,8 +332,6 @@ public class Human : Player
         canMove = true;
 
         interactableLayer = LayerMask.NameToLayer("Interactable");
-
-        ToggleGameUI(false);
 
         ChangePlayerState(PlayerState.Idle);
     }
@@ -378,7 +374,8 @@ public class Human : Player
         playerVisual.PlayAnimation("Throwing");
     }
 
-    private void ToggleGameUI(bool toggle)
+    [ClientRpc]
+    public void ToggleGameUIClientRpc(bool toggle)
     {
         if (!IsOwner)
             return;

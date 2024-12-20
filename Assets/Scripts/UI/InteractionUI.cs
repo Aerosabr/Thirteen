@@ -12,10 +12,12 @@ public class InteractionUI : MonoBehaviour
         Instance = this;
     }
 
-    public void Show(InteractableObject.InteractType interactType, bool isServer)
+    public void Show(InteractableObject interactObject, bool isServer)
     {
         if (isServer)
+        {
             SpawnAI.SetActive(true);
+        }
 
         Sit.SetActive(true);
     }

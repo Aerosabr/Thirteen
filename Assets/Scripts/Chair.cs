@@ -48,10 +48,7 @@ public class Chair : InteractableObject
     public override void Interact(NetworkObjectReference playerRef)
     {
         if (playerType == PlayerType.None)
-        {
             InteractServerRpc(playerRef);
-            StartNextGameUI.Instance.Show();
-        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -59,6 +56,7 @@ public class Chair : InteractableObject
     {
         InteractClientRpc(playerRef);
         Table.Instance.ChairStateChangedServerRpc();
+        player.GetComponent<Human>().ToggleGameUIClientRpc(true);
     }
 
     [ClientRpc]
@@ -77,6 +75,7 @@ public class Chair : InteractableObject
     [ServerRpc(RequireOwnership = false)]
     public void PlayerExitServerRpc()
     {
+        player.GetComponent<Human>().ToggleGameUIClientRpc(false);
         PlayerExitClientRpc();
         Table.Instance.ChairStateChangedServerRpc();
     }
@@ -94,8 +93,11 @@ public class Chair : InteractableObject
 
     #region Spawn AI
     [ServerRpc]
-    public void SpawnAIServerRpc() => SpawnAIClientRpc();
-
+    public void SpawnAIServerRpc()
+    {
+        SpawnAIClientRpc();
+        Table.Instance.ChairStateChangedServerRpc();
+    }
     [ClientRpc]
     private void SpawnAIClientRpc()
     {
@@ -163,8 +165,8 @@ public class Chair : InteractableObject
             if (IsServer)
                 card.transform.SetParent(hand.transform);
 
+            card.gameObject.layer = LayerMask.NameToLayer("Player" + chairID);
             SortCardsByValue();
-            //ArrangeCardsInFan();
         }
         else
             Debug.Log("Object is not a card");
@@ -173,6 +175,8 @@ public class Chair : InteractableObject
     [ServerRpc(RequireOwnership = false)]
     public void ArrangeCardsInFanServerRpc()
     {
+        
+
         int childCount = hand.transform.childCount;
 
         if (childCount == 0)

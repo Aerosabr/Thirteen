@@ -20,16 +20,20 @@ public class StartNextGameUI : MonoBehaviour
         Hide();
     }
 
-    public void UpdateUI(int playersReady, int maxPlayers)
+    public void UpdateUI()
     {
-        Debug.Log(playersReady + " " + maxPlayers);
-        if (playersReady == maxPlayers)
+        Debug.Log(Table.Instance.GetNumPlayersAtTable() + "/4");
+        if (Table.Instance.GetNumPlayersAtTable() != 4)
+        {
+            text.text = $"Waiting for more players: {Table.Instance.GetNumPlayersAtTable()}/4";
+            return;
+        }
+        else if (Table.Instance.GetNumHumansReady() == Table.Instance.GetNumHumansAtTable())
         {
             Hide();
             return;
         }
-
-        text.text = $"Press SPACE To Start Next Game: {playersReady}/{maxPlayers}";
+        text.text = $"Press SPACE To Start Next Game: {Table.Instance.GetNumHumansReady()}/{Table.Instance.GetNumHumansAtTable()}";
     }
 
     public void Show() => gameObject.SetActive(true);

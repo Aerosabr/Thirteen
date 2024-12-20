@@ -30,7 +30,6 @@ public class StartNextGameUI : MonoBehaviour
         }
 
         text.text = $"Press SPACE To Start Next Game: {playersReady}/{maxPlayers}";
-        Show();
     }
 
     public void Show() => gameObject.SetActive(true);

@@ -269,6 +269,7 @@ public class Human : Player
             return;
 
         chair.PlayerExitServerRpc();
+        StartNextGameUI.Instance.Hide();
     }
 
     private void GameInput_OnSpaceBarAction(object sender, System.EventArgs e)
@@ -286,7 +287,7 @@ public class Human : Player
             interactObject.GetComponent<InteractableObject>().GetInteractType() == InteractableObject.InteractType.Chair)
         {
             if (interactObject.GetComponent<Chair>().GetPlayerType() != PlayerType.Player)
-                interactObject.GetComponent<Chair>().AlternateInteractServerRpc();
+                interactObject.GetComponent<Chair>().SpawnAIServerRpc();
         }
     }
     #endregion

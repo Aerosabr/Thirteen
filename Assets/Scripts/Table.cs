@@ -43,7 +43,8 @@ public class Table : NetworkBehaviour
     }
 
     #region Card Management
-    private void DealCards()
+    [ServerRpc]
+    private void DealCardsServerRpc()
     {
         int chairNum = 0;
 
@@ -56,7 +57,7 @@ public class Table : NetworkBehaviour
             Card.layer = LayerMask.NameToLayer("Player" + (chairNum + 1));
             chairNum = (chairNum < numPlayers - 1) ? chairNum + 1 : 0;
         }
-
+        return;
         OnCardsDealt?.Invoke(this, EventArgs.Empty);
     }
 
@@ -141,9 +142,7 @@ public class Table : NetworkBehaviour
 
         if (playersReady.Count == GetNumHumansAtTable())
         {
-            //StartGame();
-
-            Debug.Log("Starting Game");
+            StartGameServerRpc();
             playersReady.Clear();
         }
     }
@@ -159,11 +158,13 @@ public class Table : NetworkBehaviour
         StartNextGameUI.Instance.UpdateUI(playersReady.Count, GetNumHumansAtTable());
     }
 
-    public void StartGame()
+    [ServerRpc]
+    public void StartGameServerRpc()
     {
-        ResetGameState();
-        DealCards();
+        ResetGameStateClientRpc();
+        DealCardsServerRpc();
 
+        return;
         if (scores.Count > 0) // If there was a winner last round, give them free move
             SetBoardType(CardType.Any);
         else // First round of the session, lowest three goes first
@@ -174,7 +175,8 @@ public class Table : NetworkBehaviour
         DetermineCurrentPlayer();
     }
 
-    private void ResetGameState()
+    [ClientRpc]
+    private void ResetGameStateClientRpc()
     {
         foreach (Chair chair in Chairs)
             chair.inRound = true;

@@ -30,6 +30,7 @@ public class Chair : InteractableObject
         playerType = PlayerType.None;
     }
 
+    #region Object Highlighting
     public override bool Highlight(GameObject player) 
     {
         if (playerType != PlayerType.Player)
@@ -41,17 +42,23 @@ public class Chair : InteractableObject
         return false;
     }
     public override void Unhighlight() { outline.enabled = false; }
+    #endregion
 
-    public override void Interact(NetworkObjectReference playerRef) => InteractServerRpc(playerRef);
+    #region Sit on Chair
+    public override void Interact(NetworkObjectReference playerRef)
+    {
+        if (playerType == PlayerType.None)
+        {
+            InteractServerRpc(playerRef);
+            StartNextGameUI.Instance.Show();
+        }
+    }
 
     [ServerRpc(RequireOwnership = false)]
     public void InteractServerRpc(NetworkObjectReference playerRef)
     {
-        if (playerType != PlayerType.Player)
-        {
-            InteractClientRpc(playerRef);
-            Table.Instance.ChairStateChangedServerRpc();
-        }
+        InteractClientRpc(playerRef);
+        Table.Instance.ChairStateChangedServerRpc();
     }
 
     [ClientRpc]
@@ -64,6 +71,48 @@ public class Chair : InteractableObject
         playerType = PlayerType.Player;
         player.GetComponent<Human>().OnSpaceBarPressed += Human_OnSpaceBarPressed;
     }
+    #endregion
+
+    #region Exit chair
+    [ServerRpc(RequireOwnership = false)]
+    public void PlayerExitServerRpc()
+    {
+        PlayerExitClientRpc();
+        Table.Instance.ChairStateChangedServerRpc();
+    }
+
+    [ClientRpc]
+    private void PlayerExitClientRpc()
+    {
+        playerID = ulong.MaxValue;
+        player.GetComponent<Player>().ExitChair();
+        playerType = PlayerType.None;
+        player.GetComponent<Human>().OnSpaceBarPressed -= Human_OnSpaceBarPressed;
+        player = null;
+    }
+    #endregion
+
+    #region Spawn AI
+    [ServerRpc]
+    public void SpawnAIServerRpc() => SpawnAIClientRpc();
+
+    [ClientRpc]
+    private void SpawnAIClientRpc()
+    {
+        if (playerType == PlayerType.AI)
+        {
+            Table.Instance.RemoveAI(chairID);
+            playerType = PlayerType.None;
+            PlayerOrderUI.Instance.ChairStateChangedServerRpc();
+        }
+        else
+        {
+            Table.Instance.SpawnAI(chairID);
+            playerType = PlayerType.AI;
+            PlayerOrderUI.Instance.ChairStateChangedServerRpc();
+        }
+    }
+    #endregion
 
     private void Human_OnSpaceBarPressed(object sender, System.EventArgs e)
     {
@@ -84,46 +133,9 @@ public class Chair : InteractableObject
             }
         }
 
-        
+
         if (Table.Instance.GetAwaitingReady())
             Table.Instance.ReadyUpServerRpc(chairID);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void PlayerExitServerRpc()
-    {
-        PlayerExitClientRpc();
-        Table.Instance.ChairStateChangedServerRpc();
-    }
-
-    [ClientRpc]
-    private void PlayerExitClientRpc()
-    {
-        playerID = ulong.MaxValue;
-        player.GetComponent<Player>().ExitChair();
-        playerType = PlayerType.None;
-        player.GetComponent<Human>().OnSpaceBarPressed -= Human_OnSpaceBarPressed;
-        player = null;
-    }
-
-    [ServerRpc]
-    public void AlternateInteractServerRpc() => AlternateInteractClientRpc();
-
-    [ClientRpc]
-    private void AlternateInteractClientRpc()
-    {
-        if (playerType == PlayerType.AI)
-        {
-            Table.Instance.RemoveAI(chairID);
-            playerType = PlayerType.None;
-            PlayerOrderUI.Instance.ChairStateChangedServerRpc();
-        }
-        else
-        {
-            Table.Instance.SpawnAI(chairID);
-            playerType = PlayerType.AI;
-            PlayerOrderUI.Instance.ChairStateChangedServerRpc();
-        }
     }
 
     public GameObject GetSitPoint() => sitPoint;

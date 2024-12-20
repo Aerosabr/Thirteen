@@ -233,7 +233,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &54895710
 Transform:
   m_ObjectHideFlags: 0
@@ -396,7 +396,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &59338539
@@ -1447,7 +1447,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &274212144
 Transform:
   m_ObjectHideFlags: 0
@@ -1715,7 +1715,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &329154411
@@ -2234,7 +2234,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &385051133
 Transform:
   m_ObjectHideFlags: 0
@@ -2320,7 +2320,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &390084688
 Transform:
   m_ObjectHideFlags: 0
@@ -2403,6 +2403,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 393358315}
+  - component: {fileID: 393358316}
   m_Layer: 0
   m_Name: P4Hand
   m_TagString: Untagged
@@ -2425,6 +2426,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1991487320}
   m_LocalEulerAnglesHint: {x: -75, y: 0, z: 0}
+--- !u!114 &393358316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393358314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2468133167
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &402090451 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3776175808157095384, guid: 42ff4c1793095ff4bb6bbe09817f11d7, type: 3}
@@ -2447,7 +2469,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &416770962
 Transform:
   m_ObjectHideFlags: 0
@@ -2801,6 +2823,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 461565033}
+  - component: {fileID: 461565034}
   m_Layer: 0
   m_Name: P1Hand
   m_TagString: Untagged
@@ -2823,6 +2846,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 214274147}
   m_LocalEulerAnglesHint: {x: -75, y: 0, z: 0}
+--- !u!114 &461565034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 461565032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1326263812
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &465354980
 GameObject:
   m_ObjectHideFlags: 0
@@ -3057,7 +3101,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &469710278
 Transform:
   m_ObjectHideFlags: 0
@@ -3143,7 +3187,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &473228516
 Transform:
   m_ObjectHideFlags: 0
@@ -3229,7 +3273,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &492174574
 Transform:
   m_ObjectHideFlags: 0
@@ -3483,7 +3527,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &544446413
@@ -3644,7 +3688,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &594554296
 Transform:
   m_ObjectHideFlags: 0
@@ -3730,7 +3774,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &594933136
 Transform:
   m_ObjectHideFlags: 0
@@ -3972,7 +4016,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &636292187
 Transform:
   m_ObjectHideFlags: 0
@@ -4194,7 +4238,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &658663543
 Transform:
   m_ObjectHideFlags: 0
@@ -4280,7 +4324,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &672892158
 Transform:
   m_ObjectHideFlags: 0
@@ -4557,7 +4601,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &705430629
 Transform:
   m_ObjectHideFlags: 0
@@ -5786,7 +5830,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &793901213
 Transform:
   m_ObjectHideFlags: 0
@@ -5872,7 +5916,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &797717463
 Transform:
   m_ObjectHideFlags: 0
@@ -6144,7 +6188,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &811177532
 Transform:
   m_ObjectHideFlags: 0
@@ -6230,7 +6274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &814755309
 Transform:
   m_ObjectHideFlags: 0
@@ -6316,7 +6360,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &818779124
 Transform:
   m_ObjectHideFlags: 0
@@ -6543,7 +6587,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &834450984
@@ -6634,7 +6678,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &849668620
 Transform:
   m_ObjectHideFlags: 0
@@ -6938,7 +6982,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &892493399
@@ -7145,6 +7189,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 910304633}
+  - component: {fileID: 910304634}
   m_Layer: 0
   m_Name: P2Hand
   m_TagString: Untagged
@@ -7167,6 +7212,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1031968555}
   m_LocalEulerAnglesHint: {x: -75, y: 0, z: 0}
+--- !u!114 &910304634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910304632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2941646580
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &919621978 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3490620030083838822, guid: 42ff4c1793095ff4bb6bbe09817f11d7, type: 3}
@@ -7189,7 +7255,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &920717748
 Transform:
   m_ObjectHideFlags: 0
@@ -7443,7 +7509,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &976267620
 Transform:
   m_ObjectHideFlags: 0
@@ -7587,7 +7653,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &993016547
 Transform:
   m_ObjectHideFlags: 0
@@ -7986,7 +8052,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1008259561
 Transform:
   m_ObjectHideFlags: 0
@@ -8363,6 +8429,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1031612985}
+  - component: {fileID: 1031612986}
   m_Layer: 0
   m_Name: P3Hand
   m_TagString: Untagged
@@ -8385,6 +8452,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 272660162}
   m_LocalEulerAnglesHint: {x: -75, y: 0, z: 0}
+--- !u!114 &1031612986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031612984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2684010630
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1031968549
 GameObject:
   m_ObjectHideFlags: 0
@@ -8846,7 +8934,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1087611455
 Transform:
   m_ObjectHideFlags: 0
@@ -9429,7 +9517,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1123065798 stripped
@@ -9767,7 +9855,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1162718573
 Transform:
   m_ObjectHideFlags: 0
@@ -9960,7 +10048,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1193661354
 Transform:
   m_ObjectHideFlags: 0
@@ -10381,7 +10469,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1249714907
 Transform:
   m_ObjectHideFlags: 0
@@ -10583,7 +10671,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1273206672
 Transform:
   m_ObjectHideFlags: 0
@@ -10735,7 +10823,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1285887323
 Transform:
   m_ObjectHideFlags: 0
@@ -10965,7 +11053,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1340400827
 Transform:
   m_ObjectHideFlags: 0
@@ -11062,7 +11150,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &1341595258
@@ -11189,7 +11277,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1352121538
 Transform:
   m_ObjectHideFlags: 0
@@ -11514,7 +11602,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1366352413
 Transform:
   m_ObjectHideFlags: 0
@@ -12366,7 +12454,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1418497366
 Transform:
   m_ObjectHideFlags: 0
@@ -12611,7 +12699,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1457800801
 Transform:
   m_ObjectHideFlags: 0
@@ -12718,7 +12806,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1462531828
 Transform:
   m_ObjectHideFlags: 0
@@ -13339,7 +13427,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &1488959281
@@ -13370,7 +13458,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &1488959282
@@ -13401,7 +13489,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &1488959283
@@ -13432,7 +13520,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1501136211 stripped
@@ -13489,7 +13577,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1503443954
@@ -13509,7 +13597,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1503443955
 Transform:
   m_ObjectHideFlags: 0
@@ -13690,7 +13778,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &1551024846
@@ -13742,7 +13830,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &1551722003
@@ -14139,7 +14227,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &1575603376
@@ -14170,7 +14258,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1583437595
@@ -14323,7 +14411,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1585378404
 Transform:
   m_ObjectHideFlags: 0
@@ -14420,7 +14508,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1597118089
@@ -14733,7 +14821,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1625998041 stripped
@@ -14790,7 +14878,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1629896008
@@ -14810,7 +14898,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1629896009
 Transform:
   m_ObjectHideFlags: 0
@@ -14912,7 +15000,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &1655417686
@@ -15155,7 +15243,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &1666695055
@@ -15236,7 +15324,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &1674948724
@@ -15288,7 +15376,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1676120949
@@ -15531,7 +15619,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1688438651
@@ -15658,7 +15746,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1694214295
 Transform:
   m_ObjectHideFlags: 0
@@ -15781,7 +15869,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &1695778286
@@ -15855,7 +15943,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1705790528
 Transform:
   m_ObjectHideFlags: 0
@@ -16049,7 +16137,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1707222374
 Transform:
   m_ObjectHideFlags: 0
@@ -16167,7 +16255,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &1744034886
@@ -16290,7 +16378,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1750788260
@@ -16828,7 +16916,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &1784357230
@@ -16880,7 +16968,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1789816489
@@ -17175,7 +17263,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1815931828 stripped
@@ -17232,7 +17320,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &1816963246
@@ -17306,7 +17394,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1825345874
 Transform:
   m_ObjectHideFlags: 0
@@ -17504,7 +17592,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &1845003666
@@ -17556,7 +17644,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &1845911756
@@ -17626,7 +17714,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1847235821
 Transform:
   m_ObjectHideFlags: 0
@@ -17723,7 +17811,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1852443818 stripped
@@ -17780,7 +17868,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1855203543 stripped
@@ -17837,7 +17925,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &1877285354
@@ -17939,7 +18027,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &1908401104
@@ -18108,7 +18196,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1923543827
@@ -18437,7 +18525,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &1955441620
@@ -18785,7 +18873,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1986153161
 Transform:
   m_ObjectHideFlags: 0
@@ -19078,7 +19166,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1995630850 stripped
@@ -19135,7 +19223,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &1995726809
@@ -19187,7 +19275,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &1995796857
@@ -19265,7 +19353,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1997399205
 Transform:
   m_ObjectHideFlags: 0
@@ -19351,7 +19439,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2000951958
 Transform:
   m_ObjectHideFlags: 0
@@ -19437,7 +19525,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2004429604
 Transform:
   m_ObjectHideFlags: 0
@@ -19560,7 +19648,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &2017305044
@@ -19641,7 +19729,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &2021049342
@@ -19747,7 +19835,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &2028556192
@@ -19870,7 +19958,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1001 &2042324824
@@ -19998,7 +20086,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2062885055
 Transform:
   m_ObjectHideFlags: 0
@@ -20121,7 +20209,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &2076629486
@@ -20258,7 +20346,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2077470983
 Transform:
   m_ObjectHideFlags: 0
@@ -20466,7 +20554,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &2131785741
@@ -20486,7 +20574,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2131785742
 Transform:
   m_ObjectHideFlags: 0
@@ -20944,7 +21032,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &648116873303245017
 Transform:
   m_ObjectHideFlags: 0
@@ -22046,7 +22134,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &813698948216420032
@@ -22077,7 +22165,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &813698948216420033
@@ -22108,7 +22196,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &813698948216420034
@@ -22139,7 +22227,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &844228100187488511

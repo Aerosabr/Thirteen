@@ -55,6 +55,14 @@ public class Card : InteractableObject
         }
     }
 
+    [ClientRpc]
+    public void SetPositionClientRpc(Vector3 handPos, Vector3 pos, Quaternion rotation)
+    {
+        this.handPos = handPos;
+        transform.localPosition = pos;
+        transform.localRotation = rotation;
+    }
+
     public int GetValue() => (int)Rank + (int)Suit;
     public Sprite GetSprite() => cardSprite;
     public Rank GetRank() => Rank;

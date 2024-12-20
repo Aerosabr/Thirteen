@@ -50,12 +50,19 @@ public class Table : NetworkBehaviour
 
         for (int i = 0; i < maxCards; i++)
         {
-            GameObject Card = Deck.transform.GetChild(UnityEngine.Random.Range(0, Deck.transform.childCount)).gameObject;
-            Chairs[chairNum].DealtCard(Card);
-            Card.GetComponent<Card>().emptyCard.layer = LayerMask.NameToLayer("Player" + (chairNum + 1) + "Blank");
-            Card.GetComponent<Card>().emptyCard.SetActive(true);
-            Card.layer = LayerMask.NameToLayer("Player" + (chairNum + 1));
+            Card Card = Deck.transform.GetChild(UnityEngine.Random.Range(0, Deck.transform.childCount)).GetComponent<Card>();
+            Chairs[chairNum].DealtCardClientRpc(Card.NetworkObject);
+            //Chairs[chairNum].DealtCard(Card.gameObject);
+            //Card.GetComponent<Card>().emptyCard.layer = LayerMask.NameToLayer("Player" + (chairNum + 1) + "Blank");
+            //Card.GetComponent<Card>().emptyCard.SetActive(true);
+            //Card.layer = LayerMask.NameToLayer("Player" + (chairNum + 1));
             chairNum = (chairNum < numPlayers - 1) ? chairNum + 1 : 0;
+        }
+
+        foreach (Chair chair in Chairs)
+        {
+            if (chair.GetPlayerType() != PlayerType.None)
+                chair.ArrangeCardsInFanServerRpc();
         }
         return;
         OnCardsDealt?.Invoke(this, EventArgs.Empty);
@@ -189,8 +196,8 @@ public class Table : NetworkBehaviour
 
         lowestCardValue = 0;
 
-        maxCards = 52 - (52 % numPlayers);
-        //maxCards = 24;
+        //maxCards = 52 - (52 % numPlayers);
+        maxCards = 26;
 
         TakeCardsFromHands();
         RemoveCardsOnTable();

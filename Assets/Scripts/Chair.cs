@@ -146,14 +146,32 @@ public class Chair : InteractableObject
         if (card.GetComponent<Card>() != null)
         {
             card.transform.SetParent(hand.transform);
+
             SortCardsByValue();
-            ArrangeCardsInFan();
+            //ArrangeCardsInFan();
         }
         else
             Debug.Log("Object is not a card");
     }
 
-    private void ArrangeCardsInFan()
+    [ClientRpc]
+    public void DealtCardClientRpc(NetworkObjectReference cardRef)
+    {
+        cardRef.TryGet(out NetworkObject card);
+        if (card.GetComponent<Card>() != null)
+        {
+            if (IsServer)
+                card.transform.SetParent(hand.transform);
+
+            SortCardsByValue();
+            //ArrangeCardsInFan();
+        }
+        else
+            Debug.Log("Object is not a card");
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ArrangeCardsInFanServerRpc()
     {
         int childCount = hand.transform.childCount;
 
@@ -168,12 +186,10 @@ public class Chair : InteractableObject
             float angle = (childCount > 1) ? startAngle + i * angleStep : 0;
             float rad = Mathf.Deg2Rad * angle;
 
-            Vector3 cardPosition = new Vector3(Mathf.Sin(rad) * fanRadius, i * 0.0001f, Mathf.Cos(rad) * fanRadius);
+            Vector3 cardPosition = new Vector3(Mathf.Sin(rad) * fanRadius, i * 0.001f, Mathf.Cos(rad) * fanRadius);
 
-            Transform card = hand.transform.GetChild(i);
-            card.gameObject.GetComponent<Card>().handPos = new Vector3(Mathf.Sin(rad), i * 0.0001f, Mathf.Cos(rad));
-            card.localPosition = cardPosition;
-            card.localRotation = Quaternion.Euler(0, angle, 0);
+            Card card = hand.transform.GetChild(i).GetComponent<Card>();
+            card.SetPositionClientRpc(new Vector3(Mathf.Sin(rad), i * 0.001f, Mathf.Cos(rad)), cardPosition, Quaternion.Euler(0, angle, 0));
         }
     }
 
@@ -187,7 +203,7 @@ public class Chair : InteractableObject
             cards[i].transform.SetSiblingIndex(i);
     }
 
-    public void CardsPlayed() => ArrangeCardsInFan(); // Refan cards in hand
+    public void CardsPlayed() => ArrangeCardsInFanServerRpc(); // Refan cards in hand
 
     public List<Card> GetHand()
     {

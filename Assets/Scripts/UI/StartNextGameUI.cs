@@ -22,7 +22,6 @@ public class StartNextGameUI : MonoBehaviour
 
     public void UpdateUI()
     {
-        Debug.Log(Table.Instance.GetNumPlayersAtTable() + "/4");
         if (Table.Instance.GetNumPlayersAtTable() != 4)
         {
             text.text = $"Waiting for more players: {Table.Instance.GetNumPlayersAtTable()}/4";

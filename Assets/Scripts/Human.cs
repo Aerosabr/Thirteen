@@ -231,13 +231,19 @@ public class Human : Player
 
         if (Physics.Raycast(ray, out hit, interactionDistance, 1 << interactableLayer))
         {
-            if (interactObject != null && interactObject != hit.collider.gameObject)
+            if (interactObject != null)
             {
-                interactObject.GetComponent<InteractableObject>().Unhighlight();
-                interactObject = null;
-                InteractionUI.Instance.Hide();
+                // Unhighlight previous object if looking at new object or object becomes unhighlightable
+                if (interactObject != hit.collider.gameObject
+                    || !hit.collider.gameObject.GetComponent<InteractableObject>().Highlight(gameObject))
+                {
+                    interactObject.GetComponent<InteractableObject>().Unhighlight();
+                    interactObject = null;
+                    InteractionUI.Instance.Hide();
+                }
             }
-
+           
+            // Highlight new object if no previous object and new object is highlightable
             if (!interactObject && hit.collider.gameObject.GetComponent<InteractableObject>().Highlight(gameObject))
             {
                 interactObject = hit.collider.gameObject;
@@ -260,7 +266,12 @@ public class Human : Player
             return;
 
         if (interactObject && canInteract)
+        {
             interactObject.GetComponent<InteractableObject>().Interact(NetworkObject);
+            interactObject.GetComponent<InteractableObject>().Unhighlight();
+            interactObject = null;
+            InteractionUI.Instance.Hide();
+        }
     }
 
     private void GameInput_OnExitChairAction(object sender, System.EventArgs e)
@@ -287,7 +298,10 @@ public class Human : Player
             interactObject.GetComponent<InteractableObject>().GetInteractType() == InteractableObject.InteractType.Chair)
         {
             if (interactObject.GetComponent<Chair>().GetPlayerType() != PlayerType.Player)
+            {
                 interactObject.GetComponent<Chair>().SpawnAIServerRpc();
+                interactObject = null;
+            }
         }
     }
     #endregion

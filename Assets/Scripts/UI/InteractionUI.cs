@@ -1,11 +1,15 @@
+using TMPro;
 using UnityEngine;
 
 public class InteractionUI : MonoBehaviour
 {
     public static InteractionUI Instance { get; private set; }
 
-    [SerializeField] private GameObject Sit;
-    [SerializeField] private GameObject SpawnAI;
+    [SerializeField] private GameObject eObject;
+    [SerializeField] private TextMeshProUGUI eText;
+
+    [SerializeField] private GameObject fObject;
+    [SerializeField] private TextMeshProUGUI fText;
 
     private void Awake()
     {
@@ -14,17 +18,49 @@ public class InteractionUI : MonoBehaviour
 
     public void Show(InteractableObject interactObject, bool isServer)
     {
-        if (isServer)
+        Debug.Log("Showing");
+        if (interactObject.GetInteractType() == InteractableObject.InteractType.Card) // Looking at card
         {
-            SpawnAI.SetActive(true);
+            if (interactObject.GetComponent<Card>().Selected)
+            {
+                eObject.SetActive(true);
+                eText.text = "Deselect";
+            }
+            else
+            {
+                eObject.SetActive(true);
+                eText.text = "Select";
+            }
         }
+        else // Looking at chair
+        {
+            if (isServer)
+            {
+                if (interactObject.GetComponent<Chair>().GetPlayerType() != PlayerType.AI)
+                {
+                    fObject.SetActive(true);
+                    fText.text = "Spawn AI";
+                }
+                else
+                {
+                    fObject.SetActive(true);
+                    fText.text = "Remove AI";
+                }   
+            }
 
-        Sit.SetActive(true);
+            if (interactObject.GetComponent<Chair>().GetPlayerType() == PlayerType.None)
+            {
+                eObject.SetActive(true);
+                eText.text = "Sit";
+            }
+            else
+                eObject.SetActive(false);
+        }
     }
 
     public void Hide()
     {
-        Sit.SetActive(false);
-        SpawnAI.SetActive(false);
+        eObject.SetActive(false);
+        fObject.SetActive(false);
     }
 }

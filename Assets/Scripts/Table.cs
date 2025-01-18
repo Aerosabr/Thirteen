@@ -19,12 +19,14 @@ public class Table : NetworkBehaviour
     [SerializeField] private GameObject Deck;
     [SerializeField] private List<Chair> Chairs;
 
+    [SerializeField] private List<Sprite> cardSprites;
+
     private List<int> playersReady = new List<int>();
     private List<Scores> scores = new List<Scores>();
     private Dictionary<int, Transform> spawnedAI = new Dictionary<int, Transform>();
 
-    private CardType currentType = CardType.None;
-    private List<Card> cardsInPlay = new List<Card>();
+    public NetworkVariable<CardType> currentType = new NetworkVariable<CardType>();
+    private NetworkList<CardData> cardsInPlay = new NetworkList<CardData>();
     private int currentPlayer;
     private int lastPlayerPlayed;
     private int numPlayers;
@@ -38,6 +40,8 @@ public class Table : NetworkBehaviour
 
     void Start()
     {
+        if (IsServer)
+            currentType.Value = CardType.None;
         //if (IsServer)
         //   StartGame();
     }
@@ -92,13 +96,13 @@ public class Table : NetworkBehaviour
             cards[i].emptyCard.SetActive(false);
         }
 
-        cardsInPlay = new List<Card>(cards);
-        GameStateUI.Instance.UpdateVisual(cards, currentType);
+        cardsInPlay = new NetworkList<CardData>(ConvertCardsToCardData(cards));
+        GameStateUI.Instance.UpdateVisualClientRpc();
 
         if (Chairs[currentPlayer - 1].GetHand().Count == 0)
             EmptiedHand();
         else
-            DetermineCurrentPlayer();
+            DetermineCurrentPlayerServerRpc();
     }
 
     private void RemoveCardsOnTable()
@@ -135,9 +139,19 @@ public class Table : NetworkBehaviour
         }
     }
 
+    private List<CardData> ConvertCardsToCardData(List<Card> cards)
+    {
+        List<CardData> cardDatas = new List<CardData>();
+
+        foreach (Card card in cards)
+            cardDatas.Add(new CardData(card.GetRank(), card.GetSuit()));
+
+        return cardDatas;
+    }
+
     private void SetBoardType(CardType cardType)
     {
-        currentType = cardType;
+        currentType.Value = cardType;
     }
     #endregion
 
@@ -174,15 +188,15 @@ public class Table : NetworkBehaviour
         ResetGameStateClientRpc();
         DealCardsServerRpc();
 
-        return;
         if (scores.Count > 0) // If there was a winner last round, give them free move
             SetBoardType(CardType.Any);
         else // First round of the session, lowest three goes first
             SetBoardType(CardType.LowestThree);
 
         scores.Add(new Scores(numPlayers));
-        GameStateUI.Instance.UpdateVisual(cardsInPlay, currentType);
-        DetermineCurrentPlayer();
+        GameStateUI.Instance.UpdateVisualClientRpc();
+        DetermineCurrentPlayerServerRpc();
+        return;     
     }
 
     [ClientRpc]
@@ -227,7 +241,7 @@ public class Table : NetworkBehaviour
         // Reset board state
         SetBoardType(CardType.Any);
         RemoveCardsOnTable();
-        GameStateUI.Instance.UpdateVisual(cardsInPlay, currentType);
+        GameStateUI.Instance.UpdateVisualClientRpc();
     }
 
     public void EmptiedHand()
@@ -247,7 +261,7 @@ public class Table : NetworkBehaviour
             EndGame();
         }
         else
-            DetermineCurrentPlayer();
+            DetermineCurrentPlayerServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -295,12 +309,13 @@ public class Table : NetworkBehaviour
     {
         Chairs[currentPlayer - 1].inRound = false;
         PlayerOrderUI.Instance.PlayerSkipped(currentPlayer);
-        DetermineCurrentPlayer();
+        DetermineCurrentPlayerServerRpc();
     }
 
-    private void DetermineCurrentPlayer()
+    [ServerRpc(RequireOwnership = false)]
+    private void DetermineCurrentPlayerServerRpc()
     {
-        switch (currentType)
+        switch (currentType.Value)
         {
             case CardType.Any: // Free move
                 if (scores.Count > 0) // First move of game
@@ -326,10 +341,7 @@ public class Table : NetworkBehaviour
                             if (card.GetValue() == j)
                             {
                                 currentPlayer = i + 1;
-                                OnPlayerTurn?.Invoke(this, new OnPlayerTurnEventArgs
-                                {
-                                    currentPlayer = currentPlayer
-                                });
+                                DetermineCurrentPlayerClientRpc(currentPlayer);
                                 lowestCardValue = j;
                                 return;
                             }
@@ -343,9 +355,15 @@ public class Table : NetworkBehaviour
                 break;
         }
 
+        DetermineCurrentPlayerClientRpc(currentPlayer);
+    }
+
+    [ClientRpc]
+    private void DetermineCurrentPlayerClientRpc(int playerNum)
+    {
         OnPlayerTurn?.Invoke(this, new OnPlayerTurnEventArgs
         {
-            currentPlayer = currentPlayer
+            currentPlayer = playerNum
         });
     }
 
@@ -400,7 +418,7 @@ public class Table : NetworkBehaviour
     public bool CheckIfCardsValid(List<Card> cards)
     {
         // First move of the session -> verify if cards played contains Three of Spades
-        if (currentType == CardType.LowestThree)
+        if (currentType.Value == CardType.LowestThree)
             if (!CheckLowestThree(cards))
                 return false;
 
@@ -439,7 +457,9 @@ public class Table : NetworkBehaviour
     private bool CheckValidSingle(List<Card> cards)
     {
         // If free move OR round is singles + card played is higher than card on board
-        if (currentType == CardType.Any || currentType == CardType.LowestThree || (currentType == CardType.Single && cards[0].GetValue() > cardsInPlay[0].GetValue()))
+        if (currentType.Value == CardType.Any || 
+            currentType.Value == CardType.LowestThree || 
+            (currentType.Value == CardType.Single && cards[0].GetValue() > cardsInPlay[0].value))
         {
             SetBoardType(CardType.Single);
             return true;
@@ -451,7 +471,9 @@ public class Table : NetworkBehaviour
     private bool CheckValidDouble(List<Card> cards)
     {
         // If free move OR round is doubles + highest card played is higher than highest card on board
-        if (currentType == CardType.Any || currentType == CardType.LowestThree || (currentType == CardType.Double && cards[1].GetValue() > cardsInPlay[1].GetValue()))
+        if (currentType.Value == CardType.Any || 
+            currentType.Value == CardType.LowestThree || 
+            (currentType.Value == CardType.Double && cards[1].GetValue() > cardsInPlay[1].value))
         {
             // Rank of each card is the same
             if (cards[0].GetRank() == cards[1].GetRank())
@@ -467,7 +489,9 @@ public class Table : NetworkBehaviour
     private bool CheckValidTriple(List<Card> cards)
     {
         // If free move OR round is triples + highest card played is higher than highest card on board
-        if (currentType == CardType.Any || currentType == CardType.LowestThree || (currentType == CardType.Triple && cards[2].GetValue() > cardsInPlay[2].GetValue()))
+        if (currentType.Value == CardType.Any || 
+            currentType.Value == CardType.LowestThree || 
+            (currentType.Value == CardType.Triple && cards[2].GetValue() > cardsInPlay[2].value))
         {
             // Rank of each card is the same
             if (cards.All(card => card.GetRank() == cards[0].GetRank()))
@@ -484,10 +508,10 @@ public class Table : NetworkBehaviour
     {
         // If free move OR round is quadruples + highest card played is higher than highest card on board
         // OR card on board consists of a single Two
-        if (currentType == CardType.Any || 
-            currentType == CardType.LowestThree || 
-            (currentType == CardType.Quadruple && cards[3].GetValue() > cardsInPlay[3].GetValue()) ||
-            (cardsInPlay[0].GetRank() == Rank.Two && currentType == CardType.Single))
+        if (currentType.Value == CardType.Any || 
+            currentType.Value == CardType.LowestThree || 
+            (currentType.Value == CardType.Quadruple && cards[3].GetValue() > cardsInPlay[3].value) ||
+            (cardsInPlay[0].rank == Rank.Two && currentType.Value == CardType.Single))
         {
             // Rank of each card is the same
             if (cards.All(card => card.GetRank() == cards[0].GetRank()))
@@ -503,9 +527,9 @@ public class Table : NetworkBehaviour
     private bool CheckValidStraight(List<Card> cards)
     {
         // If free move OR round is straights + highest card played is higher than highest card on board + num cards played is the same
-        if (currentType == CardType.Any || 
-            currentType == CardType.LowestThree || 
-            (currentType == CardType.Straight && cards[cardsInPlay.Count - 1].GetValue() > cardsInPlay[cardsInPlay.Count - 1].GetValue() && cards.Count == cardsInPlay.Count))
+        if (currentType.Value == CardType.Any || 
+            currentType.Value == CardType.LowestThree || 
+            (currentType.Value == CardType.Straight && cards[cardsInPlay.Count - 1].GetValue() > cardsInPlay[cardsInPlay.Count - 1].value && cards.Count == cardsInPlay.Count))
         {
             // Disapprove if cards played contains a Two
             foreach (Card card in cards)
@@ -535,12 +559,23 @@ public class Table : NetworkBehaviour
         if (cards.Count % 2 != 0)
             return false;
 
+        // Check if all cards on board are twos
+        bool cardsInPlayAreTwos = true;
+        foreach (CardData cardData in cardsInPlay)
+        {
+            if (cardData.rank != Rank.Two)
+            {
+                cardsInPlayAreTwos = false;
+                break;
+            }
+        }
+
         // If free move OR round is bombs + highest card played is higher than highest card on board + num cards played is the same
         // OR cards on board consists of Twos and num cards played meets required amount to bomb
-        if (currentType == CardType.Any || 
-            currentType == CardType.LowestThree || 
-            (currentType == CardType.Bomb && cards[cardsInPlay.Count - 1].GetValue() > cardsInPlay[cardsInPlay.Count - 1].GetValue() && cards.Count == cardsInPlay.Count) ||
-            (cardsInPlay.All(card => card.GetRank() == Rank.Two) && cards.Count >= (cardsInPlay.Count * 2 + 4)))
+        if (currentType.Value == CardType.Any || 
+            currentType.Value == CardType.LowestThree || 
+            (currentType.Value == CardType.Bomb && cards[cardsInPlay.Count - 1].GetValue() > cardsInPlay[cardsInPlay.Count - 1].value && cards.Count == cardsInPlay.Count) ||
+            cardsInPlayAreTwos && cards.Count >= (cardsInPlay.Count * 2 + 4))
         {
             foreach (Card card in cards)
                 if (card.GetRank() == Rank.Two)
@@ -554,7 +589,6 @@ public class Table : NetworkBehaviour
 
                 rank += 4;
             }
-
             SetBoardType(CardType.Bomb);
             return true;
         }
@@ -588,10 +622,11 @@ public class Table : NetworkBehaviour
     }
     #endregion
 
-    public bool GetAwaitingReady() => currentType == CardType.None;
+    public Sprite GetSpriteFromValue(int value) => cardSprites[value - 1];
+    public bool GetAwaitingReady() => currentType.Value == CardType.None;
     public Chair GetChair(int chairNum) => Chairs[chairNum - 1];
-    public CardType GetCurrentType() => currentType;
-    public List<Card> GetCardsInPlay() => cardsInPlay;
+    public CardType GetCurrentType() => currentType.Value;
+    public NetworkList<CardData> GetCardsInPlay() => cardsInPlay;
     public int GetMaxCards() => maxCards;
     public Transform GetAIOnChair(int chairID) => spawnedAI[chairID];
     public int GetNumberCardsPlayed() => Deck.transform.childCount - (52 % maxCards);

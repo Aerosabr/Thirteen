@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine;
+using Unity.Netcode;
 
-public class GameStateUI : MonoBehaviour
+public class GameStateUI : NetworkBehaviour
 {
     public static GameStateUI Instance { get; private set; }
 
@@ -20,9 +21,16 @@ public class GameStateUI : MonoBehaviour
     private void Start()
     {
         Hide();
+        Table.Instance.currentType.OnValueChanged += CurrentTypeChanged;
     }
 
-    public void UpdateVisual(List <Card> Cards = null, CardType cardType = CardType.Any)
+    private void CurrentTypeChanged(CardType prev, CardType current)
+    {
+        cardType.text = current.ToString();
+    }
+
+    [ClientRpc]
+    public void UpdateVisualClientRpc()
     {
         foreach (Transform child in cardImages)
         {
@@ -31,17 +39,15 @@ public class GameStateUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        if (Cards != null)
+        if (Table.Instance.GetCardsInPlay() != null)
         {
-            foreach (Card card in Cards)
+            foreach (CardData card in Table.Instance.GetCardsInPlay())
             {
                 Transform imageTransform = Instantiate(imageTemplate, cardImages);
                 imageTransform.gameObject.SetActive(true);
-                imageTransform.GetComponent<Image>().sprite = card.GetSprite();
+                imageTransform.GetComponent<Image>().sprite = Table.Instance.GetSpriteFromValue(card.value);
             }
         }
-
-        this.cardType.text = cardType.ToString();
     }
 
     public void Show() => gameObject.SetActive(true);

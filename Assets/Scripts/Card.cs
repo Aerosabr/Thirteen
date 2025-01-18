@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Unity.Netcode;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class Card : InteractableObject
 {
@@ -71,7 +74,7 @@ public class Card : InteractableObject
 }
 
 [System.Serializable]
-public struct CardData
+public struct CardData : IEquatable<CardData>, INetworkSerializable
 {
     public Rank rank;
     public Suit suit;
@@ -82,6 +85,21 @@ public struct CardData
         this.rank = rank;
         this.suit = suit;
         value = (int)rank + (int)suit;
+    }
+
+    public bool Equals(CardData other)
+    {
+        return
+            rank == other.rank &&
+            suit == other.suit &&
+            value == other.value;
+    }
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref rank);
+        serializer.SerializeValue(ref suit);
+        serializer.SerializeValue(ref value);
     }
 }
 
@@ -94,6 +112,7 @@ public struct CardCombo
     { 
         this.cards = cards; 
     }
+
 }
 
 public enum Suit

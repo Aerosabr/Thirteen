@@ -23,11 +23,12 @@ public class PlayerOrderUI : NetworkBehaviour
     private void Start()
     {
         Hide();
-        //Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
+        Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
     }
 
     private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e)
     {
+        Debug.Log("Current player: " + e.currentPlayer);
         foreach (GameObject temp in currentIndicator)
         {
             temp.SetActive(false);

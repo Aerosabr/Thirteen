@@ -36,7 +36,6 @@ public struct PlayerInfo : IEquatable<PlayerInfo>, INetworkSerializable
     public FixedString64Bytes playerName;
     public int modelNum;
 
-
     public bool Equals(PlayerInfo other)
     {
         return
@@ -51,5 +50,4 @@ public struct PlayerInfo : IEquatable<PlayerInfo>, INetworkSerializable
         serializer.SerializeValue(ref playerName);
         serializer.SerializeValue(ref modelNum);
     }
-
 }

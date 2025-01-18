@@ -29,7 +29,7 @@ public class AI : Player
 
         playerID = chair.GetChairID();
 
-        Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
+        //Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
         Table.Instance.OnCardsDealt += Table_OnCardsDealt;
     }
 
@@ -171,8 +171,8 @@ public class AI : Player
 
     private void PlaySingle()
     {
-        List<Card> cardsInPlay = Table.Instance.GetCardsInPlay();
-        int cardInPlayValue = cardsInPlay[0].GetValue();
+        NetworkList<CardData> cardsInPlay = Table.Instance.GetCardsInPlay();
+        int cardInPlayValue = cardsInPlay[0].value;
         int cardsPlayedThreshold = CardsPlayedExceedsPercentage(50) ? 1 : 0;
 
         foreach (CardData card in hand)
@@ -204,7 +204,7 @@ public class AI : Player
 
     private void PlayDouble()
     {
-        int cardInPlayValue = Table.Instance.GetCardsInPlay()[1].GetValue();
+        int cardInPlayValue = Table.Instance.GetCardsInPlay()[1].value;
 
         List<CardCombo> playableDoubles = FindDuplicates(hand, 2);
 
@@ -232,7 +232,7 @@ public class AI : Player
 
     private void PlayTriple()
     {
-        int cardInPlayValue = Table.Instance.GetCardsInPlay()[2].GetValue();
+        int cardInPlayValue = Table.Instance.GetCardsInPlay()[2].value;
 
         List<CardCombo> playableTriples = FindDuplicates(hand, 3);
 
@@ -265,7 +265,7 @@ public class AI : Player
 
     private void PlayQuadruple()
     {
-        int cardInPlayValue = Table.Instance.GetCardsInPlay()[3].GetValue();
+        int cardInPlayValue = Table.Instance.GetCardsInPlay()[3].value;
 
         List<CardCombo> playableQuadruples = FindDuplicates(hand, 4);
 
@@ -298,9 +298,9 @@ public class AI : Player
 
     private void PlayStraight()
     {
-        List<Card> cardsInPlay = Table.Instance.GetCardsInPlay();
+        NetworkList<CardData> cardsInPlay = Table.Instance.GetCardsInPlay();
         int straightLength = cardsInPlay.Count;
-        int cardInPlayValue = cardsInPlay[straightLength - 1].GetValue();
+        int cardInPlayValue = cardsInPlay[straightLength - 1].value;
 
         List<CardCombo> playableStraights = FindStraights(hand.Except(twos).ToList(), straightLength);
 
@@ -333,8 +333,8 @@ public class AI : Player
 
     private void PlayBomb()
     {
-        List<Card> cardsInPlay = Table.Instance.GetCardsInPlay();
-        int cardInPlayValue = cardsInPlay[cardsInPlay.Count - 1].GetValue();
+        NetworkList<CardData> cardsInPlay = Table.Instance.GetCardsInPlay();
+        int cardInPlayValue = cardsInPlay[cardsInPlay.Count - 1].value;
 
         List<CardCombo> playableBombs = new List<CardCombo>();
         if (Table.Instance.GetCurrentType() == CardType.Bomb)

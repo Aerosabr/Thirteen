@@ -18,7 +18,6 @@ public class InteractionUI : MonoBehaviour
 
     public void Show(InteractableObject interactObject, bool isServer)
     {
-        Debug.Log("Showing");
         if (interactObject.GetInteractType() == InteractableObject.InteractType.Card) // Looking at card
         {
             if (interactObject.GetComponent<Card>().Selected)

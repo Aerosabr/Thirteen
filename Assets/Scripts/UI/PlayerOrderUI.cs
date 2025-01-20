@@ -60,33 +60,30 @@ public class PlayerOrderUI : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void ChairStateChangedServerRpc()
     {
-        ChairStateChangedClientRpc();
-    }
-
-    [ClientRpc]
-    private void ChairStateChangedClientRpc()
-    {
         for (int i = 1; i <= 4; i++)
         {
             Chair chair = Table.Instance.GetChair(i);
             switch (chair.GetPlayerType())
             {
                 case PlayerType.AI:
-                    nameText[i - 1].text = "AI";
-                    playerBackground[i - 1].gameObject.SetActive(true);
-                    playerBackground[i - 1].sprite = characterBackgrounds[Table.Instance.GetAIOnChair(i).GetComponent<AI>().modelNum];
+                    ChairStateChangedClientRpc(i - 1, "AI", true, Table.Instance.GetAIOnChair(i).GetComponent<AI>().modelNum.Value);
                     break;
                 case PlayerType.Player:
-                    nameText[i - 1].text = PlayerManager.Instance.Players[(int)chair.playerID].playerName.ToString();
-                    playerBackground[i - 1].gameObject.SetActive(true);
-                    playerBackground[i - 1].sprite = characterBackgrounds[PlayerManager.Instance.Players[(int)chair.playerID].modelNum];
+                    ChairStateChangedClientRpc(i - 1, PlayerManager.Instance.Players[(int)chair.playerID].playerName.ToString(), true, PlayerManager.Instance.Players[(int)chair.playerID].modelNum);
                     break;
                 case PlayerType.None:
-                    nameText[i - 1].text = "";
-                    playerBackground[i - 1].gameObject.SetActive(false);
+                    ChairStateChangedClientRpc(i - 1, "", false, 0);
                     break;
             }
         }
+    }
+
+    [ClientRpc]
+    private void ChairStateChangedClientRpc(int chairNum, string nameText, bool playerBackgroundToggle, int modelNum)
+    {
+        this.nameText[chairNum].text = nameText;
+        playerBackground[chairNum].gameObject.SetActive(playerBackgroundToggle);
+        playerBackground[chairNum].sprite = characterBackgrounds[modelNum];
     }
 
     public void Show() => gameObject.SetActive(true);

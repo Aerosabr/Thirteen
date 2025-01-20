@@ -10,7 +10,7 @@ public class PlayerManager : NetworkBehaviour
     public static PlayerManager Instance { get; private set; }
 
     [SerializeField] private Transform playerPrefab;
-    [SerializeField] private Transform aiPrefab;
+    [SerializeField] private ScriptableObjectSO aiSO;
     public NetworkList<PlayerInfo> Players;
     //public int numPlayers = 0;
 
@@ -80,5 +80,7 @@ public class PlayerManager : NetworkBehaviour
         return default;
     }
 
-    public Transform GetAIPrefab() => aiPrefab;
+    public ScriptableObjectSO GetAIPrefab() => aiSO;
+
+    public bool CheckIfServer() => IsServer;
 }

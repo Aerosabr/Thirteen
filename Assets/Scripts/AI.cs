@@ -12,7 +12,20 @@ public class AI : Player
     [SerializeField] private List<CardData> twos = new List<CardData>();
     [SerializeField] private List<CardData> cardsToBePlayed = new List<CardData>();
 
-    public int modelNum;
+    public NetworkVariable<int> modelNum = new NetworkVariable<int>();
+
+    private void Start()
+    {
+        playerVisual.LoadModel(modelNum.Value);
+        playerVisual.PlayAnimation("Sitting");
+        modelNum.OnValueChanged += UpdateModelVisual;
+    }
+
+    private void UpdateModelVisual(int oldValue, int newValue)
+    {
+        Debug.Log("Updated: " + modelNum.Value);
+        playerVisual.LoadModel(modelNum.Value);
+    }
 
     public override void SitOnChair(NetworkObjectReference chairRef)
     {
@@ -23,25 +36,18 @@ public class AI : Player
         transform.rotation = chair.GetSitPoint().transform.rotation;
         this.chair = chair;
 
-        modelNum = Random.Range(0, 6);
-        playerVisual.LoadModel(modelNum);
-        playerVisual.PlayAnimation("Sitting");
+        modelNum.Value = Random.Range(0, 6);
+        Debug.Log("Sit " + modelNum.Value);
+        playerVisual.LoadModel(modelNum.Value);
 
         playerID = chair.GetChairID();
 
-        //Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
-        Table.Instance.OnCardsDealt += Table_OnCardsDealt;
-    }
-
-    private void Table_OnCardsDealt(object sender, System.EventArgs e)
-    {
-        ProcessHand();
-        
+        Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
     }
 
     private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e)
     {
-        if (e.currentPlayer == playerID)
+        if (e.currentPlayer == playerID && PlayerManager.Instance.CheckIfServer())
             StartCoroutine(TakeAction());
 
     }
@@ -49,6 +55,8 @@ public class AI : Player
     private IEnumerator TakeAction()
     {
         yield return new WaitForSeconds(Random.Range(2f, 4f));
+
+        ProcessHand();
 
         switch (Table.Instance.GetCurrentType())
         {
@@ -110,7 +118,6 @@ public class AI : Player
         Table.Instance.CheckIfCardsValid(selectedCards);
         Table.Instance.PlayCards(selectedCards);
         chair.CardsPlayed();
-        ProcessHand();
     }
 
     #region Turn Actions

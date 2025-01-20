@@ -608,15 +608,20 @@ public class Table : NetworkBehaviour
     #endregion
 
     #region AI Spawning
-    public void SpawnAI(int chairID)
+    [ServerRpc]
+    public void SpawnAIServerRpc(int chairID)
     {
-        Transform aiTransform = Instantiate(PlayerManager.Instance.GetAIPrefab());
+        Transform aiTransform = Instantiate(PlayerManager.Instance.GetAIPrefab().prefab);
+        aiTransform.GetComponent<NetworkObject>().Spawn(true);
         aiTransform.GetComponent<AI>().SitOnChair(Chairs[chairID - 1].NetworkObject);
+
         spawnedAI.Add(chairID, aiTransform);
     }
 
-    public void RemoveAI(int chairID)
+    [ServerRpc]
+    public void RemoveAIServerRpc(int chairID)
     {
+        spawnedAI[chairID].gameObject.GetComponent<NetworkObject>().Despawn();
         Destroy(spawnedAI[chairID].gameObject);
         spawnedAI.Remove(chairID);
     }

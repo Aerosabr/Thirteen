@@ -14,7 +14,7 @@ public class Chair : InteractableObject
     [SerializeField] private GameObject hand;
     [SerializeField] private int chairID;
 
-    private PlayerType playerType;
+    private NetworkVariable<PlayerType> playerType = new NetworkVariable<PlayerType>();
     public bool inRound = true;
     public ulong playerID = ulong.MaxValue;
     private bool canPlay = false;
@@ -27,13 +27,14 @@ public class Chair : InteractableObject
     private void Start()
     {
         interactType = InteractType.Chair;
-        playerType = PlayerType.None;
+        if (IsServer)
+            playerType.Value = PlayerType.None;
     }
 
     #region Object Highlighting
     public override bool Highlight(GameObject player) 
     {
-        if (playerType != PlayerType.Player)
+        if (playerType.Value != PlayerType.Player)
         {
             outline.enabled = true;
             return true;
@@ -47,7 +48,7 @@ public class Chair : InteractableObject
     #region Sit on Chair
     public override void Interact(NetworkObjectReference playerRef)
     {
-        if (playerType == PlayerType.None)
+        if (playerType.Value == PlayerType.None)
             InteractServerRpc(playerRef);
     }
 
@@ -55,6 +56,7 @@ public class Chair : InteractableObject
     public void InteractServerRpc(NetworkObjectReference playerRef)
     {
         InteractClientRpc(playerRef);
+        playerType.Value = PlayerType.Player;
         Table.Instance.ChairStateChangedServerRpc();
         player.GetComponent<Human>().ToggleGameUIClientRpc(true);
     }
@@ -66,7 +68,6 @@ public class Chair : InteractableObject
         playerID = playerObj.OwnerClientId;
         player = playerObj.GetComponent<Player>();
         player.GetComponent<Player>().SitOnChair(NetworkObject);
-        playerType = PlayerType.Player;
         player.GetComponent<Human>().OnSpaceBarPressed += Human_OnSpaceBarPressed;
     }
     #endregion
@@ -77,6 +78,7 @@ public class Chair : InteractableObject
     {
         player.GetComponent<Human>().ToggleGameUIClientRpc(false);
         PlayerExitClientRpc();
+        playerType.Value = PlayerType.None;
         Table.Instance.ChairStateChangedServerRpc();
     }
 
@@ -85,7 +87,6 @@ public class Chair : InteractableObject
     {
         playerID = ulong.MaxValue;
         player.GetComponent<Player>().ExitChair();
-        playerType = PlayerType.None;
         player.GetComponent<Human>().OnSpaceBarPressed -= Human_OnSpaceBarPressed;
         player = null;
     }
@@ -95,24 +96,18 @@ public class Chair : InteractableObject
     [ServerRpc]
     public void SpawnAIServerRpc()
     {
-        SpawnAIClientRpc();
-        Table.Instance.ChairStateChangedServerRpc();
-    }
-    [ClientRpc]
-    private void SpawnAIClientRpc()
-    {
-        if (playerType == PlayerType.AI)
+        if (playerType.Value == PlayerType.AI)
         {
-            Table.Instance.RemoveAI(chairID);
-            playerType = PlayerType.None;
-            PlayerOrderUI.Instance.ChairStateChangedServerRpc();
+            Table.Instance.RemoveAIServerRpc(chairID);
+            playerType.Value = PlayerType.None;
         }
         else
         {
-            Table.Instance.SpawnAI(chairID);
-            playerType = PlayerType.AI;
-            PlayerOrderUI.Instance.ChairStateChangedServerRpc();
+            Table.Instance.SpawnAIServerRpc(chairID);
+            playerType.Value = PlayerType.AI;
         }
+
+        Table.Instance.ChairStateChangedServerRpc();
     }
     #endregion
 
@@ -220,5 +215,5 @@ public class Chair : InteractableObject
     }
 
     public int GetChairID() => chairID;
-    public PlayerType GetPlayerType() => playerType;
+    public PlayerType GetPlayerType() => playerType.Value;
 }

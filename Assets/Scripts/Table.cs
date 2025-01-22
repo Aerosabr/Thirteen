@@ -216,15 +216,17 @@ public class Table : NetworkBehaviour
         lowestCardValue = 0;
 
         //maxCards = 52 - (52 % numPlayers);
-        maxCards = 16;
+        maxCards = 8;
 
         TakeCardsFromHands();
         RemoveCardsOnTable();
         PlayerOrderUI.Instance.ResetUI();
     }
 
-    private void EndGame()
+    [ServerRpc]
+    private void EndGameServerRpc()
     {
+        SetBoardType(CardType.None);
         StartNextGameUI.Instance.UpdateUIServerRpc();
     }
 
@@ -262,7 +264,7 @@ public class Table : NetworkBehaviour
             int remainingPlayer = scores[gameNum].players.FindIndex(player => player == 0);
             scores[gameNum].players[remainingPlayer] = scores[gameNum].players.Max() + 1;
             PlayerOrderUI.Instance.PlayerHandEmptiedClientRpc(remainingPlayer + 1, scores[gameNum].players[remainingPlayer]);
-            EndGame();
+            EndGameServerRpc();
         }
         else
             DetermineCurrentPlayerServerRpc();

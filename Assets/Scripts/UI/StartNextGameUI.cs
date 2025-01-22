@@ -34,14 +34,15 @@ public class StartNextGameUI : NetworkBehaviour
             HideClientRpc();
             return;
         }
+        ShowClientRpc();
         UpdateUIClientRpc($"Press SPACE To Start Next Game: {Table.Instance.GetNumHumansReady()}/{Table.Instance.GetNumHumansAtTable()}");
     }
 
     [ClientRpc]
-    private void UpdateUIClientRpc(string uiText)
-    {
-        text.text = uiText;
-    }
+    private void UpdateUIClientRpc(string uiText) => text.text = uiText;
+
+    [ClientRpc]
+    private void ShowClientRpc() => Show();
 
     [ClientRpc]
     private void HideClientRpc() => Hide();

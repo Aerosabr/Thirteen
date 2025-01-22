@@ -21,17 +21,28 @@ public class GameStateUI : NetworkBehaviour
     private void Start()
     {
         Hide();
-        Table.Instance.currentType.OnValueChanged += CurrentTypeChanged;
     }
 
-    private void CurrentTypeChanged(CardType prev, CardType current)
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdateGameStateUIServerRpc()
     {
-        cardType.text = current.ToString();
+        string currentType = Table.Instance.currentType.Value.ToString();
+        Debug.Log("Current Type: " + currentType);
+
+        List<int> cardValues = new List<int>();
+        foreach (CardData card in Table.Instance.cardsInPlay)
+            cardValues.Add(card.value);
+
+        int[] cards = cardValues.ToArray();
+
+        UpdateGameStateUIClientRpc(cards, currentType);
     }
 
     [ClientRpc]
-    public void UpdateVisualClientRpc()
+    private void UpdateGameStateUIClientRpc(int[] cards, string currentType)
     {
+        cardType.text = currentType;
+
         foreach (Transform child in cardImages)
         {
             if (child == imageTemplate) continue;
@@ -39,14 +50,11 @@ public class GameStateUI : NetworkBehaviour
             Destroy(child.gameObject);
         }
 
-        if (Table.Instance.GetCardsInPlay() != null)
+        foreach (int card in cards)
         {
-            foreach (CardData card in Table.Instance.GetCardsInPlay())
-            {
-                Transform imageTransform = Instantiate(imageTemplate, cardImages);
-                imageTransform.gameObject.SetActive(true);
-                imageTransform.GetComponent<Image>().sprite = Table.Instance.GetSpriteFromValue(card.value);
-            }
+            Transform imageTransform = Instantiate(imageTemplate, cardImages);
+            imageTransform.gameObject.SetActive(true);
+            imageTransform.GetComponent<Image>().sprite = Table.Instance.GetSpriteFromValue(card);
         }
     }
 

@@ -102,6 +102,9 @@ public class AI : Player
 
     public override void CardThrown()
     {
+        if (!PlayerManager.Instance.CheckIfServer())
+            return;
+
         List<Card> selectedCards = new List<Card>();
 
         foreach (CardData cardData in cardsToBePlayed)
@@ -116,7 +119,9 @@ public class AI : Player
 
         cardsToBePlayed.Clear();
         Table.Instance.CheckIfCardsValid(selectedCards);
-        Table.Instance.PlayCards(selectedCards);
+        chair.SetSelectedCards(selectedCards);
+        Table.Instance.PlayCardsServerRpc(chair.GetChairID());
+        chair.ClearSelectedCards();
         chair.CardsPlayed();
     }
 
@@ -178,7 +183,7 @@ public class AI : Player
 
     private void PlaySingle()
     {
-        NetworkList<CardData> cardsInPlay = Table.Instance.GetCardsInPlay();
+        List<CardData> cardsInPlay = Table.Instance.GetCardsInPlay();
         int cardInPlayValue = cardsInPlay[0].value;
         int cardsPlayedThreshold = CardsPlayedExceedsPercentage(50) ? 1 : 0;
 
@@ -305,7 +310,7 @@ public class AI : Player
 
     private void PlayStraight()
     {
-        NetworkList<CardData> cardsInPlay = Table.Instance.GetCardsInPlay();
+        List<CardData> cardsInPlay = Table.Instance.GetCardsInPlay();
         int straightLength = cardsInPlay.Count;
         int cardInPlayValue = cardsInPlay[straightLength - 1].value;
 
@@ -340,7 +345,7 @@ public class AI : Player
 
     private void PlayBomb()
     {
-        NetworkList<CardData> cardsInPlay = Table.Instance.GetCardsInPlay();
+        List<CardData> cardsInPlay = Table.Instance.GetCardsInPlay();
         int cardInPlayValue = cardsInPlay[cardsInPlay.Count - 1].value;
 
         List<CardCombo> playableBombs = new List<CardCombo>();
@@ -532,4 +537,10 @@ public class AI : Player
         return Table.Instance.GetNumberCardsPlayed() >= percentageOfDeckAsNumCards;
     }
     #endregion
+
+    public override void OnDestroy()
+    {
+        Debug.Log("Destroyed");
+        Table.Instance.OnPlayerTurn -= Table_OnPlayerTurn;
+    }
 }

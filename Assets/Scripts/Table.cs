@@ -26,7 +26,8 @@ public class Table : NetworkBehaviour
     private Dictionary<int, Transform> spawnedAI = new Dictionary<int, Transform>();
 
     public NetworkVariable<CardType> currentType = new NetworkVariable<CardType>();
-    private NetworkList<CardData> cardsInPlay = new NetworkList<CardData>();
+    public List<CardData> cardsInPlay = new List<CardData>();
+
     private int currentPlayer;
     private int lastPlayerPlayed;
     private int numPlayers;
@@ -69,11 +70,12 @@ public class Table : NetworkBehaviour
                 chair.ArrangeCardsInFanServerRpc();
         }
         return;
-        OnCardsDealt?.Invoke(this, EventArgs.Empty);
     }
 
-    public void PlayCards(List<Card> cards)
+    [ServerRpc(RequireOwnership = false)]
+    public void PlayCardsServerRpc(int chairID)
     {
+        Debug.Log("Play cards");
         RemoveCardsOnTable();
         lastPlayerPlayed = currentPlayer;
 
@@ -82,6 +84,8 @@ public class Table : NetworkBehaviour
 
         float cardWidthSpacing = 0.025f;
         float cardHeightSpacing = 0.0001f;
+
+        List<Card> cards = Chairs[chairID - 1].GetSelectedCards();
 
         int numCards = cards.Count;
         float startPos = (numCards > 1) ? -(numCards / 2) * cardWidthSpacing : 0;
@@ -96,11 +100,15 @@ public class Table : NetworkBehaviour
             cards[i].emptyCard.SetActive(false);
         }
 
-        cardsInPlay = new NetworkList<CardData>(ConvertCardsToCardData(cards));
-        GameStateUI.Instance.UpdateVisualClientRpc();
+        cardsInPlay = new List<CardData>(ConvertCardsToCardData(cards));
+        foreach (CardData card in cardsInPlay)
+        {
+            Debug.Log("Card: " + card.value);
+        }
+        GameStateUI.Instance.UpdateGameStateUIServerRpc();
 
         if (Chairs[currentPlayer - 1].GetHand().Count == 0)
-            EmptiedHand();
+            EmptiedHandServerRpc();
         else
             DetermineCurrentPlayerServerRpc();
     }
@@ -161,25 +169,19 @@ public class Table : NetworkBehaviour
     {
         if (GetNumPlayersAtTable() != 4)
             return;
-        
-        ReadyUpClientRpc(chairID);
+
+        if (playersReady.Contains(chairID))
+            playersReady.Remove(chairID);
+        else
+            playersReady.Add(chairID);
+
+        StartNextGameUI.Instance.UpdateUIServerRpc();
 
         if (playersReady.Count == GetNumHumansAtTable())
         {
             StartGameServerRpc();
             playersReady.Clear();
         }
-    }
-
-    [ClientRpc]
-    private void ReadyUpClientRpc(int chairID)
-    {
-        if (playersReady.Contains(chairID))
-            playersReady.Remove(chairID);
-        else
-            playersReady.Add(chairID);
-
-        StartNextGameUI.Instance.UpdateUI();
     }
 
     [ServerRpc]
@@ -194,7 +196,7 @@ public class Table : NetworkBehaviour
             SetBoardType(CardType.LowestThree);
 
         scores.Add(new Scores(numPlayers));
-        GameStateUI.Instance.UpdateVisualClientRpc();
+        GameStateUI.Instance.UpdateGameStateUIServerRpc();
         DetermineCurrentPlayerServerRpc();
         return;     
     }
@@ -214,7 +216,7 @@ public class Table : NetworkBehaviour
         lowestCardValue = 0;
 
         //maxCards = 52 - (52 % numPlayers);
-        maxCards = 26;
+        maxCards = 16;
 
         TakeCardsFromHands();
         RemoveCardsOnTable();
@@ -223,10 +225,11 @@ public class Table : NetworkBehaviour
 
     private void EndGame()
     {
-        StartNextGameUI.Instance.UpdateUI();
+        StartNextGameUI.Instance.UpdateUIServerRpc();
     }
 
-    private void EndRound()
+    [ServerRpc]
+    private void EndRoundServerRpc()
     {
         // Reset "skipped" players
         foreach (Chair chair in Chairs)
@@ -234,30 +237,31 @@ public class Table : NetworkBehaviour
             if (chair.GetHand().Count != 0)
             {
                 chair.inRound = true;
-                PlayerOrderUI.Instance.RemoveSkipOverlay(chair.GetChairID());
+                PlayerOrderUI.Instance.RemoveSkipOverlayClientRpc(chair.GetChairID());
             }
         }
 
         // Reset board state
         SetBoardType(CardType.Any);
         RemoveCardsOnTable();
-        GameStateUI.Instance.UpdateVisualClientRpc();
+        GameStateUI.Instance.UpdateGameStateUIServerRpc();
     }
 
-    public void EmptiedHand()
+    [ServerRpc]
+    private void EmptiedHandServerRpc()
     {
         int gameNum = scores.Count - 1;
         Chairs[currentPlayer - 1].inRound = false;
         scores[gameNum].players[currentPlayer - 1] = scores[gameNum].players.Max() + 1;
         numPlayers--;
 
-        PlayerOrderUI.Instance.PlayerHandEmptied(currentPlayer, scores[gameNum].players[currentPlayer - 1]);
+        PlayerOrderUI.Instance.PlayerHandEmptiedClientRpc(currentPlayer, scores[gameNum].players[currentPlayer - 1]);
 
         if (numPlayers == 1)
         {
             int remainingPlayer = scores[gameNum].players.FindIndex(player => player == 0);
             scores[gameNum].players[remainingPlayer] = scores[gameNum].players.Max() + 1;
-            PlayerOrderUI.Instance.PlayerHandEmptied(remainingPlayer + 1, scores[gameNum].players[remainingPlayer]);
+            PlayerOrderUI.Instance.PlayerHandEmptiedClientRpc(remainingPlayer + 1, scores[gameNum].players[remainingPlayer]);
             EndGame();
         }
         else
@@ -267,14 +271,11 @@ public class Table : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void ChairStateChangedServerRpc()
     {
-        ChairStateChangedClientRpc();
-        PlayerOrderUI.Instance.ChairStateChangedServerRpc();
-    }
+        if (GetNumPlayersAtTable() != 4)
+            playersReady.Clear();
 
-    [ClientRpc]
-    private void ChairStateChangedClientRpc()
-    {
-        StartNextGameUI.Instance.UpdateUI();
+        StartNextGameUI.Instance.UpdateUIServerRpc();
+        PlayerOrderUI.Instance.ChairStateChangedServerRpc();
     }
 
     public int GetNumPlayersAtTable()
@@ -308,13 +309,14 @@ public class Table : NetworkBehaviour
     public void SkipTurn()
     {
         Chairs[currentPlayer - 1].inRound = false;
-        PlayerOrderUI.Instance.PlayerSkipped(currentPlayer);
+        PlayerOrderUI.Instance.PlayerSkippedServerRpc(currentPlayer);
         DetermineCurrentPlayerServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void DetermineCurrentPlayerServerRpc()
     {
+        Debug.Log("Current value: " + currentType.Value);
         switch (currentType.Value)
         {
             case CardType.Any: // Free move
@@ -341,7 +343,10 @@ public class Table : NetworkBehaviour
                             if (card.GetValue() == j)
                             {
                                 currentPlayer = i + 1;
-                                DetermineCurrentPlayerClientRpc(currentPlayer);
+                                OnPlayerTurn?.Invoke(this, new OnPlayerTurnEventArgs
+                                {
+                                    currentPlayer = currentPlayer
+                                });
                                 lowestCardValue = j;
                                 return;
                             }
@@ -355,15 +360,9 @@ public class Table : NetworkBehaviour
                 break;
         }
 
-        DetermineCurrentPlayerClientRpc(currentPlayer);
-    }
-
-    [ClientRpc]
-    private void DetermineCurrentPlayerClientRpc(int playerNum)
-    {
         OnPlayerTurn?.Invoke(this, new OnPlayerTurnEventArgs
         {
-            currentPlayer = playerNum
+            currentPlayer = currentPlayer
         });
     }
 
@@ -377,7 +376,7 @@ public class Table : NetworkBehaviour
             if (Chairs[currentPlayer - 1].inRound)
             {
                 if (currentPlayer == lastPlayerPlayed)
-                    EndRound();
+                    EndRoundServerRpc();
 
                 return;
             }
@@ -392,7 +391,7 @@ public class Table : NetworkBehaviour
 
                         if (Chairs[currentPlayer - 1].GetHand().Count > 0)
                         {
-                            EndRound();
+                            EndRoundServerRpc();
                             return;
                         }
                     }
@@ -631,7 +630,7 @@ public class Table : NetworkBehaviour
     public bool GetAwaitingReady() => currentType.Value == CardType.None;
     public Chair GetChair(int chairNum) => Chairs[chairNum - 1];
     public CardType GetCurrentType() => currentType.Value;
-    public NetworkList<CardData> GetCardsInPlay() => cardsInPlay;
+    public List<CardData> GetCardsInPlay() => cardsInPlay;
     public int GetMaxCards() => maxCards;
     public Transform GetAIOnChair(int chairID) => spawnedAI[chairID];
     public int GetNumberCardsPlayed() => Deck.transform.childCount - (52 % maxCards);

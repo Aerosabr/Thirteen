@@ -13403,6 +13403,27 @@ MonoBehaviour:
   InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &1535140820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 350033351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2008522478
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1543638304
 GameObject:
   m_ObjectHideFlags: 0
@@ -16483,6 +16504,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1765037432}
+  - component: {fileID: 1765037434}
   - component: {fileID: 1765037433}
   m_Layer: 5
   m_Name: StartNextGameUI
@@ -16524,6 +16546,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 544446415}
+--- !u!114 &1765037434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765037431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 4272432660
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1768314990
 GameObject:
   m_ObjectHideFlags: 0
@@ -21940,6 +21983,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2004429604}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5023865267985552045, guid: 42ff4c1793095ff4bb6bbe09817f11d7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1535140820}
     - targetCorrespondingSourceObject: {fileID: 1944097956331851202, guid: 42ff4c1793095ff4bb6bbe09817f11d7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 813698948216420030}

@@ -43,17 +43,17 @@ public class Card : InteractableObject
     public void InteractServerRpc(NetworkObjectReference playerRef)
     {
         playerRef.TryGet(out NetworkObject playerObj);
-        Player player = playerObj.GetComponent<Player>();
+        Chair chair = playerObj.GetComponent<Player>().GetChair();
         if (!Selected)
         {
             transform.localPosition = new Vector3(handPos.x * 0.175f, handPos.y, handPos.z * 0.175f);
-            player.GetComponent<Human>().SelectedCard(this);
+            chair.SelectedCard(this);
             Selected = true;
         }
         else
         {
             transform.localPosition = new Vector3(handPos.x * 0.15f, handPos.y, handPos.z * 0.15f);
-            player.GetComponent<Human>().SelectedCard(this);
+            chair.SelectedCard(this);
             Selected = false;
         }
     }

@@ -17,7 +17,7 @@ public class Chair : InteractableObject
     private NetworkVariable<PlayerType> playerType = new NetworkVariable<PlayerType>();
     public bool inRound = true;
     public ulong playerID = ulong.MaxValue;
-    private bool canPlay = false;
+    private NetworkVariable<bool> canPlay = new NetworkVariable<bool>();
     private Player player;
     [SerializeField] private List<Card> selectedCards;
 
@@ -28,7 +28,16 @@ public class Chair : InteractableObject
     {
         interactType = InteractType.Chair;
         if (IsServer)
+        {
+            Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
             playerType.Value = PlayerType.None;
+        }
+    }
+
+    private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e)
+    {
+        if (e.currentPlayer == chairID && PlayerManager.Instance.CheckIfServer())
+            canPlay.Value = true;
     }
 
     #region Object Highlighting
@@ -111,29 +120,51 @@ public class Chair : InteractableObject
     }
     #endregion
 
+    #region Hand Interaction
+    public void SelectedCard(Card card)
+    {
+        if (selectedCards.Contains(card))
+            selectedCards.Remove(card);
+        else
+            selectedCards.Add(card);
+    }
+
     private void Human_OnSpaceBarPressed(object sender, System.EventArgs e)
     {
-        if (canPlay)
+        SpaceBarPressedServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SpaceBarPressedServerRpc()
+    {
+        if (canPlay.Value)
         {
             if (selectedCards.Count == 0)
             {
                 if (Table.Instance.GetCurrentType() != CardType.LowestThree && Table.Instance.GetCurrentType() != CardType.Any)
                 {
                     Table.Instance.SkipTurn();
-                    canPlay = false;
+                    canPlay.Value = false;
                 }
             }
             else if (Table.Instance.CheckIfCardsValid(selectedCards))
             {
-                canPlay = false;
+                canPlay.Value = false;
                 player.GetComponent<Human>().ThrowingCardServerRpc();
             }
         }
 
-
         if (Table.Instance.GetAwaitingReady())
             Table.Instance.ReadyUpServerRpc(chairID);
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void PlayHandServerRpc()
+    {
+        Table.Instance.PlayCardsServerRpc(chairID);
+        selectedCards.Clear();
+    }
+    #endregion
 
     public GameObject GetSitPoint() => sitPoint;
     public Vector3 GetExitPoint() => exitPoint.transform.position;
@@ -170,8 +201,6 @@ public class Chair : InteractableObject
     [ServerRpc(RequireOwnership = false)]
     public void ArrangeCardsInFanServerRpc()
     {
-        
-
         int childCount = hand.transform.childCount;
 
         if (childCount == 0)
@@ -185,10 +214,10 @@ public class Chair : InteractableObject
             float angle = (childCount > 1) ? startAngle + i * angleStep : 0;
             float rad = Mathf.Deg2Rad * angle;
 
-            Vector3 cardPosition = new Vector3(Mathf.Sin(rad) * fanRadius, i * 0.001f, Mathf.Cos(rad) * fanRadius);
+            Vector3 cardPosition = new Vector3(Mathf.Sin(rad) * fanRadius, i * 0.002f, Mathf.Cos(rad) * fanRadius);
 
             Card card = hand.transform.GetChild(i).GetComponent<Card>();
-            card.SetPositionClientRpc(new Vector3(Mathf.Sin(rad), i * 0.001f, Mathf.Cos(rad)), cardPosition, Quaternion.Euler(0, angle, 0));
+            card.SetPositionClientRpc(new Vector3(Mathf.Sin(rad), i * 0.002f, Mathf.Cos(rad)), cardPosition, Quaternion.Euler(0, angle, 0));
         }
     }
 
@@ -216,4 +245,7 @@ public class Chair : InteractableObject
 
     public int GetChairID() => chairID;
     public PlayerType GetPlayerType() => playerType.Value;
+    public List<Card> GetSelectedCards() => selectedCards;
+    public void SetSelectedCards(List<Card> cards) => selectedCards = cards;
+    public void ClearSelectedCards() => selectedCards.Clear();
 }

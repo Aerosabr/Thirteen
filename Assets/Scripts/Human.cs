@@ -52,7 +52,6 @@ public class Human : Player
 
     [SerializeField] private TextMeshProUGUI nametag;
     [SerializeField] private GameObject interactObject;
-    [SerializeField] private List<Card> selectedCards;
 
     private void Awake()
     {
@@ -307,14 +306,6 @@ public class Human : Player
     #endregion
 
     #region Object Interaction
-    public void SelectedCard(Card card)
-    {
-        if (selectedCards.Contains(card))
-            selectedCards.Remove(card);
-        else
-            selectedCards.Add(card);
-    }
-
     public override void SitOnChair(NetworkObjectReference chairRef)
     {
         if (playerState == PlayerState.Sitting)
@@ -354,8 +345,8 @@ public class Human : Player
     #region Other Inputs
     public override void CardThrown()
     {
-        Table.Instance.PlayCards(selectedCards);
-        selectedCards.Clear();
+        if (IsServer)
+            chair.PlayHandServerRpc();
         chair.CardsPlayed();
 
         canInteract = true;

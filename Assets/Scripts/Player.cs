@@ -15,6 +15,7 @@ public class Player : NetworkBehaviour
     public virtual void CardThrown() => Debug.Log("Base Player CardThrown");
     public int GetPlayerID() => playerID;
     public PlayerInfo GetPlayerInfo() => playerInfo;
+    public Chair GetChair() => chair;
 }
 
 public enum PlayerType

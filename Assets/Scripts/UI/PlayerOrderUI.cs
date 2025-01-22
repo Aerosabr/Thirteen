@@ -26,18 +26,25 @@ public class PlayerOrderUI : NetworkBehaviour
         Table.Instance.OnPlayerTurn += Table_OnPlayerTurn;
     }
 
-    private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e)
+    private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e) => PlayerTurnServerRpc(e.currentPlayer);
+
+    [ServerRpc]
+    private void PlayerTurnServerRpc(int currentPlayer) => PlayerTurnClientRpc(currentPlayer);
+
+    [ClientRpc]
+    private void PlayerTurnClientRpc(int currentPlayer)
     {
-        Debug.Log("Current player: " + e.currentPlayer);
+        Debug.Log("Current player: " + currentPlayer);
         foreach (GameObject temp in currentIndicator)
         {
             temp.SetActive(false);
         }
 
-        currentIndicator[e.currentPlayer - 1].SetActive(true);
+        currentIndicator[currentPlayer - 1].SetActive(true);
     }
 
-    public void PlayerHandEmptied(int playerID, int placement)
+    [ClientRpc]
+    public void PlayerHandEmptiedClientRpc(int playerID, int placement)
     {
         List<string> placements = new List<string>() { "1st", "2nd", "3rd", "4th" };
 
@@ -46,8 +53,14 @@ public class PlayerOrderUI : NetworkBehaviour
         currentIndicator[playerID - 1].SetActive(false);
     }
 
-    public void PlayerSkipped(int playerID) => skippedShadow[playerID - 1].SetActive(true);
-    public void RemoveSkipOverlay(int playerID) => skippedShadow[playerID - 1].SetActive(false);
+    [ServerRpc(RequireOwnership = false)]
+    public void PlayerSkippedServerRpc(int playerID) => PlayerSkippedClientRpc(playerID);
+
+    [ClientRpc]
+    private void PlayerSkippedClientRpc(int playerID) => skippedShadow[playerID - 1].SetActive(true);
+
+    [ClientRpc]
+    public void RemoveSkipOverlayClientRpc(int playerID) => skippedShadow[playerID - 1].SetActive(false);
     public void ResetUI()
     {
         foreach (TextMeshProUGUI text in placementText)

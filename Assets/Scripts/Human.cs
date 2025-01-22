@@ -18,7 +18,7 @@ public class Human : Player
     }
 
     #region Camera & Movement
-    private float moveSpeed = 4.0f;
+    private float moveSpeed = 20.0f;
     private float sprintSpeed = 6.0f;
     private float cameraSensitivity = 1.5f;
     private float speedChangeRate = 10.0f;
@@ -189,6 +189,7 @@ public class Human : Player
         if (!canMove)
             return;
 
+        _controller.SimpleMove(Vector3.zero);
         movementInput = GameInput.Instance.GetMovementVector();
 
         float targetSpeed = isSprinting ? sprintSpeed : moveSpeed;
@@ -275,7 +276,7 @@ public class Human : Player
 
     private void GameInput_OnExitChairAction(object sender, System.EventArgs e)
     {
-        if (playerState != PlayerState.Sitting || !IsOwner)
+        if (playerState != PlayerState.Sitting || !IsOwner || Table.Instance.currentType.Value != CardType.None)
             return;
 
         chair.PlayerExitServerRpc();

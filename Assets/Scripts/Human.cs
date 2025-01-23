@@ -43,11 +43,9 @@ public class Human : Player
 
     public event EventHandler OnSpaceBarPressed;
 
-    private bool canPlay;
     public bool canInteract;
     public bool canMove;
     private bool canLook;
-    private bool cursorEnabled;
     private PlayerState playerState;
 
     [SerializeField] private TextMeshProUGUI nametag;
@@ -113,7 +111,7 @@ public class Human : Player
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (!IsOwner)
             return;
@@ -357,7 +355,6 @@ public class Human : Player
     {
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
-        cursorEnabled = true;
         canLook = false;
     }
 
@@ -365,7 +362,6 @@ public class Human : Player
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        cursorEnabled = false;
         canLook = true;
     }
     #endregion
@@ -411,7 +407,6 @@ public class Human : Player
 
     private void Table_OnPlayerTurn(object sender, Table.OnPlayerTurnEventArgs e)
     {
-        if (e.currentPlayer == playerID)
-            canPlay = true;
+        
     }
 }

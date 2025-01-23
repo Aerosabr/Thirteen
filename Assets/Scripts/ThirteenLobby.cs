@@ -9,10 +9,11 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
-using Unity.Services.Relay;
+using RelayServiceV1 = Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Services.Relay;
 
 public class ThirteenLobby : MonoBehaviour
 {
@@ -116,7 +117,7 @@ public class ThirteenLobby : MonoBehaviour
     {
         try
         {
-            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(ThirteenMultiplayer.MAX_PLAYER_AMOUNT - 1);
+            Allocation allocation = await RelayServiceV1.RelayService.Instance.CreateAllocationAsync(ThirteenMultiplayer.MAX_PLAYER_AMOUNT - 1);
 
             return allocation;
         }
@@ -181,7 +182,7 @@ public class ThirteenLobby : MonoBehaviour
                 }
             });
 
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "dtls"));
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "wss"));
 
             ThirteenMultiplayer.Instance.StartHost();
             SceneLoader.LoadNetwork(SceneLoader.Scene.GameScene2);
@@ -202,7 +203,7 @@ public class ThirteenLobby : MonoBehaviour
 
             JoinAllocation joinAllocation = await JoinRelay(relayJoinCode);
 
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(joinAllocation, "dtls"));
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(joinAllocation, "wss"));
 
             ThirteenMultiplayer.Instance.StartClient();
         } 
@@ -222,7 +223,7 @@ public class ThirteenLobby : MonoBehaviour
 
             JoinAllocation joinAllocation = await JoinRelay(relayJoinCode);
 
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(joinAllocation, "dtls"));
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(joinAllocation, "wss"));
 
 
             ThirteenMultiplayer.Instance.StartClient();
@@ -243,7 +244,7 @@ public class ThirteenLobby : MonoBehaviour
 
             JoinAllocation joinAllocation = await JoinRelay(relayJoinCode);
 
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(joinAllocation, "dtls"));
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(AllocationUtils.ToRelayServerData(joinAllocation, "wss"));
 
 
             ThirteenMultiplayer.Instance.StartClient();

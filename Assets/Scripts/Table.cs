@@ -8,7 +8,6 @@ public class Table : NetworkBehaviour
 {
     public static Table Instance { get; private set; }
 
-    public event EventHandler OnCardsDealt;
     public event EventHandler<OnPlayerTurnEventArgs> OnPlayerTurn;
     public class OnPlayerTurnEventArgs : EventArgs
     {
@@ -216,7 +215,7 @@ public class Table : NetworkBehaviour
         lowestCardValue = 0;
 
         //maxCards = 52 - (52 % numPlayers);
-        maxCards = 8;
+        maxCards = 52;
 
         TakeCardsFromHands();
         RemoveCardsOnTable();

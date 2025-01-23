@@ -2075,7 +2075,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1257038625612079242}
-  - component: {fileID: 5292092287824422105}
+  - component: {fileID: 153383850141070853}
   m_Layer: 0
   m_Name: PlayerCameraRoot
   m_TagString: CinemachineTarget
@@ -2100,7 +2100,7 @@ Transform:
   - {fileID: 502318835579607465}
   m_Father: {fileID: 637855157820357929}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5292092287824422105
+--- !u!114 &153383850141070853
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2109,7 +2109,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3816275012815354227}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Script: {fileID: 11500000, guid: bd08a6281fa532c4195f3a4d24e85421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
@@ -4764,8 +4764,8 @@ GameObject:
   - component: {fileID: 1747310168631179387}
   - component: {fileID: 7051871356241813381}
   - component: {fileID: 3700614234088078522}
-  - component: {fileID: 214284358142695952}
-  - component: {fileID: 7132964535603050170}
+  - component: {fileID: -6713369220659926916}
+  - component: {fileID: 8331020621367792788}
   m_Layer: 0
   m_Name: Human
   m_TagString: Untagged
@@ -4851,6 +4851,77 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerType: 1
   playerVisual: {fileID: 4067436037197492}
+  playerInfo:
+    clientId: 0
+    playerName:
+      utf8LengthInBytes: 0
+      bytes:
+        offset0000:
+          byte0000: 0
+          byte0001: 0
+          byte0002: 0
+          byte0003: 0
+          byte0004: 0
+          byte0005: 0
+          byte0006: 0
+          byte0007: 0
+          byte0008: 0
+          byte0009: 0
+          byte0010: 0
+          byte0011: 0
+          byte0012: 0
+          byte0013: 0
+          byte0014: 0
+          byte0015: 0
+        offset0016:
+          byte0000: 0
+          byte0001: 0
+          byte0002: 0
+          byte0003: 0
+          byte0004: 0
+          byte0005: 0
+          byte0006: 0
+          byte0007: 0
+          byte0008: 0
+          byte0009: 0
+          byte0010: 0
+          byte0011: 0
+          byte0012: 0
+          byte0013: 0
+          byte0014: 0
+          byte0015: 0
+        offset0032:
+          byte0000: 0
+          byte0001: 0
+          byte0002: 0
+          byte0003: 0
+          byte0004: 0
+          byte0005: 0
+          byte0006: 0
+          byte0007: 0
+          byte0008: 0
+          byte0009: 0
+          byte0010: 0
+          byte0011: 0
+          byte0012: 0
+          byte0013: 0
+          byte0014: 0
+          byte0015: 0
+        byte0048: 0
+        byte0049: 0
+        byte0050: 0
+        byte0051: 0
+        byte0052: 0
+        byte0053: 0
+        byte0054: 0
+        byte0055: 0
+        byte0056: 0
+        byte0057: 0
+        byte0058: 0
+        byte0059: 0
+        byte0060: 0
+        byte0061: 0
+    modelNum: 0
   interactableLayer: 6
   cinemachineCameraTarget: {fileID: 3816275012815354227}
   virtualCamera: {fileID: 5182449023125262963}
@@ -4861,8 +4932,7 @@ MonoBehaviour:
   canMove: 0
   nametag: {fileID: 1085930426497455213}
   interactObject: {fileID: 0}
-  selectedCards: []
---- !u!114 &214284358142695952
+--- !u!114 &-6713369220659926916
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4871,7 +4941,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7894873329528999135}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Script: {fileID: 11500000, guid: bd08a6281fa532c4195f3a4d24e85421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
@@ -4893,7 +4963,7 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &7132964535603050170
+--- !u!114 &8331020621367792788
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4902,7 +4972,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7894873329528999135}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad8deae8091111f4eb30a56c1f4e0d3e, type: 3}
+  m_Script: {fileID: 11500000, guid: 6c0a5d45e35b34c4eac0c1f5eb74c0a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TransitionStateInfoList: []

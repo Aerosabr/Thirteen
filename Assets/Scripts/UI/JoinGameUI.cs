@@ -1,14 +1,22 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class JoinGameUI : MonoBehaviour
 {
-    [SerializeField] private Button joinGame;
+    [SerializeField] private Button quickJoin;
+    [SerializeField] private Button joinCode;
+    [SerializeField] private TMP_InputField joinCodeInputField;
 
     private void Start()
     {
-        joinGame.onClick.AddListener(() => {
+        quickJoin.onClick.AddListener(() => {
             ThirteenLobby.Instance.QuickJoin();
+        });
+
+        joinCode.onClick.AddListener(() =>
+        {
+            ThirteenLobby.Instance.JoinWithCode(joinCodeInputField.text);
         });
 
         MenuManager.Instance.OnStateChanged += MenuManager_OnStateChanged;

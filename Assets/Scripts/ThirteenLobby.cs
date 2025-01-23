@@ -62,4 +62,19 @@ public class ThirteenLobby : MonoBehaviour
             Debug.Log(e);
         }
     }
+
+    public async void JoinWithCode(string lobbyCode)
+    {
+        try
+        {
+            joinedLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode);
+            ThirteenMultiplayer.Instance.StartClient();
+        } 
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e); 
+        }
+    }
+
+    public Lobby GetLobby() => joinedLobby;
 }

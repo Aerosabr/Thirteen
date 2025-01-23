@@ -4,13 +4,18 @@ using UnityEngine.UI;
 
 public class CreateGameUI : MonoBehaviour
 {
-    [SerializeField] private Button startGame;
+    [SerializeField] private Button createPublic;
+    [SerializeField] private Button createPrivate;
     [SerializeField] private TMP_InputField lobbyNameInput;
 
     private void Start()
     {
-        startGame.onClick.AddListener(() => {
+        createPublic.onClick.AddListener(() => {
             ThirteenLobby.Instance.CreateLobby(lobbyNameInput.text, false);
+        });
+
+        createPrivate.onClick.AddListener(() => {
+            ThirteenLobby.Instance.CreateLobby(lobbyNameInput.text, true);
         });
 
         MenuManager.Instance.OnStateChanged += MenuManager_OnStateChanged;
